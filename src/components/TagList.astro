@@ -15,7 +15,7 @@ const { tags, counts, filter = false, current } = Astro.props;
     tags.map((tag) => (
       <li>
         <a
-          href={url(`/tags/${tag}/`)}
+          href={url(`/topics/${tag}/`)}
           data-filter={filter ? tag : undefined}
           aria-current={current === tag ? 'page' : undefined}
         >
