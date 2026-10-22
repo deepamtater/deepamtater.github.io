@@ -15,7 +15,7 @@ const topics = TOPICS.map((tag) => ({
   <div class="wrap">
     <header class="page-head">
       <h1>Topics</h1>
-      <p>Four things I keep coming back to.</p>
+      <p>Four subjects I keep returning to.</p>
     </header>
     <ul class="topics" role="list">
       {
@@ -49,19 +49,29 @@ const topics = TOPICS.map((tag) => ({
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    padding-block: 1.1rem;
+    padding: 1rem 0.65rem;
+    margin-inline: -0.65rem;
+    border-radius: 4px;
     text-decoration: none;
+    transition:
+      background-color 140ms ease,
+      color 140ms ease;
+  }
+
+  a:hover {
+    background: var(--hover);
   }
 
   .name {
-    font-size: var(--step-2);
+    font-size: var(--step-1);
     font-style: italic;
     text-transform: capitalize;
-    transition: transform 300ms var(--ease);
+    color: var(--ink);
+    transition: color 140ms ease;
   }
 
   a:hover .name {
-    transform: translateX(0.4rem);
+    color: var(--accent);
   }
 
   .mono {

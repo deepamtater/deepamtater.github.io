@@ -1,11 +1,25 @@
 export const SITE = {
-  name: 'Dee Tater',
-  title: 'Dee Tater',
+  name: 'Deepam Tater',
+  title: 'Deepam Tater',
   description:
     'Essays and notes on startups, engineering, reading, and life — written to think more clearly.',
-  author: 'Dee Tater',
+  author: 'Deepam Tater',
   locale: 'en',
   ogImage: '/og.png',
+  email: 'connectwithdeepam@gmail.com',
+  socials: [
+    { label: 'X', handle: '@justdeepam', href: 'https://x.com/justdeepam' },
+    {
+      label: 'LinkedIn',
+      handle: '/in/deepamtater',
+      href: 'https://www.linkedin.com/in/deepamtater/',
+    },
+    {
+      label: 'GitHub',
+      handle: '@dimension-drifter',
+      href: 'https://github.com/dimension-drifter',
+    },
+  ],
   nav: [
     { href: '/writing/', label: 'Writing' },
     { href: '/essays/', label: 'Essays' },

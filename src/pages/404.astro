@@ -10,19 +10,12 @@ const recent = (await getPosts()).slice(0, 3);
 <Base title="Page not found" description="This page doesn’t exist.">
   <div class="wrap">
     <header class="page-head">
-      <p class="eyebrow">404</p>
-      <h1>This page wandered off.</h1>
+      <h1>404 — This page wandered off.</h1>
       <p>
-        It may have been renamed, or never existed. Try the <a href={url("/writing/")}>full archive</a>, or
-        one of these:
+        It may have been renamed, or never existed. Try the{' '}
+        <a href={url("/writing/")}>full archive</a> or head back <a href={url("/")}>home</a>.
       </p>
     </header>
-    <PostList posts={recent} showKind />
+    {recent.length > 0 && <PostList posts={recent} showKind />}
   </div>
 </Base>
-
-<style>
-  .page-head h1 {
-    margin-block-start: 0.4rem;
-  }
-</style>

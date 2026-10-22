@@ -4,7 +4,6 @@ import {
   formatShortDate,
   kindLabel,
   postUrl,
-  transitionName,
   type Post,
 } from '../lib/posts';
 
@@ -23,7 +22,7 @@ const { posts, showKind = false, showSummary = false, shortDate = false } = Astr
     posts.map((post) => (
       <li data-tags={post.data.tags.join(' ')}>
         <a href={postUrl(post)}>
-          <span class="title" style={`view-transition-name: ${transitionName(post)}`}>
+          <span class="title">
             {post.data.title}
             {post.data.draft && <span class="draft mono">draft</span>}
           </span>
@@ -63,8 +62,18 @@ const { posts, showKind = false, showSummary = false, shortDate = false } = Astr
       'summary summary';
     column-gap: var(--space-m);
     align-items: baseline;
-    padding-block: 0.95rem;
+    padding: 0.9rem 0.65rem;
+    margin-inline: -0.65rem;
+    border-radius: 4px;
     text-decoration: none;
+    transition:
+      background-color 140ms ease,
+      color 140ms ease;
+  }
+
+  a:hover,
+  a:focus-visible {
+    background: var(--hover);
   }
 
   .title {
@@ -72,19 +81,15 @@ const { posts, showKind = false, showSummary = false, shortDate = false } = Astr
     width: fit-content;
     font-size: var(--step-0);
     font-weight: 450;
-    line-height: 1.3;
+    line-height: 1.32;
     color: var(--ink);
     text-wrap: balance;
-    background: linear-gradient(var(--accent), var(--accent)) 0 100% / 0 1px no-repeat;
-    transition:
-      background-size 360ms var(--ease),
-      color 160ms var(--ease);
+    transition: color 140ms ease;
   }
 
   a:hover .title,
   a:focus-visible .title {
     color: var(--accent);
-    background-size: 100% 1px;
   }
 
   .summary {
@@ -92,29 +97,28 @@ const { posts, showKind = false, showSummary = false, shortDate = false } = Astr
     margin-block-start: 0.3rem;
     max-width: 58ch;
     font-size: var(--step--1);
-    line-height: 1.5;
+    line-height: 1.52;
     color: var(--muted);
   }
 
   .meta {
     grid-area: meta;
     display: flex;
-    gap: 0.75rem;
+    gap: 0.65rem;
     color: var(--muted);
     white-space: nowrap;
   }
 
   .kind {
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    color: var(--muted);
   }
 
   .draft {
     margin-inline-start: 0.5rem;
     padding: 0.05rem 0.35rem;
-    border: 1px solid var(--accent);
+    border: 1px solid var(--rule);
     border-radius: 3px;
-    color: var(--accent);
+    color: var(--muted);
     vertical-align: middle;
   }
 

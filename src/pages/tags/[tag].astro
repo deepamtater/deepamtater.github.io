@@ -20,7 +20,6 @@ const { tag, posts } = Astro.props;
 <Base title={`#${tag}`} description={`Essays and notes about ${tag}.`}>
   <div class="wrap">
     <header class="page-head">
-      <p class="eyebrow">Topic</p>
       <h1>#{tag}</h1>
       <p>
         {posts.length}
@@ -34,7 +33,7 @@ const { tag, posts } = Astro.props;
       posts.length ? (
         <PostList posts={posts} showKind showSummary />
       ) : (
-        <p class="empty">Nothing here yet — check back soon.</p>
+        <p class="empty">No pieces filed under #{tag} yet.</p>
       )
     }
   </div>
@@ -42,7 +41,6 @@ const { tag, posts } = Astro.props;
 
 <style>
   .page-head h1 {
-    margin-block-start: 0.4rem;
     font-style: italic;
   }
 
@@ -51,6 +49,8 @@ const { tag, posts } = Astro.props;
   }
 
   .empty {
+    padding-block: 1rem;
+    border-top: 1px solid var(--rule);
     color: var(--muted);
     font-style: italic;
   }

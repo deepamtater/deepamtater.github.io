@@ -11,17 +11,18 @@ const notes = (await getPosts('notes')).slice(0, 6);
 <Base>
   <div class="wrap">
     <section class="intro" aria-label="Introduction">
-      <h1 class="rise">
-        I’m Dee. I write to understand <em>startups</em>, <em>engineering</em>,
-        the <em>books</em> I read, and the occasional thing about <em>life</em>.
+      <h1>
+        I’m Deepam Tater. I write about startups, software engineering, books worth rereading, and
+        questions I’m still working through.
       </h1>
-      <p class="rise rise-2">
-        Essays are slow and rewritten until they’re true. Notes are fast — things I learned this
-        week, written down before I forget them. <a href={url("/about/")}>More about me</a>.
+      <p>
+        Essays are slow and rewritten until they hold up. Notes are shorter — observations,
+        technical details, and passages written down before they fade.{' '}
+        <a href={url("/about/")}>More about me</a>.
       </p>
     </section>
 
-    <section class="block rise rise-3" aria-labelledby="essays-heading">
+    <section class="block" aria-labelledby="essays-heading">
       <div class="section-head">
         <h2 id="essays-heading" class="eyebrow">Essays</h2>
         <a href={url("/essays/")}>All essays →</a>
@@ -30,12 +31,12 @@ const notes = (await getPosts('notes')).slice(0, 6);
         essays.length ? (
           <PostList posts={essays} showSummary />
         ) : (
-          <p class="empty">The first essay is still being rewritten.</p>
+          <p class="empty">No essays published yet.</p>
         )
       }
     </section>
 
-    <section class="block rise rise-3" aria-labelledby="notes-heading">
+    <section class="block" aria-labelledby="notes-heading">
       <div class="section-head">
         <h2 id="notes-heading" class="eyebrow">Notes</h2>
         <a href={url("/notes/")}>All notes →</a>
@@ -44,7 +45,7 @@ const notes = (await getPosts('notes')).slice(0, 6);
         notes.length ? (
           <PostList posts={notes} />
         ) : (
-          <p class="empty">No notes yet.</p>
+          <p class="empty">No notes published yet.</p>
         )
       }
     </section>
@@ -53,27 +54,26 @@ const notes = (await getPosts('notes')).slice(0, 6);
 
 <style>
   .intro {
-    max-width: 36rem;
+    max-width: 38rem;
     margin-block: var(--space-l) var(--space-xl);
   }
 
   h1 {
     font-size: var(--step-2);
-    font-weight: 380;
-    line-height: 1.28;
-    letter-spacing: -0.018em;
+    font-weight: 400;
+    line-height: 1.32;
+    letter-spacing: -0.016em;
     text-wrap: pretty;
-  }
-
-  h1 em {
-    font-style: italic;
-    color: var(--accent);
   }
 
   .intro p {
     margin-block-start: var(--space-m);
-    max-width: 52ch;
+    max-width: 54ch;
     color: var(--muted);
+  }
+
+  .intro a {
+    color: var(--accent);
   }
 
   .block + .block {
