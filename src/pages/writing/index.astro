@@ -1,4 +1,5 @@
 ---
+import { url } from '../../lib/url';
 import Base from '../../layouts/Base.astro';
 import PostList from '../../components/PostList.astro';
 import TagList from '../../components/TagList.astro';
@@ -11,12 +12,23 @@ const counts = Object.fromEntries(
   TOPICS.map((t) => [t, posts.filter((p) => p.data.tags.includes(t)).length]),
 );
 const tags = TOPICS.filter((t) => counts[t] > 0);
+const description = 'Essays and short notes, newest first.';
 ---
 
-<Base title="Writing" description="Every essay and note, newest first.">
+<Base title="Writing" description={description}>
   <div class="wrap">
     <header class="page-head">
-      <h1>Writing</h1>
+      <div class="head-row">
+        <h1>Writing</h1>
+        <nav class="kind-nav mono" aria-label="Writing format">
+          <a href={url("/writing/")} aria-current="page">All</a>
+          <span aria-hidden="true">·</span>
+          <a href={url("/essays/")}>Essays</a>
+          <span aria-hidden="true">·</span>
+          <a href={url("/notes/")}>Notes</a>
+        </nav>
+      </div>
+      <p>{description}</p>
     </header>
 
     {
@@ -92,6 +104,37 @@ const tags = TOPICS.filter((t) => counts[t] > 0);
 </script>
 
 <style>
+  .head-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-s);
+  }
+
+  .kind-nav {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    color: var(--muted);
+  }
+
+  .kind-nav a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .kind-nav a:hover {
+    color: var(--accent);
+  }
+
+  .kind-nav a[aria-current='page'] {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 0.24em;
+  }
+
   .filter {
     display: flex;
     flex-wrap: wrap;

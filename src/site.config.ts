@@ -22,8 +22,6 @@ export const SITE = {
   ],
   nav: [
     { href: '/writing/', label: 'Writing' },
-    { href: '/essays/', label: 'Essays' },
-    { href: '/notes/', label: 'Notes' },
     { href: '/2am/', label: '2AM' },
     { href: '/now/', label: 'Now' },
     { href: '/about/', label: 'About' },

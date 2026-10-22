@@ -5,6 +5,7 @@ export interface Book {
 
 export interface NowSection {
   id: string;
+  label: string;
   title: string;
   note?: string;
   text: string;
@@ -27,19 +28,22 @@ export const PREVIOUSLY_READ: Book[] = [
 export const NOW_SECTIONS: NowSection[] = [
   {
     id: 'building',
-    title: 'Building',
+    label: 'Building',
+    title: 'Puvio',
     href: 'https://puvio.app',
-    text: 'Puvio, a single work record for career search and progression.',
+    text: 'Puvio, a single place to keep a record of your work and use it to land roles or move up.',
   },
   {
     id: 'llms',
+    label: 'Studying',
     title: 'Everything about LLMs, from A to Z',
     note: 'Week 1',
-    text: 'Rebuilding the language model stack from blank files, starting with neural networks and backpropagation by hand.',
+    text: 'Coding neural networks and backpropagation by hand from blank files, without AI autocomplete.',
   },
   {
     id: 'reading',
+    label: 'Reading',
     title: 'Reading',
-    text: CURRENTLY_READING.map((b) => `${b.title} (${b.author})`).join(', '),
+    text: CURRENTLY_READING.map((b) => `${b.title} (${b.author})`).join(' and '),
   },
 ];

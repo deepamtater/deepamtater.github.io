@@ -74,14 +74,14 @@ export const GET: APIRoute = async () => {
 
     {
       title: 'Now',
-      snippet: 'Puvio, Everything about LLMs, from A to Z (Week 1), and reading',
+      snippet: 'What I’m working on, studying, and reading right now in Jaipur.',
       kind: 'Page',
       href: url('/now/'),
-      keywords: 'now puvio everything about llms from a to z week 1 reading books',
+      keywords: 'now puvio everything about llms from a to z week 1 reading books jaipur',
     },
     {
       title: '2AM',
-      snippet: 'Late-night thoughts, fragments, and observations',
+      snippet: 'Late-night thoughts and half-formed ideas I’m still figuring out.',
       kind: 'Page',
       href: url('/2am/'),
       keywords: '2am thoughts stream ledger night',
@@ -95,10 +95,25 @@ export const GET: APIRoute = async () => {
     },
     {
       title: 'Writing',
-      snippet: 'Archive of essays and notes',
+      snippet: 'Essays and short notes, newest first.',
       kind: 'Page',
       href: url('/writing/'),
       keywords: 'writing archive essays notes all',
+    },
+    {
+      title: 'Essays',
+      snippet: 'Longer pieces on startups, software, books, and life.',
+      kind: 'Page',
+      href: url('/essays/'),
+      keywords: 'essays long-form writing startups software books life',
+    },
+    {
+      title: 'Notes',
+      snippet:
+        'Short things I learned while building or reading, written down before I forget them.',
+      kind: 'Page',
+      href: url('/notes/'),
+      keywords: 'notes short learnings reading building',
     },
   ];
 

@@ -1,93 +1,124 @@
 ---
 import Base from '../layouts/Base.astro';
 import { CURRENTLY_READING, PREVIOUSLY_READ } from '../data/now';
+
+const description = 'What I’m working on, studying, and reading right now in Jaipur.';
 ---
 
-<Base title="Now" description="Current focus and reading.">
+<Base title="Now" description={description}>
   <div class="wrap" data-article>
     <header class="page-head">
       <h1>Now</h1>
+      <p>{description}</p>
     </header>
 
-    <div class="now-content prose">
-      <section id="building">
-        <h2>Building</h2>
-        <p>
-          <a href="https://puvio.app" rel="noopener" target="_blank">Puvio</a>, a single work record
-          for career search and progression.
-        </p>
-      </section>
+    <section class="now-group" aria-labelledby="currently-heading">
+      <div class="section-head">
+        <h2 id="currently-heading" class="eyebrow">Currently</h2>
+      </div>
 
-      <section id="llms">
-        <h2>
-          Everything about LLMs, from A to Z <span class="week">(Week 1)</span>
-        </h2>
-        <p>
-          Rebuilding the language model stack from blank files, starting with neural networks and
-          backpropagation by hand.
-        </p>
-      </section>
+      <dl class="now-ledger">
+        <div id="building" class="ledger-item">
+          <dt class="mono">Building</dt>
+          <dd>
+            <a href="https://puvio.app" rel="noopener" target="_blank" class="item-lead">Puvio</a>,
+            a single place to keep a record of your work and use it to land roles or move up.
+          </dd>
+        </div>
 
-      <section id="reading">
-        <h2>Reading</h2>
+        <div id="llms" class="ledger-item">
+          <dt class="mono">Studying</dt>
+          <dd>
+            <span class="item-lead">Everything about LLMs, from A to Z</span>{' '}
+            <span class="week">(Week 1)</span>. Coding neural networks and backpropagation by hand
+            from blank files, without AI autocomplete.
+          </dd>
+        </div>
 
-        <h3 class="eyebrow subhead">Currently reading</h3>
-        <ul class="books" role="list">
-          {
-            CURRENTLY_READING.map((book) => (
-              <li>
-                <span class="book-title">{book.title}</span>{' '}
-                <span class="book-author">{book.author}</span>
-              </li>
-            ))
-          }
-        </ul>
+        <div id="reading" class="ledger-item">
+          <dt class="mono">Reading</dt>
+          <dd>
+            <em>{CURRENTLY_READING[0].title}</em> ({CURRENTLY_READING[0].author}) and{' '}
+            <em>{CURRENTLY_READING[1].title}</em> ({CURRENTLY_READING[1].author}).
+          </dd>
+        </div>
+      </dl>
+    </section>
 
-        <h3 class="eyebrow subhead">Read</h3>
-        <ul class="books" role="list">
-          {
-            PREVIOUSLY_READ.map((book) => (
-              <li>
-                <span class="book-title">{book.title}</span>{' '}
-                <span class="book-author">{book.author}</span>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
-    </div>
+    <section class="now-group previously" aria-labelledby="previously-heading">
+      <div class="section-head">
+        <h2 id="previously-heading" class="eyebrow">Previously read</h2>
+      </div>
+
+      <ul class="books" role="list">
+        {
+          PREVIOUSLY_READ.map((book) => (
+            <li>
+              <span class="book-title">{book.title}</span>{' '}
+              <span class="book-author">{book.author}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
   </div>
 </Base>
 
 <style>
-  .now-content > section + section {
-    margin-block-start: var(--space-l);
-    padding-block-start: var(--space-l);
-    border-top: 1px solid var(--rule);
+  .now-group + .now-group {
+    margin-block-start: var(--space-xl);
   }
 
-  .now-content h2 {
-    margin-block-start: 0;
-    font-size: var(--step-1);
-    font-weight: 450;
+  .now-ledger {
+    margin: 0;
+  }
+
+  .ledger-item {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: 0.35rem var(--space-m);
+    align-items: baseline;
+    padding-block: 1rem;
+    scroll-margin-top: 2rem;
+  }
+
+  .ledger-item + .ledger-item {
+    border-top: 1px solid color-mix(in oklab, var(--rule) 60%, transparent);
+  }
+
+  dt {
+    color: var(--muted);
+  }
+
+  dd {
+    margin: 0;
+    max-width: var(--measure);
+    color: var(--ink);
+  }
+
+  .item-lead {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  a.item-lead {
+    color: var(--accent);
+    text-decoration-color: color-mix(in oklab, var(--accent) 45%, transparent);
+  }
+
+  a.item-lead:hover {
+    color: var(--accent);
+    text-decoration-color: currentColor;
   }
 
   .week {
     font-style: italic;
-    font-weight: 400;
-    color: var(--muted);
-  }
-
-  .subhead {
-    margin-block-start: var(--space-m);
-    margin-block-end: 0.65rem;
-    font-weight: 500;
     color: var(--muted);
   }
 
   .books {
     padding: 0;
-    margin-block-start: 0.5rem;
+    margin-block-start: 0.35rem;
     list-style: none;
   }
 
@@ -97,11 +128,10 @@ import { CURRENTLY_READING, PREVIOUSLY_READ } from '../data/now';
     align-items: baseline;
     justify-content: space-between;
     gap: 0.25rem var(--space-m);
-    padding-block: 0.45rem;
+    padding-block: 0.55rem;
   }
 
   .books li + li {
-    margin-block-start: 0;
     border-top: 1px solid color-mix(in oklab, var(--rule) 55%, transparent);
   }
 
@@ -113,5 +143,12 @@ import { CURRENTLY_READING, PREVIOUSLY_READ } from '../data/now';
   .book-author {
     font-size: var(--step--1);
     color: var(--muted);
+  }
+
+  @media (max-width: 36rem) {
+    .ledger-item {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
   }
 </style>
