@@ -1,0 +1,64 @@
+---
+// Empty state: a few ruled lines waiting for entries, the first one written on.
+interface Props {
+  line: string;
+  lines?: number;
+}
+
+const { line, lines = 5 } = Astro.props;
+---
+
+<div class="unwritten">
+  <p class="line first" style="--n: 0">{line}</p>
+  {Array.from({ length: lines - 1 }, (_, n) => <span class="line" aria-hidden="true" style={`--n: ${n + 1}`} />)}
+  <div class="note">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .unwritten {
+    --lh: clamp(2.6rem, 2.2rem + 1.4vw, 3.4rem);
+    max-width: 44rem;
+  }
+
+  .line {
+    position: relative;
+    display: block;
+    height: var(--lh);
+  }
+
+  .line::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: var(--hair);
+    background: var(--rule);
+    opacity: max(0.4, calc(1 - var(--n) * 0.15));
+    transform-origin: 0 50%;
+    animation: rule-in 1000ms var(--ease-out) both;
+    animation-delay: calc(200ms + var(--n) * 90ms);
+  }
+
+  .first {
+    display: flex;
+    align-items: flex-end;
+    padding-block-end: 0.35rem;
+    font-size: var(--step-2);
+    font-style: italic;
+    line-height: 1;
+    color: var(--ink);
+    animation: ink-in 1100ms var(--ease-out) 450ms backwards;
+  }
+
+  .note {
+    margin-block-start: var(--space-m);
+    max-width: 46ch;
+    color: var(--muted);
+  }
+
+  .note :global(a) {
+    color: var(--ink);
+    text-decoration-color: var(--accent);
+  }
+</style>

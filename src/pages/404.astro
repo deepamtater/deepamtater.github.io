@@ -1,28 +1,27 @@
 ---
 import { url } from '../lib/url';
 import Base from '../layouts/Base.astro';
-import PostList from '../components/PostList.astro';
-import { getPosts } from '../lib/posts';
-
-const recent = (await getPosts()).slice(0, 3);
+import PageTitle from '../components/PageTitle.astro';
 ---
 
-<Base title="Page not found" description="This page doesn’t exist.">
+<Base title="Page not found" description="This page isn’t in the book.">
   <div class="wrap">
-    <header class="page-head">
-      <p class="eyebrow">404</p>
-      <h1>This page wandered off.</h1>
-      <p>
-        It may have been renamed, or never existed. Try the <a href={url("/writing/")}>full archive</a>, or
-        one of these:
-      </p>
-    </header>
-    <PostList posts={recent} showKind />
+    <PageTitle title="Not in the book" note="Error 404" dek="This page may have moved, or was never written." />
+    <div class="leaf">
+      <p class="margin">Try</p>
+      <ul class="body" role="list">
+        <li><a href={url('/')}>The index</a></li>
+        <li><a href={url('/writing/')}>All writing</a></li>
+        <li><a href={url('/tags/')}>The heads</a></li>
+      </ul>
+    </div>
   </div>
 </Base>
 
 <style>
-  .page-head h1 {
-    margin-block-start: 0.4rem;
+  ul {
+    display: grid;
+    gap: 0.4rem;
+    list-style: none;
   }
 </style>

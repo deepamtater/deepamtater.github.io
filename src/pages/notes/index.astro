@@ -1,18 +1,33 @@
 ---
+import { url } from '../../lib/url';
 import Base from '../../layouts/Base.astro';
+import PageTitle from '../../components/PageTitle.astro';
 import PostList from '../../components/PostList.astro';
-import { getPosts } from '../../lib/posts';
+import Unwritten from '../../components/Unwritten.astro';
+import { entryCount, getPosts } from '../../lib/posts';
 
 const posts = await getPosts('notes');
-const description = 'Short learnings and book notes, written down before they fade.';
+const description = 'Short notes from work and books, kept before they fade.';
 ---
 
 <Base title="Notes" description={description}>
   <div class="wrap">
-    <header class="page-head">
-      <h1>Notes</h1>
-      <p>{description}</p>
-    </header>
-    {posts.length ? <PostList posts={posts} showSummary /> : <p>No notes yet.</p>}
+    <PageTitle title="Notes" dek={description} note={entryCount(posts.length)} />
+    <div class="leaf">
+      <p class="margin" />
+      <div class="body">
+        {
+          posts.length ? (
+            <PostList posts={posts} showSummary />
+          ) : (
+            <Unwritten line="First notes coming soon.">
+              <p>
+                Notes will collect here: lessons from the week, passages worth copying out. They also arrive in the <a href={url('/rss.xml')}>RSS feed</a>.
+              </p>
+            </Unwritten>
+          )
+        }
+      </div>
+    </div>
   </div>
 </Base>

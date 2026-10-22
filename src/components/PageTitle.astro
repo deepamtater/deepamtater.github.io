@@ -1,0 +1,19 @@
+---
+// Page heading on the leaf: a short note in the margin, the title on the rail.
+interface Props {
+  title: string;
+  dek?: string;
+  note?: string;
+}
+
+const { title, dek, note } = Astro.props;
+---
+
+<header class="page-title leaf">
+  <p class="margin rise" style="--d: 1">{note}</p>
+  <div class="body">
+    <h1 class="rise">{title}</h1>
+    {dek && <p class="dek rise" style="--d: 2">{dek}</p>}
+    <slot />
+  </div>
+</header>

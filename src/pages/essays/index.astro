@@ -1,18 +1,33 @@
 ---
+import { url } from '../../lib/url';
 import Base from '../../layouts/Base.astro';
+import PageTitle from '../../components/PageTitle.astro';
 import PostList from '../../components/PostList.astro';
-import { getPosts } from '../../lib/posts';
+import Unwritten from '../../components/Unwritten.astro';
+import { entryCount, getPosts } from '../../lib/posts';
 
 const posts = await getPosts('essays');
-const description = 'Long-form, evergreen pieces — rewritten until they hold up.';
+const description = 'Long pieces, rewritten until they hold up.';
 ---
 
 <Base title="Essays" description={description}>
   <div class="wrap">
-    <header class="page-head">
-      <h1>Essays</h1>
-      <p>{description}</p>
-    </header>
-    {posts.length ? <PostList posts={posts} showSummary /> : <p>The first essay is on its way.</p>}
+    <PageTitle title="Essays" dek={description} note={entryCount(posts.length)} />
+    <div class="leaf">
+      <p class="margin" />
+      <div class="body">
+        {
+          posts.length ? (
+            <PostList posts={posts} showSummary />
+          ) : (
+            <Unwritten line="First essay coming soon.">
+              <p>
+                The first essays are in revision. They go up when they say something worth keeping, and arrive in the <a href={url('/rss.xml')}>RSS feed</a>.
+              </p>
+            </Unwritten>
+          )
+        }
+      </div>
+    </div>
   </div>
 </Base>

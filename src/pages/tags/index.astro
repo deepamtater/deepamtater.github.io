@@ -1,31 +1,32 @@
 ---
 import { url } from '../../lib/url';
 import Base from '../../layouts/Base.astro';
-import { getPosts } from '../../lib/posts';
+import PageTitle from '../../components/PageTitle.astro';
+import { entryCount, getPosts } from '../../lib/posts';
+import { lockeKey } from '../../lib/locke';
 import { TOPICS } from '../../site.config';
 
 const posts = await getPosts();
-const topics = TOPICS.map((tag) => ({
-  tag,
-  count: posts.filter((p) => p.data.tags.includes(tag)).length,
-}));
+const heads = TOPICS.map((tag) => {
+  const { letter, vowel } = lockeKey(tag);
+  return { tag, key: `${letter}${vowel}`, count: posts.filter((p) => p.data.tags.includes(tag)).length };
+});
 ---
 
-<Base title="Topics" description="Browse writing by topic.">
+<Base title="Heads" description="The four subjects Dee Tater's essays and notes are filed under.">
   <div class="wrap">
-    <header class="page-head">
-      <h1>Topics</h1>
-      <p>Four things I keep coming back to.</p>
-    </header>
-    <ul class="topics" role="list">
+    <PageTitle title="Heads" dek="Four subjects this book keeps returning to." note={`${heads.length} heads`} />
+    <ul class="heads" role="list">
       {
-        topics.map(({ tag, count }) => (
-          <li>
-            <a href={url(`/tags/${tag}/`)}>
+        heads.map(({ tag, key, count }) => (
+          <li class="leaf">
+            <span class="margin">
+              <span class="visually-hidden">Index key </span>
+              {key}
+            </span>
+            <a class="body" href={url(`/tags/${tag}/`)}>
               <span class="name">{tag}</span>
-              <span class="mono">
-                {count} {count === 1 ? 'piece' : 'pieces'}
-              </span>
+              <span class="count">{entryCount(count)}</span>
             </a>
           </li>
         ))
@@ -35,36 +36,46 @@ const topics = TOPICS.map((tag) => ({
 </Base>
 
 <style>
-  .topics {
+  .heads {
     padding: 0;
     list-style: none;
-    border-top: 1px solid var(--rule);
   }
 
-  li {
-    border-bottom: 1px solid var(--rule);
+  .margin {
+    align-self: center;
+    font-style: normal;
+    font-family: var(--font-display);
   }
 
   a {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    padding-block: 1.1rem;
+    gap: var(--space-s);
+    padding-block: 1rem;
+    border-bottom: var(--hair) solid var(--rule);
     text-decoration: none;
   }
 
+  li:first-child a {
+    border-top: var(--hair) solid var(--rule);
+  }
+
   .name {
-    font-size: var(--step-2);
-    font-style: italic;
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    line-height: 1;
     text-transform: capitalize;
-    transition: transform 300ms var(--ease);
+    transition: transform 500ms var(--ease-out);
   }
 
   a:hover .name {
-    transform: translateX(0.4rem);
+    transform: translateX(0.35rem);
   }
 
-  .mono {
+  .count {
+    font-size: var(--step--1);
+    font-style: italic;
     color: var(--muted);
   }
 </style>

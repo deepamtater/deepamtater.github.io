@@ -2,87 +2,157 @@
 import { url } from '../lib/url';
 import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
+import LockeIndex from '../components/LockeIndex.astro';
+import Unwritten from '../components/Unwritten.astro';
 import { getPosts } from '../lib/posts';
+import { SITE, TOPICS } from '../site.config';
+import type { Head } from '../lib/locke';
 
-const essays = (await getPosts('essays')).slice(0, 5);
-const notes = (await getPosts('notes')).slice(0, 6);
+const all = await getPosts();
+const count = (kind: string) => all.filter((p) => p.collection === kind).length;
+const heads: Head[] = [
+  { label: 'Writing', href: url('/writing/'), count: all.length },
+  { label: 'Essays', href: url('/essays/'), count: count('essays') },
+  { label: 'Notes', href: url('/notes/'), count: count('notes') },
+  { label: 'About', href: url('/about/') },
+  ...TOPICS.map((topic) => ({
+    label: topic.charAt(0).toUpperCase() + topic.slice(1),
+    href: url(`/tags/${topic}/`),
+    count: all.filter((p) => p.data.tags.includes(topic)).length,
+  })),
+];
+const latest = all.slice(0, 6);
+const name = [...SITE.name];
 ---
 
 <Base>
-  <div class="wrap">
-    <section class="intro" aria-label="Introduction">
-      <h1 class="rise">
-        I’m Dee. I write to understand <em>startups</em>, <em>engineering</em>,
-        the <em>books</em> I read, and the occasional thing about <em>life</em>.
-      </h1>
-      <p class="rise rise-2">
-        Essays are slow and rewritten until they’re true. Notes are fast — things I learned this
-        week, written down before I forget them. <a href={url("/about/")}>More about me</a>.
+  <section class="wrap opening" aria-labelledby="name">
+    <h1 id="name" class="name" aria-label={SITE.name}>
+      {
+        name.map((char, i) => (
+          <span aria-hidden="true" data-kern={name[i - 1] === 'T' ? '' : undefined} style={`--i: ${i}`}>
+            {char === ' ' ? '\u00a0' : char}
+          </span>
+        ))
+      }
+    </h1>
+    <div class="leaf">
+      <p class="margin rise" style="--d: 3">A commonplace book</p>
+      <p class="body lede rise" style="--d: 4">
+        Essays, rewritten until they hold up. Notes, kept before an idea fades. Both filed under four heads:
+        startups, engineering, reading, and life.
       </p>
-    </section>
+    </div>
+  </section>
 
-    <section class="block rise rise-3" aria-labelledby="essays-heading">
-      <div class="section-head">
-        <h2 id="essays-heading" class="eyebrow">Essays</h2>
-        <a href={url("/essays/")}>All essays →</a>
+  <section class="band endpaper" aria-labelledby="index-title">
+    <div class="wrap">
+      <div class="leaf">
+        <h2 id="index-title" class="margin">Index</h2>
+        <p class="body caption">
+          Kept by John Locke’s method of 1706: every head is filed under its first letter and the first vowel after it.
+        </p>
       </div>
+      <LockeIndex heads={heads} />
+    </div>
+  </section>
+
+  <section class="wrap leaf latest" aria-labelledby="latest-title">
+    <h2 id="latest-title" class="margin">Latest entries</h2>
+    <div class="body">
       {
-        essays.length ? (
-          <PostList posts={essays} showSummary />
+        latest.length ? (
+          <PostList posts={latest} showKind />
         ) : (
-          <p class="empty">The first essay is still being rewritten.</p>
+          <Unwritten line="First pieces coming soon.">
+            <p>
+              The first essays are still being rewritten. They will appear here, and in the{' '}
+              <a href={url('/rss.xml')}>RSS feed</a>, when they hold up.
+            </p>
+          </Unwritten>
         )
       }
-    </section>
-
-    <section class="block rise rise-3" aria-labelledby="notes-heading">
-      <div class="section-head">
-        <h2 id="notes-heading" class="eyebrow">Notes</h2>
-        <a href={url("/notes/")}>All notes →</a>
-      </div>
-      {
-        notes.length ? (
-          <PostList posts={notes} />
-        ) : (
-          <p class="empty">No notes yet.</p>
-        )
-      }
-    </section>
-  </div>
+    </div>
+  </section>
 </Base>
 
 <style>
-  .intro {
-    max-width: 36rem;
-    margin-block: var(--space-l) var(--space-xl);
+  .opening {
+    padding-block: clamp(1.5rem, 1rem + 2vw, 3rem) var(--space-l);
   }
 
-  h1 {
-    font-size: var(--step-2);
-    font-weight: 380;
-    line-height: 1.28;
-    letter-spacing: -0.018em;
-    text-wrap: pretty;
+  .name {
+    margin-inline-start: -0.04em;
+    font-size: var(--step-title);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
   }
 
-  h1 em {
+  .name span {
+    display: inline-block;
+    animation: letter 1000ms var(--ease-out) both;
+    animation-delay: calc(250ms + var(--i) * 45ms);
+  }
+
+  /* Splitting letters drops the font's pair kerning; restore the T–a pair. */
+  .name span[data-kern] {
+    margin-inline-start: -0.07em;
+  }
+
+  @keyframes letter {
+    from {
+      opacity: 0;
+      transform: translateY(0.18em);
+      filter: blur(6px);
+    }
+  }
+
+  .opening .leaf {
+    margin-block-start: var(--space-l);
+  }
+
+  .lede {
+    max-width: 38ch;
+    font-size: var(--step-1);
+    line-height: 1.45;
+    color: var(--ink-2);
+  }
+
+  .endpaper {
+    padding-block: var(--space-l) var(--space-l);
+  }
+
+  .endpaper .margin {
+    font-family: var(--font-text);
+    font-size: var(--step--1);
     font-style: italic;
-    color: var(--accent);
+    color: var(--on-cloth-muted);
   }
 
-  .intro p {
+  .endpaper .body {
+    border-color: var(--cloth-rule);
+  }
+
+  .endpaper :global(.locke) {
     margin-block-start: var(--space-m);
+  }
+
+  .caption {
     max-width: 52ch;
-    color: var(--muted);
-  }
-
-  .block + .block {
-    margin-block-start: var(--space-xl);
-  }
-
-  .empty {
-    padding-block: 1rem;
-    color: var(--muted);
+    font-size: var(--step--1);
     font-style: italic;
+    color: var(--on-cloth-muted);
+  }
+
+  .latest {
+    padding-block-start: var(--space-xl);
+  }
+
+  .latest .margin {
+    font-family: var(--font-text);
+    font-size: var(--step--1);
+    font-style: italic;
+    color: var(--muted);
   }
 </style>

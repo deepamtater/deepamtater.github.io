@@ -5,42 +5,53 @@ import { SITE } from '../site.config';
 const year = new Date().getFullYear();
 ---
 
-<footer class="site-footer wrap">
-  <p>© {year} {SITE.author}</p>
-  <ul>
-    <li><a href={url("/rss.xml")}>RSS</a></li>
-    <li><a href={url("/tags/")}>Topics</a></li>
-    <li><a href="#content">Top ↑</a></li>
-  </ul>
+<footer class="band colophon">
+  <div class="wrap leaf">
+    <p class="margin">Colophon</p>
+    <div class="body">
+      <p>
+        {SITE.author}’s commonplace book. Set in Libre Caslon, published from plain Markdown.
+      </p>
+      <ul role="list">
+        <li><a href={url('/rss.xml')}>RSS feed</a></li>
+        <li><a href={url('/tags/')}>Heads</a></li>
+        <li><a href="#content">Back to top</a></li>
+      </ul>
+      <p class="small">© {year} {SITE.author}</p>
+    </div>
+  </div>
 </footer>
 
 <style>
-  .site-footer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: var(--space-s);
-    padding-block: var(--space-m) var(--space-l);
-    border-top: 1px solid var(--rule);
-    font-family: var(--font-mono);
-    font-size: var(--step--2);
-    letter-spacing: 0.03em;
-    color: var(--muted);
+  .colophon {
+    padding-block: var(--space-l) clamp(2.5rem, 2rem + 2vw, 3.5rem);
+    font-size: var(--step--1);
+    view-transition-name: colophon;
+  }
+
+  .margin {
+    color: var(--on-cloth-muted);
+  }
+
+  .body {
+    display: grid;
+    gap: 0.9rem;
+    border-color: var(--cloth-rule);
   }
 
   ul {
     display: flex;
-    gap: 1.25rem;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.6rem;
     padding: 0;
     list-style: none;
   }
 
   a {
-    text-decoration: none;
-    color: var(--muted);
+    text-decoration-color: color-mix(in oklab, var(--gilt) 60%, transparent);
   }
 
-  a:hover {
-    color: var(--accent);
+  .small {
+    color: var(--on-cloth-muted);
   }
 </style>

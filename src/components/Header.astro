@@ -3,168 +3,223 @@ import { url } from '../lib/url';
 import { SITE } from '../site.config';
 
 const path = Astro.url.pathname;
-const nav = SITE.nav.map(({ href, label }) => ({ href: url(href), label }));
+const home = url('/');
+const isHome = path === home || path === `${home}index.html`;
+const nav = SITE.nav.map((item) => ({ ...item, href: url(item.href) }));
 const isCurrent = (href: string) => path.startsWith(href);
 ---
 
-<header class="site-header wrap">
-  <a class="wordmark" href={url("/")} aria-label={`${SITE.name}, home`}>
-    {SITE.name}<span class="dot" aria-hidden="true">.</span>
-  </a>
-  <nav aria-label="Primary">
-    <ul>
-      {
-        nav.map(({ href, label }) => (
-          <li>
-            <a href={href} aria-current={isCurrent(href) ? 'page' : undefined}>
-              {label}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-    <button class="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle theme">
-      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-        <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.5"></circle>
-        <path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"></path>
+<header class="band masthead">
+  <div class="wrap bar">
+    <a class="wordmark" href={home} aria-current={isHome ? 'page' : undefined}>
+      {isHome && <span class="ribbon" aria-hidden="true" />}
+      <span class="label">{SITE.name}</span>
+    </a>
+    <nav aria-label="Primary">
+      <ul role="list">
+        {
+          nav.map(({ href, label }) => (
+            <li>
+              <a href={href} data-head={label} aria-current={isCurrent(href) ? 'page' : undefined}>
+                {isCurrent(href) && <span class="ribbon" aria-hidden="true" />}
+                <span class="label">{label}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="Dark theme" aria-pressed="false" title="Light or dark">
+      <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
+        <circle cx="10" cy="10" r="6.75" fill="none" stroke="currentColor" stroke-width="1.2"></circle>
+        <path d="M10 3.25a6.75 6.75 0 0 1 0 13.5z" fill="currentColor"></path>
       </svg>
     </button>
-  </nav>
+  </div>
 </header>
 
 <script is:inline>
-  document.querySelector('.theme-toggle')?.addEventListener('click', () => {
+  (() => {
+    const toggle = document.querySelector('.theme-toggle');
     const root = document.documentElement;
-    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-    const apply = () => {
-      root.dataset.theme = next;
-      localStorage.setItem('theme', next);
-    };
-    if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      document.startViewTransition(apply);
-    } else {
-      apply();
-    }
-  });
+    const sync = () => toggle?.setAttribute('aria-pressed', String(root.dataset.theme === 'dark'));
+    sync();
+    toggle?.addEventListener('click', () => {
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      const apply = () => {
+        root.dataset.theme = next;
+        localStorage.setItem('theme', next);
+        sync();
+      };
+      if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.startViewTransition(apply);
+      } else {
+        apply();
+      }
+    });
+  })();
 </script>
 
 <style>
-  .site-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-s);
-    padding-block: clamp(1.25rem, 1rem + 1.5vw, 2.25rem) 0;
-    view-transition-name: site-header;
+  .masthead {
+    --band-pad: clamp(1.1rem, 0.8rem + 1.2vw, 1.7rem);
+    position: relative;
+    z-index: 2;
+    view-transition-name: masthead;
   }
 
-  .wordmark {
-    font-size: var(--step-1);
-    font-style: italic;
-    font-weight: 450;
-    letter-spacing: -0.015em;
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+    padding-block: var(--band-pad);
+  }
+
+  a {
+    position: relative;
     text-decoration: none;
+  }
+
+  .label {
+    position: relative;
+  }
+
+  /* The name is stamped in gilt on the board, like a spine title. */
+  .wordmark {
+    margin-inline-end: auto;
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    line-height: 1;
     white-space: nowrap;
-  }
-
-  .wordmark:hover {
-    color: var(--ink);
-  }
-
-  .dot {
-    display: inline-block;
-    color: var(--accent);
-    font-style: normal;
-    transition: transform 420ms var(--ease);
-  }
-
-  .wordmark:hover .dot {
-    transform: translateY(-0.18em) scale(1.25);
-  }
-
-  nav {
-    display: flex;
-    align-items: center;
-    gap: clamp(0.25rem, 1.5vw, 1rem);
+    color: var(--gilt);
   }
 
   ul {
     display: flex;
-    gap: clamp(0.85rem, 2.5vw, 1.6rem);
+    gap: clamp(1rem, 2.6vw, 2.4rem);
     padding: 0;
     list-style: none;
   }
 
   nav a {
-    position: relative;
-    font-family: var(--font-mono);
-    font-size: var(--step--2);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: var(--muted);
+    display: block;
+    padding-block: 0.3rem;
+    font-size: var(--step-0);
+    line-height: 1.2;
+    color: var(--on-cloth);
   }
 
-  nav a::after {
+  nav a .label::after {
     content: '';
     position: absolute;
-    inset: auto 0 -0.4em;
-    height: 1px;
-    background: var(--accent);
+    inset: auto 0 -0.2em;
+    height: var(--hair);
+    background: var(--gilt);
     transform: scaleX(0);
     transform-origin: right;
-    transition: transform 280ms var(--ease);
+    transition: transform 380ms var(--ease-out);
   }
 
-  nav a:hover,
-  nav a[aria-current='page'] {
-    color: var(--ink);
-  }
-
-  nav a:hover::after,
-  nav a[aria-current='page']::after {
+  nav a:hover .label::after {
     transform: scaleX(1);
     transform-origin: left;
+  }
+
+  nav a:hover {
+    color: var(--on-cloth);
+  }
+
+  .wordmark:hover {
+    color: var(--gilt);
+  }
+
+  /* The silk ribbon: hangs from the top of the book over wherever you are,
+     and follows you to the next page as a view transition. */
+  .ribbon {
+    position: absolute;
+    inset-inline: -0.7rem;
+    top: -20rem;
+    bottom: calc(-1 * (var(--band-pad) + 2.1rem));
+    background: var(--gilt);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 0.65rem), 0 100%);
+    view-transition-name: ribbon;
+  }
+
+  .wordmark[aria-current='page'],
+  nav a[aria-current='page'] {
+    color: var(--cloth);
+  }
+
+  nav a[aria-current='page'] .label::after {
+    display: none;
+  }
+
+  :global(.arrive) .ribbon {
+    animation: drop 1100ms var(--ease-out) 150ms both;
+  }
+
+  @keyframes drop {
+    from {
+      transform: translateY(-100%);
+    }
+  }
+
+  :global(.arrive) [aria-current='page'] .label {
+    animation: label-on 1100ms var(--ease) 150ms both;
+  }
+
+  @keyframes label-on {
+    from {
+      color: var(--on-cloth);
+    }
   }
 
   .theme-toggle {
     display: grid;
     place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    margin-inline-end: -0.5rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    margin-inline-end: -0.6rem;
+    padding: 0;
     border: 0;
-    border-radius: 999px;
     background: none;
-    color: var(--muted);
+    color: var(--on-cloth);
     cursor: pointer;
-    transition:
-      color 160ms var(--ease),
-      background 160ms var(--ease);
   }
 
   .theme-toggle:hover {
-    color: var(--ink);
-    background: var(--paper-2);
+    color: var(--gilt);
   }
 
   .theme-toggle svg {
-    transition: transform 500ms var(--ease);
+    transition: transform 700ms var(--ease-out);
   }
 
   :global([data-theme='dark']) .theme-toggle svg {
     transform: rotate(180deg);
   }
 
-  @media (max-width: 34rem) {
-    .site-header {
+  @media (max-width: 40rem) {
+    .bar {
       flex-wrap: wrap;
-      row-gap: 0.4rem;
+      row-gap: 0.9rem;
     }
 
     nav {
+      order: 3;
       width: 100%;
+    }
+
+    ul {
       justify-content: space-between;
+    }
+
+    nav .ribbon {
+      top: -0.55rem;
+    }
+
+    .wordmark .ribbon {
+      bottom: -0.9rem;
     }
   }
 </style>

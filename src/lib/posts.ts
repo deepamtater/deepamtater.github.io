@@ -67,3 +67,5 @@ const shortFormat = new Intl.DateTimeFormat('en-US', {
 
 export const formatDate = (d: Date) => dateFormat.format(d);
 export const formatShortDate = (d: Date) => shortFormat.format(d);
+
+export const entryCount = (n: number) => (n === 0 ? 'No entries yet' : n === 1 ? '1 entry' : `${n} entries`);

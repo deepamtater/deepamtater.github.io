@@ -1,0 +1,308 @@
+---
+import { LETTERS, VOWELS, indexHeads, type Head } from '../lib/locke';
+
+interface Props {
+  heads: Head[];
+}
+
+const entries = indexHeads(Astro.props.heads);
+const entriesLabel = (n: number) => (n === 0 ? 'no entries yet' : n === 1 ? '1 entry' : `${n} entries`);
+---
+
+<nav class="locke" aria-label="Index of heads" data-locke style={`--cols-d: ${LETTERS.length}; --rows-d: ${VOWELS.length}`}>
+  <div class="sheet">
+    <span class="hl hl-col" aria-hidden="true"></span>
+    <span class="hl hl-row" aria-hidden="true"></span>
+    {
+      LETTERS.map((letter, i) => (
+        <span
+          class="key letter"
+          aria-hidden="true"
+          data-letter={letter}
+          style={`--dc: ${i + 2}; --dr: 1; --mc: 1; --mr: ${i + 2}`}
+        >
+          {letter}
+        </span>
+      ))
+    }
+    {
+      VOWELS.map((vowel, j) => (
+        <span
+          class="key vowel"
+          aria-hidden="true"
+          data-vowel={vowel}
+          style={`--dc: 1; --dr: ${j + 2}; --mc: ${j + 2}; --mr: 1`}
+        >
+          {vowel}
+        </span>
+      ))
+    }
+    {
+      entries.map(({ label, href, count, letter, vowel, col, row }) => (
+        <a
+          class="entry"
+          href={href}
+          data-head={label}
+          data-letter={letter}
+          data-vowel={vowel}
+          data-end={col >= LETTERS.length - 2 ? '' : undefined}
+          style={`--dc: ${col + 2}; --dr: ${row + 2}; --mc: ${row + 2}; --mr: ${col + 2}; --i: ${col}`}
+        >
+          <span class="name">{label}</span>
+          {!!count && <sup aria-hidden="true">{count}</sup>}
+          {count !== undefined && <span class="visually-hidden">, {entriesLabel(count)}</span>}
+        </a>
+      ))
+    }
+  </div>
+</nav>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-locke]');
+  if (root) {
+    const sheet = root.querySelector<HTMLElement>('.sheet')!;
+    const keys = [...root.querySelectorAll<HTMLElement>('.key')];
+    const entries = new Map(
+      [...root.querySelectorAll<HTMLAnchorElement>('.entry')].map((a) => [a.dataset.head!, a]),
+    );
+
+    const show = (entry: HTMLAnchorElement | undefined) => {
+      for (const key of keys) key.classList.remove('on');
+      for (const a of entries.values()) a.classList.remove('on');
+      if (!entry) {
+        delete sheet.dataset.hl;
+        return;
+      }
+      const { dc, dr, mc, mr } = Object.fromEntries(
+        ['dc', 'dr', 'mc', 'mr'].map((k) => [k, entry.style.getPropertyValue(`--${k}`).trim()]),
+      );
+      sheet.style.setProperty('--hl-dc', dc);
+      sheet.style.setProperty('--hl-dr', dr);
+      sheet.style.setProperty('--hl-mc', mc);
+      sheet.style.setProperty('--hl-mr', mr);
+      sheet.dataset.hl = '';
+      entry.classList.add('on');
+      for (const key of keys) {
+        if (key.dataset.letter === entry.dataset.letter || key.dataset.vowel === entry.dataset.vowel) {
+          key.classList.add('on');
+        }
+      }
+    };
+
+    // Any link to a head, in the index or the masthead, lights its letter and vowel.
+    for (const link of document.querySelectorAll<HTMLAnchorElement>('a[data-head]')) {
+      const entry = entries.get(link.dataset.head!);
+      if (!entry) continue;
+      link.addEventListener('pointerenter', () => show(entry));
+      link.addEventListener('pointerleave', () => show(undefined));
+      link.addEventListener('focus', () => show(entry));
+      link.addEventListener('blur', () => show(undefined));
+    }
+  }
+</script>
+
+<style>
+  .locke {
+    --head: 2.25rem;
+    --hdr: 2.25rem;
+    --row: clamp(2.6rem, 2rem + 1.4vw, 3.4rem);
+    --cols: var(--cols-d);
+    --rows: var(--rows-d);
+  }
+
+  .sheet {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--head) repeat(var(--cols), minmax(0, 1fr));
+    grid-template-rows: var(--hdr) repeat(var(--rows), var(--row));
+  }
+
+  /* Ruling: rows draw left to right, then columns top to bottom. */
+  .sheet::before,
+  .sheet::after {
+    content: '';
+    position: absolute;
+    inset: var(--hdr) 0 0 var(--head);
+    pointer-events: none;
+  }
+
+  .sheet::before {
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--cloth-rule) 0 1px,
+      transparent 1px var(--row)
+    );
+    border-bottom: var(--hair) solid var(--cloth-rule);
+    animation: ink-in 900ms var(--ease-out) 100ms both;
+  }
+
+  .sheet::after {
+    background: linear-gradient(to right, var(--cloth-rule) 0 1px, transparent 1px) 0 0 / calc(100% / var(--cols)) 100%;
+    border-right: var(--hair) solid var(--cloth-rule);
+    animation: drop-in 900ms var(--ease-out) 350ms both;
+  }
+
+  @keyframes drop-in {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  .key,
+  .entry,
+  .hl {
+    grid-column: var(--dc);
+    grid-row: var(--dr);
+  }
+
+  .key {
+    display: grid;
+    place-items: center;
+    font-size: var(--step--1);
+    letter-spacing: 0.04em;
+    color: var(--on-cloth-muted);
+    transition: color 200ms var(--ease);
+  }
+
+  .vowel {
+    font-family: var(--font-text);
+    font-style: italic;
+  }
+
+  .key.on {
+    color: var(--gilt);
+  }
+
+  .hl {
+    z-index: 0;
+    background: var(--cloth-2);
+    opacity: 0;
+    transition: opacity 240ms var(--ease);
+  }
+
+  .hl-col {
+    grid-column: var(--hl-dc, 2);
+    grid-row: 2 / -1;
+  }
+
+  .hl-row {
+    grid-column: 2 / -1;
+    grid-row: var(--hl-dr, 2);
+  }
+
+  [data-hl] > .hl {
+    opacity: 1;
+  }
+
+  .entry {
+    position: relative;
+    z-index: 1;
+    align-self: center;
+    justify-self: start;
+    display: flex;
+    align-items: baseline;
+    gap: 0.2em;
+    padding: 0.35rem 0.6rem 0.35rem 0.75rem;
+    font-size: var(--step--1);
+    line-height: 1.2;
+    white-space: nowrap;
+    color: var(--on-cloth);
+    text-decoration: none;
+    animation: ink-in 700ms var(--ease-out) backwards;
+    animation-delay: calc(700ms + var(--i) * 35ms);
+  }
+
+  /* Heads in the last columns read leftward, with the tick kept in their own cell. */
+  .entry[data-end] {
+    justify-self: end;
+    flex-direction: row-reverse;
+    padding: 0.35rem 0.75rem 0.35rem 0.6rem;
+  }
+
+  .entry[data-end]::before {
+    left: auto;
+    right: 0.3rem;
+  }
+
+  /* The entry mark: a gilt tick where the head was written in. */
+  .entry::before {
+    content: '';
+    position: absolute;
+    left: 0.3rem;
+    top: calc(50% - 0.45em);
+    width: 2px;
+    height: 0.9em;
+    background: var(--gilt);
+    transform-origin: 50% 100%;
+    transition: transform 300ms var(--ease-out);
+  }
+
+  .entry .name {
+    text-decoration: underline;
+    text-decoration-thickness: var(--hair);
+    text-decoration-color: transparent;
+    text-underline-offset: 0.22em;
+    transition: text-decoration-color 200ms var(--ease);
+  }
+
+  .entry:hover,
+  .entry.on {
+    color: var(--gilt);
+  }
+
+  .entry.on .name,
+  .entry:hover .name {
+    text-decoration-color: currentColor;
+  }
+
+  .entry.on::before {
+    transform: scaleY(1.35);
+  }
+
+  sup {
+    font-size: 0.7em;
+    color: var(--gilt);
+  }
+
+  @media (max-width: 44rem) {
+    .locke {
+      --head: 1.75rem;
+      --hdr: 1.9rem;
+      --row: 1.8rem;
+      --cols: var(--rows-d);
+      --rows: var(--cols-d);
+    }
+
+    .key,
+    .entry {
+      grid-column: var(--mc);
+      grid-row: var(--mr);
+    }
+
+    .entry[data-end] {
+      justify-self: start;
+      flex-direction: row;
+      padding: 0.15rem 0.6rem 0.15rem 0.75rem;
+    }
+
+    .entry[data-end]::before {
+      left: 0.3rem;
+      right: auto;
+    }
+
+    .hl-col {
+      grid-column: var(--hl-mc, 2);
+    }
+
+    .hl-row {
+      grid-row: var(--hl-mr, 2);
+    }
+
+    .entry {
+      padding-block: 0.15rem;
+    }
+  }
+</style>

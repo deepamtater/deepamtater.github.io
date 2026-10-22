@@ -2,6 +2,8 @@
 
 Essays and notes on startups, engineering, reading, and life. A static [Astro](https://astro.build) site: Markdown in the repo, push to publish, near-zero JavaScript.
 
+The design is a commonplace book: bottle-green cloth bands frame cool page stock, a gilt ribbon marks the page you're on, and the home page indexes every head with John Locke's 1706 letter-and-vowel method. The design rules are in the [Design](#design) section below.
+
 ## Run it locally
 
 Requires Node 22.23.4+ (Node 24 recommended; see `.nvmrc`).
@@ -45,7 +47,9 @@ Notes:
 - Tags are validated. To add a topic, add it to `TOPICS` in `src/site.config.ts`; it gets a `/tags/<topic>/` page automatically.
 - Markdown supports GFM: tables, footnotes (`[^1]`), and syntax-highlighted code blocks.
 - An essay's `summary` is also shown as the italic subtitle under its title.
-- The five sample posts (marked "Sample" at the top, and `# SAMPLE POST` in the frontmatter) and the bio on `src/pages/about.astro` are placeholders. Delete or replace them.
+- The site launches with no posts, and the Writing, Essays, Notes and topic pages show a "coming soon" state until the first one lands. Until then, `npm run dev` and `npm run build` print a harmless `collection ... is empty` warning.
+- Drafts: any post with `draft: true` shows in `npm run dev` (marked "draft") and is left out of the built site, RSS, and sitemap.
+- The bio and contact email on `src/pages/about.astro` are marked placeholders. Replace them with your own.
 
 ## Project layout
 
@@ -55,14 +59,22 @@ src/
   content.config.ts                 frontmatter schema
   site.config.ts                    name, description, nav, allowed topics
   layouts/                          Base (SEO, theme, header/footer), Post
-  components/                       Header, Footer, PostList, TagList
+  components/                       Header, Footer, LockeIndex, Unwritten (empty state), PageTitle, PostList, TagList
+  lib/locke.ts                      files each head under its first letter + first vowel
   pages/                            home, writing, essays, notes, tags, about, 404, rss.xml
   styles/global.css                 design tokens, type scale, prose styles
 public/                             favicon.svg, og.png (default social preview image)
 astro.config.mjs                    site URL + base path, fonts, integrations
 ```
 
-Built in: RSS (`/rss.xml`), sitemap (`/sitemap-index.xml`), canonical/Open Graph/Twitter meta, light and dark mode (follows the system, with a toggle), self-hosted fonts (Newsreader and Geist Mono via Astro's Fonts API), cross-document view transitions, and a reading-progress bar driven by CSS scroll timelines.
+Built in: RSS (`/rss.xml`), sitemap (`/sitemap-index.xml`), canonical/Open Graph/Twitter meta, light and dark mode (follows the system, with a toggle), self-hosted fonts (Libre Caslon Display and Text via Astro's Fonts API), and cross-document view transitions (the ribbon slides to the new page's head). All motion switches off under `prefers-reduced-motion`.
+
+## Design
+
+- **Colour:** cloth `#1b3a30` only as full-width bands (masthead, index, colophon); gilt `#d1ae55` only on cloth and for the ribbon; page `#f2f4f3`, ink `#16191a`. Dark mode swaps to a deep green page `#0e1a16`.
+- **Type:** Libre Caslon Display for titles, Libre Caslon Text for everything else. No mono labels, eyebrows, or section numbers.
+- **Layout:** every page hangs off one margin rule. Short notes (counts, years) sit to its left, and entries sit to its right.
+- **Index:** add a topic to `TOPICS` and it is filed in the Locke index automatically.
 
 ## Deploy: GitHub Pages (primary)
 

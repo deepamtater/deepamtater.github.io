@@ -1,9 +1,12 @@
 ---
 import type { GetStaticPaths } from 'astro';
+import { url } from '../../lib/url';
 import Base from '../../layouts/Base.astro';
+import PageTitle from '../../components/PageTitle.astro';
 import PostList from '../../components/PostList.astro';
 import TagList from '../../components/TagList.astro';
-import { getPosts } from '../../lib/posts';
+import Unwritten from '../../components/Unwritten.astro';
+import { entryCount, getPosts } from '../../lib/posts';
 import { TOPICS } from '../../site.config';
 
 export const getStaticPaths = (async () => {
@@ -15,43 +18,37 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 const { tag, posts } = Astro.props;
+const title = tag.charAt(0).toUpperCase() + tag.slice(1);
 ---
 
-<Base title={`#${tag}`} description={`Essays and notes about ${tag}.`}>
+<Base title={title} description={`Essays and notes by Dee Tater filed under ${tag}.`}>
   <div class="wrap">
-    <header class="page-head">
-      <p class="eyebrow">Topic</p>
-      <h1>#{tag}</h1>
-      <p>
-        {posts.length}
-        {posts.length === 1 ? 'piece' : 'pieces'} about {tag}.
-      </p>
-    </header>
-    <div class="others">
-      <TagList tags={TOPICS} current={tag} />
+    <PageTitle title={title} dek={`Everything filed under ${tag}.`} note={entryCount(posts.length)}>
+      <div class="others">
+        <TagList tags={TOPICS} current={tag} />
+      </div>
+    </PageTitle>
+    <div class="leaf">
+      <p class="margin" />
+      <div class="body">
+        {
+          posts.length ? (
+            <PostList posts={posts} showKind showSummary />
+          ) : (
+            <Unwritten line={`Nothing filed under ${tag} yet.`} lines={4}>
+              <p>
+                New entries arrive in the <a href={url('/rss.xml')}>RSS feed</a>.
+              </p>
+            </Unwritten>
+          )
+        }
+      </div>
     </div>
-    {
-      posts.length ? (
-        <PostList posts={posts} showKind showSummary />
-      ) : (
-        <p class="empty">Nothing here yet — check back soon.</p>
-      )
-    }
   </div>
 </Base>
 
 <style>
-  .page-head h1 {
-    margin-block-start: 0.4rem;
-    font-style: italic;
-  }
-
   .others {
-    margin-block-end: var(--space-m);
-  }
-
-  .empty {
-    color: var(--muted);
-    font-style: italic;
+    margin-block-start: var(--space-m);
   }
 </style>

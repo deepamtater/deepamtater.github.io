@@ -17,7 +17,7 @@ import sitemap from '@astrojs/sitemap';
 const SITE_URL = process.env.SITE_URL || 'https://deepamtater.github.io';
 const BASE_PATH = process.env.BASE_PATH || '/';
 
-const fontDir = './node_modules/@fontsource-variable';
+const fontDir = './node_modules/@fontsource';
 
 export default defineConfig({
   site: SITE_URL.replace(/\/$/, '').toLowerCase(),
@@ -35,37 +35,43 @@ export default defineConfig({
       defaultColor: false,
     },
   },
+  // Libre Caslon: the English book face of the commonplace-book era. Display for titles, Text for reading.
   fonts: [
     {
       provider: fontProviders.local(),
-      name: 'Newsreader',
-      cssVariable: '--font-serif',
-      fallbacks: ['Georgia', 'serif'],
+      name: 'Libre Caslon Display',
+      cssVariable: '--font-display',
+      fallbacks: ['Big Caslon', 'Georgia', 'serif'],
       options: {
         variants: [
           {
-            src: [`${fontDir}/newsreader/files/newsreader-latin-wght-normal.woff2`],
-            weight: '200 800',
+            src: [`${fontDir}/libre-caslon-display/files/libre-caslon-display-latin-400-normal.woff2`],
+            weight: '400',
             style: 'normal',
-          },
-          {
-            src: [`${fontDir}/newsreader/files/newsreader-latin-wght-italic.woff2`],
-            weight: '200 800',
-            style: 'italic',
           },
         ],
       },
     },
     {
       provider: fontProviders.local(),
-      name: 'Geist Mono',
-      cssVariable: '--font-mono',
-      fallbacks: ['ui-monospace', 'monospace'],
+      name: 'Libre Caslon Text',
+      cssVariable: '--font-text',
+      fallbacks: ['Georgia', 'serif'],
       options: {
         variants: [
           {
-            src: [`${fontDir}/geist-mono/files/geist-mono-latin-wght-normal.woff2`],
-            weight: '100 900',
+            src: [`${fontDir}/libre-caslon-text/files/libre-caslon-text-latin-400-normal.woff2`],
+            weight: '400',
+            style: 'normal',
+          },
+          {
+            src: [`${fontDir}/libre-caslon-text/files/libre-caslon-text-latin-400-italic.woff2`],
+            weight: '400',
+            style: 'italic',
+          },
+          {
+            src: [`${fontDir}/libre-caslon-text/files/libre-caslon-text-latin-700-normal.woff2`],
+            weight: '700',
             style: 'normal',
           },
         ],

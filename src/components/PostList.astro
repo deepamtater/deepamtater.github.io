@@ -1,12 +1,5 @@
 ---
-import {
-  formatDate,
-  formatShortDate,
-  kindLabel,
-  postUrl,
-  transitionName,
-  type Post,
-} from '../lib/posts';
+import { formatDate, formatShortDate, kindLabel, postUrl, transitionName, type Post } from '../lib/posts';
 
 interface Props {
   posts: Post[];
@@ -23,17 +16,17 @@ const { posts, showKind = false, showSummary = false, shortDate = false } = Astr
     posts.map((post) => (
       <li data-tags={post.data.tags.join(' ')}>
         <a href={postUrl(post)}>
-          <span class="title" style={`view-transition-name: ${transitionName(post)}`}>
-            {post.data.title}
-            {post.data.draft && <span class="draft mono">draft</span>}
-          </span>
-          {showSummary && <span class="summary">{post.data.summary}</span>}
-          <span class="meta mono">
-            {showKind && <span class="kind">{kindLabel(post)}</span>}
+          <span class="meta">
             <time datetime={post.data.date.toISOString()}>
               {shortDate ? formatShortDate(post.data.date) : formatDate(post.data.date)}
             </time>
+            {showKind && <span>{kindLabel(post)}</span>}
           </span>
+          <span class="title" style={`view-transition-name: ${transitionName(post)}`}>
+            {post.data.title}
+            {post.data.draft && <span class="draft">draft</span>}
+          </span>
+          {showSummary && <span class="summary">{post.data.summary}</span>}
         </a>
       </li>
     ))
@@ -46,89 +39,87 @@ const { posts, showKind = false, showSummary = false, shortDate = false } = Astr
     list-style: none;
   }
 
-  li {
-    border-top: 1px solid var(--rule);
+  li + li {
+    border-top: var(--hair) solid var(--rule);
   }
 
-  /* First *visible* row, so the tag filter never leaves a dangling divider. */
   li:nth-child(1 of :not([hidden])) {
     border-top: 0;
   }
 
   a {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
     grid-template-areas:
-      'title meta'
-      'summary summary';
+      'meta title'
+      'meta summary';
     column-gap: var(--space-m);
-    align-items: baseline;
-    padding-block: 0.95rem;
+    padding-block: 1rem 1.1rem;
     text-decoration: none;
+  }
+
+  .meta {
+    grid-area: meta;
+    display: grid;
+    align-content: start;
+    padding-block-start: 0.35rem;
+    font-size: var(--step--1);
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
   }
 
   .title {
     grid-area: title;
     width: fit-content;
-    font-size: var(--step-0);
-    font-weight: 450;
-    line-height: 1.3;
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    line-height: 1.2;
     color: var(--ink);
     text-wrap: balance;
-    background: linear-gradient(var(--accent), var(--accent)) 0 100% / 0 1px no-repeat;
+    background: linear-gradient(var(--accent), var(--accent)) 0 100% / 0 var(--hair) no-repeat;
     transition:
-      background-size 360ms var(--ease),
-      color 160ms var(--ease);
+      background-size 420ms var(--ease-out),
+      color 200ms var(--ease);
   }
 
   a:hover .title,
   a:focus-visible .title {
     color: var(--accent);
-    background-size: 100% 1px;
+    background-size: 100% var(--hair);
   }
 
   .summary {
     grid-area: summary;
-    margin-block-start: 0.3rem;
+    margin-block-start: 0.35rem;
     max-width: 58ch;
     font-size: var(--step--1);
-    line-height: 1.5;
+    line-height: 1.55;
     color: var(--muted);
-  }
-
-  .meta {
-    grid-area: meta;
-    display: flex;
-    gap: 0.75rem;
-    color: var(--muted);
-    white-space: nowrap;
-  }
-
-  .kind {
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
   }
 
   .draft {
     margin-inline-start: 0.5rem;
-    padding: 0.05rem 0.35rem;
-    border: 1px solid var(--accent);
-    border-radius: 3px;
+    font-family: var(--font-text);
+    font-size: var(--step--1);
+    font-style: italic;
     color: var(--accent);
-    vertical-align: middle;
   }
 
   @media (max-width: 34rem) {
     a {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       grid-template-areas:
+        'meta'
         'title'
-        'summary'
-        'meta';
+        'summary';
     }
 
     .meta {
-      margin-block-start: 0.35rem;
+      display: flex;
+      gap: 0.75rem;
+      padding-block: 0 0.25rem;
     }
   }
 </style>

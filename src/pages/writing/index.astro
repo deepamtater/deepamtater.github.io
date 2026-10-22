@@ -1,8 +1,11 @@
 ---
+import { url } from '../../lib/url';
 import Base from '../../layouts/Base.astro';
+import PageTitle from '../../components/PageTitle.astro';
 import PostList from '../../components/PostList.astro';
 import TagList from '../../components/TagList.astro';
-import { getPosts, groupByYear } from '../../lib/posts';
+import Unwritten from '../../components/Unwritten.astro';
+import { entryCount, getPosts, groupByYear } from '../../lib/posts';
 import { TOPICS } from '../../site.config';
 
 const posts = await getPosts();
@@ -13,29 +16,47 @@ const counts = Object.fromEntries(
 const tags = TOPICS.filter((t) => counts[t] > 0);
 ---
 
-<Base title="Writing" description="Every essay and note, newest first.">
+<Base title="Writing" description="Every essay and note by Dee Tater, newest first.">
   <div class="wrap">
-    <header class="page-head">
-      <h1>Writing</h1>
-      <p>Every essay and note, newest first. {posts.length} pieces so far.</p>
-    </header>
-
-    <div class="filter" role="group" aria-label="Filter by topic">
-      <TagList tags={tags} counts={counts} filter />
-      <p class="status mono" aria-live="polite"></p>
-    </div>
+    <PageTitle title="Writing" dek="Every essay and note, newest first." note={entryCount(posts.length)}>
+      {
+        tags.length > 0 && (
+          <div class="filter" role="group" aria-label="Filter by head">
+            <TagList tags={tags} counts={counts} filter />
+            <p class="status" aria-live="polite" />
+          </div>
+        )
+      }
+    </PageTitle>
 
     {
       years.map(([year, items]) => (
-        <section class="year" data-year aria-labelledby={`y-${year}`}>
-          <h2 id={`y-${year}`} class="mono">
+        <section class="leaf year" data-year aria-labelledby={`y-${year}`}>
+          <h2 id={`y-${year}`} class="margin">
             {year}
           </h2>
-          <PostList posts={items} showKind shortDate />
+          <div class="body">
+            <PostList posts={items} showKind shortDate />
+          </div>
         </section>
       ))
     }
-    {posts.length === 0 && <p class="empty">Nothing published yet.</p>}
+
+    {
+      posts.length === 0 && (
+        <div class="leaf">
+          <p class="margin" />
+          <div class="body">
+            <Unwritten line="First pieces coming soon.">
+              <p>
+                Essays and notes will be listed here as they are finished, newest first. Follow along with the{' '}
+                <a href={url('/rss.xml')}>RSS feed</a>.
+              </p>
+            </Unwritten>
+          </div>
+        </div>
+      )
+    }
   </div>
 </Base>
 
@@ -43,6 +64,7 @@ const tags = TOPICS.filter((t) => counts[t] > 0);
   (() => {
     const chips = [...document.querySelectorAll('[data-filter]')];
     const status = document.querySelector('.filter .status');
+    if (!chips.length || !status) return;
 
     const apply = (tag) => {
       let shown = 0;
@@ -57,14 +79,14 @@ const tags = TOPICS.filter((t) => counts[t] > 0);
         year.hidden = visible === 0;
         shown += visible;
       }
-      status.textContent = tag ? `${shown} tagged #${tag} · ` : '';
-      if (tag) status.append(Object.assign(document.createElement('button'), { textContent: 'Clear', type: 'button', onclick: () => go(null) }));
+      status.textContent = tag ? `${shown} filed under ${tag}. ` : '';
+      if (tag) status.append(Object.assign(document.createElement('button'), { textContent: 'Show all', type: 'button', onclick: () => go(null) }));
     };
 
     const go = (tag) => {
-      const url = new URL(location.href);
-      tag ? url.searchParams.set('tag', tag) : url.searchParams.delete('tag');
-      history.replaceState(null, '', url);
+      const next = new URL(location.href);
+      tag ? next.searchParams.set('tag', tag) : next.searchParams.delete('tag');
+      history.replaceState(null, '', next);
       apply(tag);
     };
 
@@ -86,10 +108,12 @@ const tags = TOPICS.filter((t) => counts[t] > 0);
     flex-wrap: wrap;
     align-items: center;
     gap: 0.75rem 1rem;
-    margin-block-end: var(--space-l);
+    margin-block-start: var(--space-m);
   }
 
   .status {
+    font-size: var(--step--1);
+    font-style: italic;
     color: var(--muted);
   }
 
@@ -97,46 +121,20 @@ const tags = TOPICS.filter((t) => counts[t] > 0);
     border: 0;
     padding: 0;
     background: none;
-    font: inherit;
     color: var(--accent);
     cursor: pointer;
     text-decoration: underline;
     text-underline-offset: 0.2em;
   }
 
-  .year {
-    display: grid;
-    grid-template-columns: 5rem 1fr;
-    align-items: start;
+  .year + .year .body {
+    padding-block-start: var(--space-m);
   }
 
-  .year + .year {
-    margin-block-start: var(--space-l);
-  }
-
-  .year h2 {
-    padding-block-start: 1.2rem;
-    font-weight: 500;
-    color: var(--muted);
-  }
-
-  .year:hover h2 {
-    color: var(--accent);
-  }
-
-  .empty {
-    color: var(--muted);
-    font-style: italic;
-  }
-
-  @media (max-width: 34rem) {
-    .year {
-      grid-template-columns: 1fr;
-    }
-
-    .year h2 {
-      padding-block: 0 0.25rem;
-      border-bottom: 1px solid var(--rule);
-    }
+  .year .margin {
+    padding-block-start: 1.25rem;
+    font-family: var(--font-text);
+    font-size: var(--step--1);
+    font-variant-numeric: tabular-nums;
   }
 </style>
