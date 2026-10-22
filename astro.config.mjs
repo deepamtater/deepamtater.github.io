@@ -2,6 +2,7 @@
 import { defineConfig, fontProviders } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import { paperDark, paperLight } from './src/lib/shiki-themes.mjs';
 
 // ─── Deployment target ──────────────────────────────────────────────────
 // The ONLY place the public URL is configured. Canonical links, RSS, the
@@ -31,7 +32,7 @@ export default defineConfig({
   prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
   markdown: {
     shikiConfig: {
-      themes: { light: 'github-light', dark: 'github-dark-dimmed' },
+      themes: { light: paperLight, dark: paperDark },
       defaultColor: false,
     },
   },

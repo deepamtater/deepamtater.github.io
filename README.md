@@ -45,7 +45,9 @@ Notes:
 - Tags are validated. To add a topic, add it to `TOPICS` in `src/site.config.ts`; it gets a `/tags/<topic>/` page automatically.
 - Markdown supports GFM: tables, footnotes (`[^1]`), and syntax-highlighted code blocks.
 - An essay's `summary` is also shown as the italic subtitle under its title.
-- The five sample posts (marked "Sample" at the top, and `# SAMPLE POST` in the frontmatter) and the bio on `src/pages/about.astro` are placeholders. Delete or replace them.
+- The site launches with no posts; every list shows one line ("Nothing published yet…") with an RSS link until the first post lands. Until then, `npm run dev` and `npm run build` print a harmless `collection ... is empty` warning.
+- Drafts: `draft: true` posts show in `npm run dev` and are left out of the built site, RSS, and sitemap.
+- The bio (`src/components/AboutContent.astro`, used on the home page and `/about/`) and the email in `src/components/Elsewhere.astro` are marked placeholders. Replace them.
 
 ## Project layout
 
@@ -62,7 +64,14 @@ public/                             favicon.svg, og.png (default social preview 
 astro.config.mjs                    site URL + base path, fonts, integrations
 ```
 
-Built in: RSS (`/rss.xml`), sitemap (`/sitemap-index.xml`), canonical/Open Graph/Twitter meta, light and dark mode (follows the system, with a toggle), self-hosted fonts (Newsreader and Geist Mono via Astro's Fonts API), cross-document view transitions, and a reading-progress bar driven by CSS scroll timelines.
+Built in: RSS (`/rss.xml`), sitemap (`/sitemap-index.xml`), canonical/Open Graph/Twitter meta, light and dark mode (follows the system, with a toggle), self-hosted fonts (Newsreader and Geist Mono via Astro's Fonts API), and cross-document view transitions.
+
+## Design
+
+- **Palette:** oat paper `#f5f0e6`, iron-gall ink `#211a15`, one persimmon `#b53d0d`; dark mode is an espresso ground `#18130f` with warm paper-white ink and a brighter persimmon `#f2845a`. Code blocks use the same palette (`src/lib/shiki-themes.mjs`).
+- **Type:** Newsreader for reading, Geist Mono for nav, dates, and labels.
+- **Home:** one linked line (essays, notes, topics), About and Elsewhere that open in place, then the essay and note lists.
+- **The full stop:** the persimmon dot after "Dee Tater" is the only moving thing on the site. It rests after the name (or the current section), slides to whichever nav link you point at, carries across page loads, and on a post docks to the top edge as a reading-progress marker (`src/components/SignatureDot.astro`). All motion is off under `prefers-reduced-motion`.
 
 ## Deploy: GitHub Pages (primary)
 

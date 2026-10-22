@@ -40,22 +40,21 @@ const related = relatedPosts(
   type="article"
   publishedTime={post.data.date}
   tags={post.data.tags}
-  progress
 >
   <article class="wrap">
     <header class="post-head">
-      <p class="eyebrow rise">
+      <h1 style={`view-transition-name: ${transitionName(post)}`}>{post.data.title}</h1>
+      {isEssay && <p class="dek">{post.data.summary}</p>}
+      <p class="byline">
         <a href={url(`/${post.collection}/`)}>{kindLabel(post)}</a>
         <span aria-hidden="true">·</span>
         <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
         <span aria-hidden="true">·</span>
         <span>{readingTime(post.body)}</span>
       </p>
-      <h1 style={`view-transition-name: ${transitionName(post)}`}>{post.data.title}</h1>
-      {isEssay && <p class="dek rise rise-2">{post.data.summary}</p>}
     </header>
 
-    <div class:list={['prose', 'rise', 'rise-3', { 'prose--essay': isEssay }]}>
+    <div class:list={['prose', { 'prose--essay': isEssay }]} data-article>
       <Content />
     </div>
 
@@ -67,7 +66,7 @@ const related = relatedPosts(
           <nav class="pager" aria-label={`More ${post.collection}`}>
             {older ? (
               <a href={postUrl(older)} rel="prev">
-                <span class="eyebrow">← Previous</span>
+                <span class="dir">Previous</span>
                 <span class="pager-title">{older.data.title}</span>
               </a>
             ) : (
@@ -75,7 +74,7 @@ const related = relatedPosts(
             )}
             {newer && (
               <a href={postUrl(newer)} rel="next" class="next">
-                <span class="eyebrow">Next →</span>
+                <span class="dir">Next</span>
                 <span class="pager-title">{newer.data.title}</span>
               </a>
             )}
@@ -103,19 +102,33 @@ const related = relatedPosts(
     margin-block: var(--space-m) var(--space-l);
   }
 
-  .eyebrow {
+  .byline {
     display: flex;
     flex-wrap: wrap;
     gap: 0.6em;
+    margin-block-start: 1.1rem;
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
   }
 
-  .eyebrow a {
+  .byline a {
     color: var(--accent);
     text-decoration: none;
   }
 
+  .dir {
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
   h1 {
-    margin-block-start: 0.9rem;
     font-size: var(--step-4);
     font-weight: 400;
     line-height: 1.04;

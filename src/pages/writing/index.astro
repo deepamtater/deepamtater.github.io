@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import PostList from '../../components/PostList.astro';
 import TagList from '../../components/TagList.astro';
+import Empty from '../../components/Empty.astro';
 import { getPosts, groupByYear } from '../../lib/posts';
 import { TOPICS } from '../../site.config';
 
@@ -17,13 +18,17 @@ const tags = TOPICS.filter((t) => counts[t] > 0);
   <div class="wrap">
     <header class="page-head">
       <h1>Writing</h1>
-      <p>Every essay and note, newest first. {posts.length} pieces so far.</p>
+      <p>Every essay and note, newest first.</p>
     </header>
 
-    <div class="filter" role="group" aria-label="Filter by topic">
-      <TagList tags={tags} counts={counts} filter />
-      <p class="status mono" aria-live="polite"></p>
-    </div>
+    {
+      tags.length > 0 && (
+        <div class="filter" role="group" aria-label="Filter by topic">
+          <TagList tags={tags} counts={counts} filter />
+          <p class="status mono" aria-live="polite" />
+        </div>
+      )
+    }
 
     {
       years.map(([year, items]) => (
@@ -35,7 +40,7 @@ const tags = TOPICS.filter((t) => counts[t] > 0);
         </section>
       ))
     }
-    {posts.length === 0 && <p class="empty">Nothing published yet.</p>}
+    {posts.length === 0 && <Empty />}
   </div>
 </Base>
 
@@ -43,6 +48,7 @@ const tags = TOPICS.filter((t) => counts[t] > 0);
   (() => {
     const chips = [...document.querySelectorAll('[data-filter]')];
     const status = document.querySelector('.filter .status');
+    if (!chips.length || !status) return;
 
     const apply = (tag) => {
       let shown = 0;

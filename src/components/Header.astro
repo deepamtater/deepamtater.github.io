@@ -3,27 +3,42 @@ import { url } from '../lib/url';
 import { SITE } from '../site.config';
 
 const path = Astro.url.pathname;
+const home = url('/');
+const isHome = path === home;
 const nav = SITE.nav.map(({ href, label }) => ({ href: url(href), label }));
 const isCurrent = (href: string) => path.startsWith(href);
+const hasCurrent = nav.some(({ href }) => isCurrent(href));
 ---
 
 <header class="site-header wrap">
-  <a class="wordmark" href={url("/")} aria-label={`${SITE.name}, home`}>
-    {SITE.name}<span class="dot" aria-hidden="true">.</span>
+  <a
+    class="wordmark"
+    href={home}
+    aria-label={`${SITE.name}, home`}
+    aria-current={isHome ? 'page' : undefined}
+    data-dot-target
+    data-dot-rest={isHome || !hasCurrent ? '' : undefined}
+  >
+    <span class="label">{SITE.name}</span><span class="stop" aria-hidden="true">.</span>
   </a>
   <nav aria-label="Primary">
     <ul>
       {
         nav.map(({ href, label }) => (
           <li>
-            <a href={href} aria-current={isCurrent(href) ? 'page' : undefined}>
-              {label}
+            <a
+              href={href}
+              aria-current={isCurrent(href) ? 'page' : undefined}
+              data-dot-target
+              data-dot-rest={isCurrent(href) ? '' : undefined}
+            >
+              <span class="label">{label}</span>
             </a>
           </li>
         ))
       }
     </ul>
-    <button class="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle theme">
+    <button class="theme-toggle" type="button" aria-label="Dark theme" aria-pressed="false" title="Light or dark">
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
         <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.5"></circle>
         <path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"></path>
@@ -33,25 +48,31 @@ const isCurrent = (href: string) => path.startsWith(href);
 </header>
 
 <script is:inline>
-  document.querySelector('.theme-toggle')?.addEventListener('click', () => {
+  (() => {
+    const toggle = document.querySelector('.theme-toggle');
     const root = document.documentElement;
-    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-    const apply = () => {
-      root.dataset.theme = next;
-      localStorage.setItem('theme', next);
-    };
-    if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      document.startViewTransition(apply);
-    } else {
-      apply();
-    }
-  });
+    const sync = () => toggle?.setAttribute('aria-pressed', String(root.dataset.theme === 'dark'));
+    sync();
+    toggle?.addEventListener('click', () => {
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      const apply = () => {
+        root.dataset.theme = next;
+        localStorage.setItem('theme', next);
+        sync();
+      };
+      if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.startViewTransition(apply);
+      } else {
+        apply();
+      }
+    });
+  })();
 </script>
 
 <style>
   .site-header {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
     gap: var(--space-s);
     padding-block: clamp(1.25rem, 1rem + 1.5vw, 2.25rem) 0;
@@ -60,8 +81,7 @@ const isCurrent = (href: string) => path.startsWith(href);
 
   .wordmark {
     font-size: var(--step-1);
-    font-style: italic;
-    font-weight: 450;
+    font-weight: 500;
     letter-spacing: -0.015em;
     text-decoration: none;
     white-space: nowrap;
@@ -71,15 +91,13 @@ const isCurrent = (href: string) => path.startsWith(href);
     color: var(--ink);
   }
 
-  .dot {
-    display: inline-block;
+  /* The plain-text full stop; the moving dot takes its place once scripts run. */
+  .stop {
     color: var(--accent);
-    font-style: normal;
-    transition: transform 420ms var(--ease);
   }
 
-  .wordmark:hover .dot {
-    transform: translateY(-0.18em) scale(1.25);
+  :global(.has-dot) .stop {
+    color: transparent;
   }
 
   nav {
@@ -90,30 +108,21 @@ const isCurrent = (href: string) => path.startsWith(href);
 
   ul {
     display: flex;
-    gap: clamp(0.85rem, 2.5vw, 1.6rem);
+    gap: clamp(1rem, 3vw, 1.9rem);
     padding: 0;
     list-style: none;
   }
 
   nav a {
-    position: relative;
+    display: inline-block;
+    padding-block: 0.4rem;
     font-family: var(--font-mono);
     font-size: var(--step--2);
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     text-decoration: none;
     color: var(--muted);
-  }
-
-  nav a::after {
-    content: '';
-    position: absolute;
-    inset: auto 0 -0.4em;
-    height: 1px;
-    background: var(--accent);
-    transform: scaleX(0);
-    transform-origin: right;
-    transition: transform 280ms var(--ease);
+    transition: color var(--duration-fast) var(--ease);
   }
 
   nav a:hover,
@@ -121,35 +130,28 @@ const isCurrent = (href: string) => path.startsWith(href);
     color: var(--ink);
   }
 
-  nav a:hover::after,
-  nav a[aria-current='page']::after {
-    transform: scaleX(1);
-    transform-origin: left;
-  }
-
   .theme-toggle {
     display: grid;
     place-items: center;
+    align-self: center;
     width: 2.25rem;
     height: 2.25rem;
     margin-inline-end: -0.5rem;
+    padding: 0;
     border: 0;
     border-radius: 999px;
     background: none;
     color: var(--muted);
     cursor: pointer;
-    transition:
-      color 160ms var(--ease),
-      background 160ms var(--ease);
+    transition: color var(--duration-fast) var(--ease);
   }
 
   .theme-toggle:hover {
     color: var(--ink);
-    background: var(--paper-2);
   }
 
   .theme-toggle svg {
-    transition: transform 500ms var(--ease);
+    transition: transform var(--duration-medium) var(--ease);
   }
 
   :global([data-theme='dark']) .theme-toggle svg {
@@ -159,7 +161,7 @@ const isCurrent = (href: string) => path.startsWith(href);
   @media (max-width: 34rem) {
     .site-header {
       flex-wrap: wrap;
-      row-gap: 0.4rem;
+      row-gap: 0.25rem;
     }
 
     nav {

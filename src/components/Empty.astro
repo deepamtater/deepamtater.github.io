@@ -1,0 +1,30 @@
+---
+import { url } from '../lib/url';
+
+interface Props {
+  what?: string;
+}
+
+const { what = 'Nothing' } = Astro.props;
+---
+
+<p class="empty">
+  {what} published yet. The first pieces are on the way; <a href={url('/rss.xml')}>follow by RSS</a>.
+</p>
+
+<style>
+  .empty {
+    padding-block: 1.1rem;
+    border-block: 1px solid var(--rule);
+    color: var(--muted);
+  }
+
+  :global(.section-head) + .empty {
+    border-top: 0;
+  }
+
+  .empty a {
+    color: var(--ink);
+    text-decoration-color: var(--accent);
+  }
+</style>

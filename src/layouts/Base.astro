@@ -4,6 +4,7 @@ import { Font } from 'astro:assets';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import SignatureDot from '../components/SignatureDot.astro';
 import { SITE } from '../site.config';
 
 interface Props {
@@ -12,7 +13,6 @@ interface Props {
   type?: 'website' | 'article';
   publishedTime?: Date;
   tags?: readonly string[];
-  progress?: boolean;
 }
 
 const {
@@ -21,7 +21,6 @@ const {
   type = 'website',
   publishedTime,
   tags = [],
-  progress = false,
 } = Astro.props;
 
 const pageTitle = title ? `${title} — ${SITE.title}` : SITE.title;
@@ -42,8 +41,8 @@ const rss = new URL(url('/rss.xml'), Astro.site);
     <link rel="icon" href={url("/favicon.svg")} type="image/svg+xml" />
     <link rel="alternate" type="application/rss+xml" title={SITE.title} href={rss} />
     <link rel="sitemap" href={url("/sitemap-index.xml")} />
-    <meta name="theme-color" content="#f9f7f2" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#131210" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f5f0e6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#18130f" media="(prefers-color-scheme: dark)" />
 
     <meta property="og:site_name" content={SITE.title} />
     <meta property="og:title" content={title ?? SITE.title} />
@@ -70,11 +69,11 @@ const rss = new URL(url('/rss.xml'), Astro.site);
   </head>
   <body>
     <a class="skip-link" href="#content">Skip to content</a>
-    {progress && <div class="progress" aria-hidden="true"></div>}
     <Header />
     <main id="content">
       <slot />
     </main>
     <Footer />
+    <SignatureDot />
   </body>
 </html>
