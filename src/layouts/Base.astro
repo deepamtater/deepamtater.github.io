@@ -137,6 +137,7 @@ const itemListNode =
           name: item.name,
           url: new URL(item.url, siteOrigin).href,
           ...(item.description ? { description: item.description } : {}),
+          ...(item.datePublished ? { datePublished: item.datePublished } : {}),
         })),
       }
     : null;

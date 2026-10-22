@@ -1,9 +1,10 @@
 ---
 import { url } from '../../lib/url';
 import Base from '../../layouts/Base.astro';
-import { getThoughts, render } from '../../lib/thoughts';
+import { getPublishedThoughts, render } from '../../lib/thoughts';
+import { SITE } from '../../site.config';
 
-const thoughts = await getThoughts();
+const thoughts = await getPublishedThoughts();
 const rendered = await Promise.all(
   thoughts.map(async (t) => ({
     ...t,
@@ -11,11 +12,31 @@ const rendered = await Promise.all(
   })),
 );
 const description = 'Late-night thoughts and half-formed ideas I’m still figuring out.';
+const siteOrigin = (Astro.site ?? new URL('https://deepamtater.github.io')).origin;
+const pageCanonical = new URL(url('/2am/'), siteOrigin).href;
+
 const collectionItems = thoughts.map((t) => ({
   name: `${t.shortDate} · ${t.time}`,
   url: url(`/2am/#${t.id}`),
   description: t.plainText.slice(0, 180),
+  datePublished: t.date.toISOString(),
 }));
+
+const thoughtPostingNodes = thoughts.map((t) => {
+  const thoughtUrl = `${pageCanonical}#${t.id}`;
+  return {
+    '@type': ['BlogPosting', 'SocialMediaPosting'],
+    '@id': thoughtUrl,
+    url: thoughtUrl,
+    headline: `2AM · ${t.shortDate} · ${t.time}`,
+    articleBody: t.plainText,
+    datePublished: t.date.toISOString(),
+    inLanguage: SITE.locale,
+    author: { '@id': `${siteOrigin}/#person` },
+    publisher: { '@id': `${siteOrigin}/#person` },
+    isPartOf: { '@id': `${pageCanonical}#webpage` },
+  };
+});
 ---
 
 <Base
@@ -23,6 +44,7 @@ const collectionItems = thoughts.map((t) => ({
   description={description}
   pageType="CollectionPage"
   collectionItems={collectionItems}
+  extraSchemaNodes={thoughtPostingNodes}
 >
   <div class="wrap" data-article>
     <header class="page-head">
