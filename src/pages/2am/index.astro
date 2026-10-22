@@ -1,4 +1,5 @@
 ---
+import { url } from '../../lib/url';
 import Base from '../../layouts/Base.astro';
 import { getThoughts, render } from '../../lib/thoughts';
 
@@ -10,9 +11,19 @@ const rendered = await Promise.all(
   })),
 );
 const description = 'Late-night thoughts and half-formed ideas I’m still figuring out.';
+const collectionItems = thoughts.map((t) => ({
+  name: `${t.shortDate} · ${t.time}`,
+  url: url(`/2am/#${t.id}`),
+  description: t.plainText.slice(0, 180),
+}));
 ---
 
-<Base title="2AM" description={description}>
+<Base
+  title="2AM"
+  description={description}
+  pageType="CollectionPage"
+  collectionItems={collectionItems}
+>
   <div class="wrap" data-article>
     <header class="page-head">
       <h1>2AM</h1>

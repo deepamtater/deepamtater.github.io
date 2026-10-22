@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import { SITE } from '../site.config';
 ---
 
-<Base title="About" description="About Deepam Tater.">
+<Base title="About" description="About Deepam Tater." pageType="ProfilePage">
   <div class="wrap">
     <header class="page-head">
       <h1>About</h1>
@@ -25,6 +25,12 @@ import { SITE } from '../site.config';
         <a href={url("/2am/")}>2AM</a> holds late-night thoughts I’m still working through.
       </p>
       <p>
+        I’m not on <span class="uninstalled" data-brand="instagram">Instagram</span>,{' '}
+        <span class="uninstalled" data-brand="snapchat">Snapchat</span>, or{' '}
+        <span class="uninstalled" data-brand="tiktok">TikTok</span>, and I don’t watch Reels or
+        Shorts. I like having a working attention span.
+      </p>
+      <p>
         If something here is useful, or if you think I have something wrong, write to me at{' '}
         <a href={`mailto:${SITE.email}`}>{SITE.email}</a>{' '}
         <span class="copy-wrap"
@@ -39,8 +45,6 @@ import { SITE } from '../site.config';
           >LinkedIn</a
         >, and{' '}
         <a href="https://github.com/dimension-drifter" rel="me noopener" target="_blank">GitHub</a>.
-        I’m not on Instagram, Snapchat, or TikTok, and I don’t watch Reels or Shorts. I like having
-        a working attention span.
       </p>
     </div>
   </div>
@@ -66,6 +70,45 @@ import { SITE } from '../site.config';
 </script>
 
 <style>
+  .uninstalled {
+    --brand: var(--ink);
+    color: color-mix(in oklab, var(--brand) 75%, var(--ink));
+    transition:
+      color 140ms ease,
+      text-decoration-color 140ms ease;
+  }
+
+  .uninstalled[data-brand='instagram'] {
+    --brand: #c13584;
+  }
+
+  .uninstalled[data-brand='snapchat'] {
+    --brand: #b07d00;
+  }
+
+  .uninstalled[data-brand='tiktok'] {
+    --brand: #d62957;
+  }
+
+  :global([data-theme='dark']) .uninstalled[data-brand='instagram'] {
+    --brand: #e15a97;
+  }
+
+  :global([data-theme='dark']) .uninstalled[data-brand='snapchat'] {
+    --brand: #e5c138;
+  }
+
+  :global([data-theme='dark']) .uninstalled[data-brand='tiktok'] {
+    --brand: #ff5c82;
+  }
+
+  .uninstalled:hover {
+    color: var(--brand);
+    text-decoration-line: line-through;
+    text-decoration-thickness: 1px;
+    text-decoration-color: currentColor;
+  }
+
   .copy-wrap {
     color: var(--muted);
     font-size: var(--step--1);

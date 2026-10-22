@@ -5,14 +5,17 @@ import Base from './Base.astro';
 import TagList from '../components/TagList.astro';
 import PostList from '../components/PostList.astro';
 import {
+  countWords,
   formatDate,
   getPosts,
   kindLabel,
   postUrl,
+  readingMinutes,
   readingTime,
   relatedPosts,
   type Post,
 } from '../lib/posts';
+import { SITE } from '../site.config';
 
 interface Props {
   post: Post;
@@ -31,6 +34,28 @@ const related = relatedPosts(
   post,
   (await getPosts()).filter((p) => !adjacent.has(postUrl(p))),
 );
+
+const siteOrigin = (Astro.site ?? new URL('https://deepamtater.github.io')).origin;
+const canonicalUrl = new URL(postUrl(post), siteOrigin).href;
+const words = countWords(post.body);
+const minutes = readingMinutes(post.body);
+
+const blogPostingNode = {
+  '@type': 'BlogPosting',
+  '@id': `${canonicalUrl}#article`,
+  headline: post.data.title,
+  description: post.data.summary,
+  datePublished: post.data.date.toISOString(),
+  wordCount: words,
+  timeRequired: `PT${minutes}M`,
+  keywords: post.data.tags,
+  articleSection: kindLabel(post),
+  inLanguage: SITE.locale,
+  url: canonicalUrl,
+  author: { '@id': `${siteOrigin}/#person` },
+  publisher: { '@id': `${siteOrigin}/#person` },
+  mainEntityOfPage: { '@id': `${canonicalUrl}#webpage` },
+};
 ---
 
 <Base
@@ -40,6 +65,7 @@ const related = relatedPosts(
   publishedTime={post.data.date}
   tags={post.data.tags}
   progress
+  extraSchemaNodes={[blogPostingNode]}
 >
   <article class="wrap">
     <header class="post-head">

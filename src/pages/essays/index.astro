@@ -2,13 +2,23 @@
 import { url } from '../../lib/url';
 import Base from '../../layouts/Base.astro';
 import PostList from '../../components/PostList.astro';
-import { getPosts } from '../../lib/posts';
+import { getPosts, postUrl } from '../../lib/posts';
 
 const posts = await getPosts('essays');
 const description = 'Longer pieces on startups, software, books, and life.';
+const collectionItems = posts.map((p) => ({
+  name: p.data.title,
+  url: postUrl(p),
+  description: p.data.summary,
+}));
 ---
 
-<Base title="Essays" description={description}>
+<Base
+  title="Essays"
+  description={description}
+  pageType="CollectionPage"
+  collectionItems={collectionItems}
+>
   <div class="wrap">
     <header class="page-head">
       <div class="head-row">

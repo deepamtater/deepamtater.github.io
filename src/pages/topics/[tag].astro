@@ -3,7 +3,7 @@ import type { GetStaticPaths } from 'astro';
 import Base from '../../layouts/Base.astro';
 import PostList from '../../components/PostList.astro';
 import TagList from '../../components/TagList.astro';
-import { getPosts } from '../../lib/posts';
+import { getPosts, postUrl } from '../../lib/posts';
 import { CURRENTLY_READING, PREVIOUSLY_READ } from '../../data/now';
 import { TOPICS } from '../../site.config';
 
@@ -17,9 +17,19 @@ export const getStaticPaths = (async () => {
 
 const { tag, posts } = Astro.props;
 const isReading = tag === 'reading';
+const collectionItems = posts.map((p) => ({
+  name: p.data.title,
+  url: postUrl(p),
+  description: p.data.summary,
+}));
 ---
 
-<Base title={`#${tag}`} description={`Essays and notes about ${tag}.`}>
+<Base
+  title={`#${tag}`}
+  description={`Essays and notes about ${tag}.`}
+  pageType="CollectionPage"
+  collectionItems={collectionItems}
+>
   <div class="wrap">
     <header class="page-head">
       <h1>#{tag}</h1>
