@@ -1,90 +1,132 @@
-# Deepam Tater — personal site
+# Deepam Tater · Personal Website
 
-Essays and notes on startups, engineering, reading, and life. A static [Astro](https://astro.build) site: Markdown in the repo, push to publish, near-zero JavaScript.
+Static [Astro](https://astro.build) site deployed at [deepamtater.github.io](https://deepamtater.github.io). Everything is plain Markdown and TypeScript files in this repo; pushing to `main` builds and deploys automatically via GitHub Actions.
 
-## Run it locally
+---
+
+## 1. Quick Start
 
 Requires Node 22.23.4+ (Node 24 recommended; see `.nvmrc`).
 
 ```bash
 npm install
-npm run dev        # http://localhost:4812
-npm run build      # static output in dist/
-npm run preview    # serve dist/ locally
-npm run check      # type-check .astro/.ts files and content frontmatter
+npm run dev      # Start local dev server at http://localhost:4812
+npm run check    # Type-check Astro, TypeScript, and Markdown frontmatter
+npm run build    # Build production static files into dist/
 ```
 
-## Write a new post
+---
 
-There are two formats, each a folder under `src/content/`:
+## 2. How to Add an Essay (`src/content/essays/<slug>.md`)
 
-| Format | Folder | Use it for |
-| --- | --- | --- |
-| Essay | `src/content/essays/` | Long, polished, evergreen pieces |
-| Note | `src/content/notes/` | Short learnings, book notes |
+Create a `.md` (or `.mdx`) file in `src/content/essays/`. The filename becomes the URL:
+`src/content/essays/taste-cannot-be-prompted.md` -> `/essays/taste-cannot-be-prompted/`
 
-1. Create a Markdown file. The filename becomes the URL: `src/content/notes/my-idea.md` → `/notes/my-idea/`. Use `.mdx` if you need components.
-2. Add the frontmatter:
+```markdown
+---
+title: Taste Cannot Be Prompted
+date: 2026-10-01
+summary: Generation produces false positives. Killing a weak draft is judgment, and judgment is the layer generation never gives you.
+tags: [startups, engineering]
+draft: false
+---
 
-   ```md
-   ---
-   title: What I learned shipping v1
-   date: 2026-10-22
-   summary: One or two sentences. Shown in lists, RSS, and link previews.
-   tags: [startups, engineering]   # any of: startups, engineering, reading, life
-   draft: true                     # visible in `npm run dev`, hidden from the built site
-   ---
-
-   Your writing here.
-   ```
-
-3. Preview with `npm run dev`. When it's ready, set `draft: false`, commit, and push to `main`; the site rebuilds and deploys automatically.
-
-Notes:
-
-- Tags are validated. To add a topic, add it to `TOPICS` in `src/site.config.ts`; it gets a `/tags/<topic>/` page automatically.
-- Markdown supports GFM: tables, footnotes (`[^1]`), and syntax-highlighted code blocks.
-- An essay's `summary` is also shown as the italic subtitle under its title.
-
-## Project layout
-
-```
-src/
-  content/essays/, content/notes/   posts (Markdown / MDX)
-  content.config.ts                 frontmatter schema
-  site.config.ts                    name, description, nav, allowed topics
-  layouts/                          Base (SEO, theme, header/footer), Post
-  components/                       Header, Footer, PostList, TagList
-  pages/                            home, writing, essays, notes, tags, about, 404, rss.xml
-  styles/global.css                 design tokens, type scale, prose styles
-public/                             favicon.svg, og.png (default social preview image)
-astro.config.mjs                    site URL + base path, fonts, integrations
+Write your essay in Markdown here.
 ```
 
-Built in: RSS (`/rss.xml`), sitemap (`/sitemap-index.xml`), canonical/Open Graph/Twitter meta, light and dark mode (follows the system, with a toggle), self-hosted fonts (Newsreader and Geist Mono via Astro's Fonts API), cross-document view transitions, and a reading-progress bar driven by CSS scroll timelines.
+- **Allowed `tags`**: `startups`, `engineering`, `reading`, `life` (defined in `src/site.config.ts`).
+- **`summary`**: Shown as the italic subtitle under the essay title, on `/essays/`, in search, and in RSS.
+- **`draft: true`**: Visible in `npm run dev`, hidden from production builds until set to `false`.
 
-## Deploy: GitHub Pages (primary)
+---
 
-The workflow in `.github/workflows/deploy.yml` builds with [`withastro/action`](https://github.com/withastro/action) and deploys on every push to `main`.
+## 3. How to Add a Note (`src/content/notes/<slug>.md`)
 
-One-time setup after the repo is on GitHub:
+Create a `.md` file in `src/content/notes/`. The filename becomes the URL:
+`src/content/notes/more-memory-worse-agents.md` -> `/notes/more-memory-worse-agents/`
 
-1. **Settings → Pages → Build and deployment → Source: GitHub Actions.**
-2. Push to `main` (or run the workflow manually from the Actions tab).
+```markdown
+---
+title: More Memory, Worse Agents
+date: 2026-10-22
+summary: Why agents that save their own advice repeat their own mistakes, and why raw examples beat vague rules.
+tags: [engineering]
+draft: false
+---
 
-The site URL and base path are set in exactly one place, the top of `astro.config.mjs`, and the workflow fills them in automatically from the repository's Pages settings:
-
-| Repo | Owner | Site URL | Base path |
-| --- | --- | --- | --- |
-| `deepamtater.github.io` | org `deepamtater` | `https://deepamtater.github.io` | `/` |
-| `deepamtater.github.io` | user `dimension-drifter` | `https://dimension-drifter.github.io/deepamtater.github.io` | `/deepamtater.github.io` |
-
-Only a repo named exactly `<owner>.github.io` is served at the domain root. All internal links go through `url()` in `src/lib/url.ts`, so both cases work without code changes. To override the detected values (for example after adding a custom domain), set the `SITE_URL` and `BASE_PATH` repository variables under **Settings → Secrets and variables → Actions → Variables**. For a local build that matches production:
-
-```bash
-SITE_URL=https://deepamtater.github.io BASE_PATH=/ npm run build
+Write your note here.
 ```
 
-## Other hosts
+---
 
-`dist/` is plain static files, so any static host works. Cloudflare Pages (`*.pages.dev`), Netlify (`*.netlify.app`), and Vercel (`*.vercel.app`) all have free subdomains: connect the repo, use build command `npm run build` and output directory `dist`, and set the `SITE_URL` environment variable to the assigned URL.
+## 4. How to Add a 2AM Thought (`/2am/`)
+
+You can add a 2AM thought in two ways:
+
+### Option A: Quick inline entry in `src/data/thoughts.ts` (fastest)
+Prepend a new object to `THOUGHTS` in `src/data/thoughts.ts`:
+
+```ts
+export const THOUGHTS: InlineThought[] = [
+  {
+    id: '2026-10-23-0210',
+    date: '2026-10-23T02:10:00',
+    time: '02:10 AM',
+    html: '<p>Your late-night thought here.</p>',
+  },
+  // ...existing thoughts
+];
+```
+
+### Option B: Markdown file in `src/content/thoughts/<slug>.md`
+For multi-paragraph thoughts or code blocks, create `src/content/thoughts/2026-10-23-idea.md`:
+
+```markdown
+---
+date: 2026-10-23T02:10:00
+time: 02:10 AM
+draft: false
+---
+
+Your Markdown thought here.
+```
+
+---
+
+## 5. How to Update `Now` & `Previously` (`src/data/now.ts`)
+
+All data for the `/now/` page (and the `/topics/reading/` bookshelf) lives in **`src/data/now.ts`**:
+
+- **Update current books (`CURRENTLY_READING`)**:
+  ```ts
+  export const CURRENTLY_READING: Book[] = [
+    { title: 'Zero to One', author: 'Peter Thiel' },
+    { title: 'LLM Engineer’s Handbook', author: 'Paul Iusztin & Maxime Labonne' },
+  ];
+  ```
+- **Move a finished book to `PREVIOUSLY_READ`**:
+  Cut the book from `CURRENTLY_READING` and add it to the top of `PREVIOUSLY_READ`.
+- **Move a finished LLM study week into `PREVIOUSLY.studied`**:
+  1. Update the active week in `src/pages/now.astro` (and the homepage `Now` aside in `src/pages/index.astro`) from `(Week 1)` to `(Week 2)`.
+  2. Add the completed week to `PREVIOUSLY.studied` in `src/data/now.ts`:
+     ```ts
+     export const PREVIOUSLY: PreviouslyArchive = {
+       studied: [
+         'Week 1 · Neural networks and backpropagation by hand from blank files.',
+       ],
+       built: [
+         'Puvio V1. Ran a 240-user beta, talked to 90 users, threw out the original draft engine, and rebuilt V2 around a single work record.',
+       ],
+       read: PREVIOUSLY_READ,
+     };
+     ```
+  The `Studied` row appears automatically at the top of `PREVIOUSLY` on `/now/` and is indexed in site search.
+- **Edit `Not doing`**: Update the `NOT_DOING` string in `src/data/now.ts`.
+
+---
+
+## 6. How to Edit `About` & Site Links
+
+- **Bio prose & inline contact links**: Edit `src/pages/about.astro`.
+- **Site name, email, navigation tabs, social links, and allowed topics**: Edit `src/site.config.ts`.
+- **Footer links**: Edit `src/components/Footer.astro`.

@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { CURRENTLY_READING, PREVIOUSLY } from '../data/now';
+import { CURRENTLY_READING, NOT_DOING, PREVIOUSLY } from '../data/now';
 
 const description = 'What I’m working on, studying, and reading right now!';
 ---
@@ -41,6 +41,11 @@ const description = 'What I’m working on, studying, and reading right now!';
             <em>{CURRENTLY_READING[0].title}</em> ({CURRENTLY_READING[0].author}) and{' '}
             <em>{CURRENTLY_READING[1].title}</em> ({CURRENTLY_READING[1].author}).
           </dd>
+        </div>
+
+        <div id="not-doing" class="ledger-item">
+          <dt>Not doing</dt>
+          <dd>{NOT_DOING}</dd>
         </div>
       </dl>
     </section>
