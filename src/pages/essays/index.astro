@@ -13,6 +13,21 @@ const description = 'Long-form, evergreen pieces — rewritten until they hold u
       <h1>Essays</h1>
       <p>{description}</p>
     </header>
-    {posts.length ? <PostList posts={posts} showSummary /> : <p>The first essay is on its way.</p>}
+    {
+      posts.length ? (
+        <PostList posts={posts} showSummary />
+      ) : (
+        <p class="empty">No essays published yet.</p>
+      )
+    }
   </div>
 </Base>
+
+<style>
+  .empty {
+    padding-block: 1rem;
+    border-top: 1px solid var(--rule);
+    color: var(--muted);
+    font-style: italic;
+  }
+</style>

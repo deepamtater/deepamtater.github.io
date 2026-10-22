@@ -17,13 +17,23 @@ const tags = TOPICS.filter((t) => counts[t] > 0);
   <div class="wrap">
     <header class="page-head">
       <h1>Writing</h1>
-      <p>Every essay and note, newest first. {posts.length} pieces so far.</p>
+      <p>
+        {
+          posts.length > 0
+            ? `Every essay and note, newest first. ${posts.length} ${posts.length === 1 ? 'piece' : 'pieces'} so far.`
+            : 'Every essay and note, newest first.'
+        }
+      </p>
     </header>
 
-    <div class="filter" role="group" aria-label="Filter by topic">
-      <TagList tags={tags} counts={counts} filter />
-      <p class="status mono" aria-live="polite"></p>
-    </div>
+    {
+      tags.length > 0 && (
+        <div class="filter" role="group" aria-label="Filter by topic">
+          <TagList tags={tags} counts={counts} filter />
+          <p class="status mono" aria-live="polite"></p>
+        </div>
+      )
+    }
 
     {
       years.map(([year, items]) => (
@@ -35,7 +45,7 @@ const tags = TOPICS.filter((t) => counts[t] > 0);
         </section>
       ))
     }
-    {posts.length === 0 && <p class="empty">Nothing published yet.</p>}
+    {posts.length === 0 && <p class="empty">No essays or notes published yet.</p>}
   </div>
 </Base>
 
@@ -43,6 +53,7 @@ const tags = TOPICS.filter((t) => counts[t] > 0);
   (() => {
     const chips = [...document.querySelectorAll('[data-filter]')];
     const status = document.querySelector('.filter .status');
+    if (!chips.length || !status) return;
 
     const apply = (tag) => {
       let shown = 0;
@@ -58,7 +69,14 @@ const tags = TOPICS.filter((t) => counts[t] > 0);
         shown += visible;
       }
       status.textContent = tag ? `${shown} tagged #${tag} · ` : '';
-      if (tag) status.append(Object.assign(document.createElement('button'), { textContent: 'Clear', type: 'button', onclick: () => go(null) }));
+      if (tag)
+        status.append(
+          Object.assign(document.createElement('button'), {
+            textContent: 'Clear',
+            type: 'button',
+            onclick: () => go(null),
+          }),
+        );
     };
 
     const go = (tag) => {
@@ -115,16 +133,14 @@ const tags = TOPICS.filter((t) => counts[t] > 0);
   }
 
   .year h2 {
-    padding-block-start: 1.2rem;
+    padding-block-start: 0.9rem;
     font-weight: 500;
     color: var(--muted);
   }
 
-  .year:hover h2 {
-    color: var(--accent);
-  }
-
   .empty {
+    padding-block: 1rem;
+    border-top: 1px solid var(--rule);
     color: var(--muted);
     font-style: italic;
   }

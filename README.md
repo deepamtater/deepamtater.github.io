@@ -1,4 +1,4 @@
-# Dee Tater — personal site
+# Deepam Tater — personal site
 
 Essays and notes on startups, engineering, reading, and life. A static [Astro](https://astro.build) site: Markdown in the repo, push to publish, near-zero JavaScript.
 
@@ -45,7 +45,6 @@ Notes:
 - Tags are validated. To add a topic, add it to `TOPICS` in `src/site.config.ts`; it gets a `/tags/<topic>/` page automatically.
 - Markdown supports GFM: tables, footnotes (`[^1]`), and syntax-highlighted code blocks.
 - An essay's `summary` is also shown as the italic subtitle under its title.
-- The five sample posts (marked "Sample" at the top, and `# SAMPLE POST` in the frontmatter) and the bio on `src/pages/about.astro` are placeholders. Delete or replace them.
 
 ## Project layout
 

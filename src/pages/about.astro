@@ -1,39 +1,154 @@
 ---
 import { url } from '../lib/url';
 import Base from '../layouts/Base.astro';
+import { SITE } from '../site.config';
 ---
 
-<Base title="About" description="Who Dee Tater is and why this site exists.">
+<Base title="About" description="Who Deepam Tater is and why this site exists.">
   <div class="wrap">
     <header class="page-head">
       <h1>About</h1>
     </header>
     <div class="prose">
       <p>
-        <em>Sample bio — placeholder copy. Replace it with your own in src/pages/about.astro.</em>
+        I’m Deepam Tater. I build software and use this site as a quiet place to think in public —
+        working through ideas on startups, systems, and the books I’m reading.
       </p>
       <p>
-        I’m Dee Tater. I’ve spent most of my working life building software and small companies,
-        and most of my free time reading about how other people did the same. This site is where I
-        think out loud.
-      </p>
-      <p>
-        There are two kinds of writing here. <a href={url("/essays/")}>Essays</a> are slow: I rewrite
-        them until they say something I’d still agree with in five years. <a href={url("/notes/")}
+        There are two kinds of writing here. <a href={url("/essays/")}>Essays</a> are slow: I
+        rewrite them until the argument holds up cleanly on its own. <a href={url("/notes/")}
           >Notes</a
-        > are fast: a lesson from this week, a passage from a book, a half-formed idea worth keeping.
+        > are shorter: a technical detail from the week, a passage worth keeping, or an observation
+        written down before it fades.
       </p>
       <p>
-        I write mostly about <a href={url("/tags/startups/")}>startups</a>, <a href={url("/tags/engineering/")}
-          >engineering</a
-        >, <a href={url("/tags/reading/")}>reading</a>, and <a href={url("/tags/life/")}>life</a>. If something
-        here was useful — or wrong — I’d like to hear about it.
+        Most pieces touch on <a href={url("/topics/startups/")}>startups</a>,{' '}
+        <a href={url("/topics/engineering/")}>engineering</a>,{' '}
+        <a href={url("/topics/reading/")}>reading</a>, or <a href={url("/topics/life/")}>life</a>. If
+        something here is useful — or if you think I’ve got something wrong — I’d love to hear from
+        you.
       </p>
+
       <h2>Elsewhere</h2>
-      <ul>
-        <li>Email: <a href="mailto:hello@example.com">hello@example.com</a></li>
-        <li>Feed: <a href={url("/rss.xml")}>RSS</a></li>
-      </ul>
+      <dl class="elsewhere">
+        {
+          SITE.socials.map(({ label, handle, href }) => (
+            <div class="row">
+              <dt>{label}</dt>
+              <dd>
+                <a href={href} rel="me noopener" target="_blank" class="mono">
+                  {handle}
+                </a>
+              </dd>
+            </div>
+          ))
+        }
+        <div class="row">
+          <dt>Email</dt>
+          <dd class="email-cell">
+            <a href={`mailto:${SITE.email}`} class="mono">{SITE.email}</a>
+            <button
+              type="button"
+              class="copy-btn mono"
+              data-copy-email={SITE.email}
+              aria-label="Copy email address"
+            >
+              Copy
+            </button>
+          </dd>
+        </div>
+        <div class="row">
+          <dt>Feed</dt>
+          <dd>
+            <a href={url("/rss.xml")} class="mono">RSS</a>
+          </dd>
+        </div>
+      </dl>
     </div>
   </div>
 </Base>
+
+<script is:inline>
+  document.querySelectorAll('[data-copy-email]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const email = btn.getAttribute('data-copy-email');
+      if (!email) return;
+      try {
+        await navigator.clipboard.writeText(email);
+        const original = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(() => {
+          btn.textContent = original;
+        }, 1600);
+      } catch {
+        location.href = `mailto:${email}`;
+      }
+    });
+  });
+</script>
+
+<style>
+  .elsewhere {
+    margin-block-start: 1rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-s);
+    padding: 0.7rem 0.5rem;
+    margin-inline: -0.5rem;
+    border-bottom: 1px solid var(--rule);
+    border-radius: 3px;
+    transition: background-color 140ms ease;
+  }
+
+  .row:hover {
+    background: var(--hover);
+  }
+
+  dt {
+    color: var(--muted);
+    font-size: var(--step--1);
+  }
+
+  dd {
+    margin: 0;
+  }
+
+  .email-cell {
+    display: inline-flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .copy-btn {
+    border: 0;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, currentColor 38%, transparent);
+    text-underline-offset: 0.2em;
+    transition:
+      color 140ms ease,
+      background-color 140ms ease;
+  }
+
+  .copy-btn:hover {
+    color: var(--accent);
+    background: var(--paper);
+  }
+
+  @media (max-width: 34rem) {
+    .row {
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+  }
+</style>

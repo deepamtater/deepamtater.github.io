@@ -1,0 +1,57 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import PostList from '../../components/PostList.astro';
+import TagList from '../../components/TagList.astro';
+import { getPosts } from '../../lib/posts';
+import { TOPICS } from '../../site.config';
+
+export const getStaticPaths = (async () => {
+  const posts = await getPosts();
+  return TOPICS.map((tag) => ({
+    params: { tag },
+    props: { tag, posts: posts.filter((p) => p.data.tags.includes(tag)) },
+  }));
+}) satisfies GetStaticPaths;
+
+const { tag, posts } = Astro.props;
+---
+
+<Base title={`#${tag}`} description={`Essays and notes about ${tag}.`}>
+  <div class="wrap">
+    <header class="page-head">
+      <h1>#{tag}</h1>
+      <p>
+        {posts.length}
+        {posts.length === 1 ? 'piece' : 'pieces'} about {tag}.
+      </p>
+    </header>
+    <div class="others">
+      <TagList tags={TOPICS} current={tag} />
+    </div>
+    {
+      posts.length ? (
+        <PostList posts={posts} showKind showSummary />
+      ) : (
+        <p class="empty">No pieces filed under #{tag} yet.</p>
+      )
+    }
+  </div>
+</Base>
+
+<style>
+  .page-head h1 {
+    font-style: italic;
+  }
+
+  .others {
+    margin-block-end: var(--space-m);
+  }
+
+  .empty {
+    padding-block: 1rem;
+    border-top: 1px solid var(--rule);
+    color: var(--muted);
+    font-style: italic;
+  }
+</style>

@@ -11,17 +11,19 @@ const notes = (await getPosts('notes')).slice(0, 6);
 <Base>
   <div class="wrap">
     <section class="intro" aria-label="Introduction">
-      <h1 class="rise">
-        I’m Dee. I write to understand <em>startups</em>, <em>engineering</em>,
-        the <em>books</em> I read, and the occasional thing about <em>life</em>.
+      <h1>
+        I’m Deepam. I write to understand <a href={url("/topics/startups/")}><em>startups</em></a>,{' '}
+        <a href={url("/topics/engineering/")}><em>engineering</em></a>, the{' '}
+        <a href={url("/topics/reading/")}><em>books</em></a> I read, and the occasional thing about{' '}
+        <a href={url("/topics/life/")}><em>life</em></a>.
       </h1>
-      <p class="rise rise-2">
+      <p>
         Essays are slow and rewritten until they’re true. Notes are fast — things I learned this
         week, written down before I forget them. <a href={url("/about/")}>More about me</a>.
       </p>
     </section>
 
-    <section class="block rise rise-3" aria-labelledby="essays-heading">
+    <section class="block" aria-labelledby="essays-heading">
       <div class="section-head">
         <h2 id="essays-heading" class="eyebrow">Essays</h2>
         <a href={url("/essays/")}>All essays →</a>
@@ -30,12 +32,12 @@ const notes = (await getPosts('notes')).slice(0, 6);
         essays.length ? (
           <PostList posts={essays} showSummary />
         ) : (
-          <p class="empty">The first essay is still being rewritten.</p>
+          <p class="empty">No essays published yet.</p>
         )
       }
     </section>
 
-    <section class="block rise rise-3" aria-labelledby="notes-heading">
+    <section class="block" aria-labelledby="notes-heading">
       <div class="section-head">
         <h2 id="notes-heading" class="eyebrow">Notes</h2>
         <a href={url("/notes/")}>All notes →</a>
@@ -44,7 +46,7 @@ const notes = (await getPosts('notes')).slice(0, 6);
         notes.length ? (
           <PostList posts={notes} />
         ) : (
-          <p class="empty">No notes yet.</p>
+          <p class="empty">No notes published yet.</p>
         )
       }
     </section>
@@ -68,6 +70,18 @@ const notes = (await getPosts('notes')).slice(0, 6);
   h1 em {
     font-style: italic;
     color: var(--accent);
+  }
+
+  h1 a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  h1 a:hover {
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
   }
 
   .intro p {

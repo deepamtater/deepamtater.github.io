@@ -8,9 +8,18 @@ const year = new Date().getFullYear();
 <footer class="site-footer wrap">
   <p>© {year} {SITE.author}</p>
   <ul>
+    {
+      SITE.socials.map(({ label, href }) => (
+        <li>
+          <a href={href} rel="me noopener" target="_blank">
+            {label}
+          </a>
+        </li>
+      ))
+    }
+    <li><a href={`mailto:${SITE.email}`}>Email</a></li>
+    <li><a href={url("/topics/")}>Topics</a></li>
     <li><a href={url("/rss.xml")}>RSS</a></li>
-    <li><a href={url("/tags/")}>Topics</a></li>
-    <li><a href="#content">Top ↑</a></li>
   </ul>
 </footer>
 
@@ -24,13 +33,14 @@ const year = new Date().getFullYear();
     border-top: 1px solid var(--rule);
     font-family: var(--font-mono);
     font-size: var(--step--2);
-    letter-spacing: 0.03em;
+    letter-spacing: 0.01em;
     color: var(--muted);
   }
 
   ul {
     display: flex;
-    gap: 1.25rem;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.15rem;
     padding: 0;
     list-style: none;
   }
@@ -38,6 +48,7 @@ const year = new Date().getFullYear();
   a {
     text-decoration: none;
     color: var(--muted);
+    transition: color 140ms ease;
   }
 
   a:hover {
