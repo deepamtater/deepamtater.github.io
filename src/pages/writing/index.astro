@@ -1,0 +1,142 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostList from '../../components/PostList.astro';
+import TagList from '../../components/TagList.astro';
+import { getPosts, groupByYear } from '../../lib/posts';
+import { TOPICS } from '../../site.config';
+
+const posts = await getPosts();
+const years = groupByYear(posts);
+const counts = Object.fromEntries(
+  TOPICS.map((t) => [t, posts.filter((p) => p.data.tags.includes(t)).length]),
+);
+const tags = TOPICS.filter((t) => counts[t] > 0);
+---
+
+<Base title="Writing" description="Every essay and note, newest first.">
+  <div class="wrap">
+    <header class="page-head">
+      <h1>Writing</h1>
+      <p>Every essay and note, newest first. {posts.length} pieces so far.</p>
+    </header>
+
+    <div class="filter" role="group" aria-label="Filter by topic">
+      <TagList tags={tags} counts={counts} filter />
+      <p class="status mono" aria-live="polite"></p>
+    </div>
+
+    {
+      years.map(([year, items]) => (
+        <section class="year" data-year aria-labelledby={`y-${year}`}>
+          <h2 id={`y-${year}`} class="mono">
+            {year}
+          </h2>
+          <PostList posts={items} showKind shortDate />
+        </section>
+      ))
+    }
+    {posts.length === 0 && <p class="empty">Nothing published yet.</p>}
+  </div>
+</Base>
+
+<script is:inline>
+  (() => {
+    const chips = [...document.querySelectorAll('[data-filter]')];
+    const status = document.querySelector('.filter .status');
+
+    const apply = (tag) => {
+      let shown = 0;
+      for (const chip of chips) chip.setAttribute('aria-pressed', String(chip.dataset.filter === tag));
+      for (const year of document.querySelectorAll('[data-year]')) {
+        let visible = 0;
+        for (const item of year.querySelectorAll('li[data-tags]')) {
+          const match = !tag || item.dataset.tags.split(' ').includes(tag);
+          item.hidden = !match;
+          visible += match;
+        }
+        year.hidden = visible === 0;
+        shown += visible;
+      }
+      status.textContent = tag ? `${shown} tagged #${tag} · ` : '';
+      if (tag) status.append(Object.assign(document.createElement('button'), { textContent: 'Clear', type: 'button', onclick: () => go(null) }));
+    };
+
+    const go = (tag) => {
+      const url = new URL(location.href);
+      tag ? url.searchParams.set('tag', tag) : url.searchParams.delete('tag');
+      history.replaceState(null, '', url);
+      apply(tag);
+    };
+
+    for (const chip of chips) {
+      chip.setAttribute('role', 'button');
+      chip.addEventListener('click', (event) => {
+        event.preventDefault();
+        go(chip.getAttribute('aria-pressed') === 'true' ? null : chip.dataset.filter);
+      });
+    }
+
+    apply(new URLSearchParams(location.search).get('tag'));
+  })();
+</script>
+
+<style>
+  .filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    margin-block-end: var(--space-l);
+  }
+
+  .status {
+    color: var(--muted);
+  }
+
+  .status :global(button) {
+    border: 0;
+    padding: 0;
+    background: none;
+    font: inherit;
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .year {
+    display: grid;
+    grid-template-columns: 5rem 1fr;
+    align-items: start;
+  }
+
+  .year + .year {
+    margin-block-start: var(--space-l);
+  }
+
+  .year h2 {
+    padding-block-start: 1.2rem;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .year:hover h2 {
+    color: var(--accent);
+  }
+
+  .empty {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  @media (max-width: 34rem) {
+    .year {
+      grid-template-columns: 1fr;
+    }
+
+    .year h2 {
+      padding-block: 0 0.25rem;
+      border-bottom: 1px solid var(--rule);
+    }
+  }
+</style>
