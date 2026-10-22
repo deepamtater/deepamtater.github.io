@@ -67,6 +67,11 @@ const blogPostingNode = {
 
 <Base
   title={post.data.title}
+  documentTitle={
+    `${post.data.title} · ${SITE.title}`.length < 45
+      ? `${post.data.title}, ${isEssay ? 'an essay' : 'a note'} by ${SITE.title}.`
+      : undefined
+  }
   description={post.data.summary}
   type="article"
   publishedTime={post.data.date}

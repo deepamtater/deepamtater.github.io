@@ -7,7 +7,11 @@ import { getPosts } from '../lib/posts';
 const recent = (await getPosts()).slice(0, 3);
 ---
 
-<Base title="Page not found" description="This page does not exist.">
+<Base
+  title="Page not found"
+  documentTitle="The page you asked for is not on Deepam Tater's site."
+  description="This page does not exist."
+>
   <div class="wrap">
     <header class="page-head">
       <h1>404</h1>

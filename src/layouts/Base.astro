@@ -17,6 +17,8 @@ export interface CollectionListItem {
 
 interface Props {
   title?: string;
+  /** Full document title when `${title} · Site` would be too short for search engines. */
+  documentTitle?: string;
   description?: string;
   type?: 'website' | 'article';
   pageType?: 'WebPage' | 'ProfilePage' | 'CollectionPage';
@@ -29,6 +31,7 @@ interface Props {
 
 const {
   title,
+  documentTitle,
   description = SITE.description,
   type = 'website',
   pageType = 'WebPage',
@@ -39,6 +42,8 @@ const {
 } = Astro.props;
 
 const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
+const htmlTitle = documentTitle ?? pageTitle;
+const socialTitle = documentTitle ?? title ?? SITE.title;
 const siteOrigin = (Astro.site ?? new URL('https://deepamtater.github.io')).origin;
 const canonical = new URL(Astro.url.pathname, siteOrigin);
 const ogImage = new URL(url(SITE.ogImage), siteOrigin);
@@ -174,7 +179,7 @@ const jsonLdGraph = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{pageTitle}</title>
+    <title>{htmlTitle}</title>
     <meta name="description" content={description} />
     <meta name="author" content="Deepam Tater" />
     <meta name="google-site-verification" content="oHrWp1gfUx__cpUuBdra3PhIFBQmMYC_gq1sMyxp1UA" />
@@ -192,7 +197,7 @@ const jsonLdGraph = {
     <meta name="theme-color" content="#20221F" media="(prefers-color-scheme: dark)" />
 
     <meta property="og:site_name" content={SITE.title} />
-    <meta property="og:title" content={title ?? SITE.title} />
+    <meta property="og:title" content={socialTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content={type} />
     <meta property="og:url" content={canonical} />

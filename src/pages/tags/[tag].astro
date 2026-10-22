@@ -26,6 +26,14 @@ const collectionItems = posts.map((p) => ({
 
 <Base
   title={`#${tag}`}
+  documentTitle={
+    {
+      startups: 'Writing by Deepam Tater on startups and building a company.',
+      engineering: 'Writing by Deepam Tater on software and how it is built.',
+      reading: 'Writing by Deepam Tater on books and what he is reading.',
+      life: 'Writing by Deepam Tater on life away from the work itself.',
+    }[tag]
+  }
   description={`Essays and notes about ${tag}.`}
   pageType="CollectionPage"
   collectionItems={collectionItems}
