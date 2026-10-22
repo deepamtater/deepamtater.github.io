@@ -20,13 +20,20 @@ export const postUrl = (post: Post) => url(`/${post.collection}/${post.id}/`);
 
 export const kindLabel = (post: Post) => (post.collection === 'essays' ? 'Essay' : 'Note');
 
-export function readingTime(body = ''): string {
-  const words = body
+export function countWords(body = ''): number {
+  return body
     .replace(/```[\s\S]*?```/g, ' ')
     .replace(/<[^>]+>|[#>*_`[\]()-]/g, ' ')
     .split(/\s+/)
     .filter(Boolean).length;
-  return `${Math.max(1, Math.round(words / WORDS_PER_MINUTE))} min read`;
+}
+
+export function readingMinutes(body = ''): number {
+  return Math.max(1, Math.round(countWords(body) / WORDS_PER_MINUTE));
+}
+
+export function readingTime(body = ''): string {
+  return `${readingMinutes(body)} min read`;
 }
 
 /** View transition names must be valid custom idents and unique per page. */
