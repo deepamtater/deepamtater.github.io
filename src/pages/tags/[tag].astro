@@ -21,8 +21,7 @@ const { tag, posts } = Astro.props;
 <Base title={`#${tag}`} description={`Essays and notes about ${tag}.`}>
   <div class="wrap">
     <header class="page-head">
-      <p class="eyebrow">Topic</p>
-      <h1>#{tag}</h1>
+      <h1>{tag}</h1>
       <p>
         {posts.length}
         {posts.length === 1 ? 'piece' : 'pieces'} about {tag}.
@@ -43,16 +42,10 @@ const { tag, posts } = Astro.props;
 
 <style>
   .page-head h1 {
-    margin-block-start: 0.4rem;
-    font-style: italic;
+    text-transform: capitalize;
   }
 
   .others {
     margin-block-end: var(--space-m);
-  }
-
-  .empty {
-    color: var(--muted);
-    font-style: italic;
   }
 </style>

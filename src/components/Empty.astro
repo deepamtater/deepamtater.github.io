@@ -9,21 +9,15 @@ const { what = 'Nothing' } = Astro.props;
 ---
 
 <p class="empty">
-  {what} published yet. The first pieces are on the way; <a class="inline-link" href={url('/rss.xml')}>follow by RSS</a>.
+  {what} published yet. New pieces will appear here and in the <a href={url('/rss.xml')}>RSS feed</a>.
 </p>
 
 <style>
   .empty {
-    padding-block: 1.1rem;
-    border-block: 1px solid var(--rule);
     color: var(--muted);
   }
 
-  :global(.section-head) + .empty {
-    border-top: 0;
-  }
-
   .empty a {
-    color: var(--ink);
+    color: var(--ink-2);
   }
 </style>

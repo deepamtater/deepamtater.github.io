@@ -1,5 +1,4 @@
-// Code colours drawn from the site palette: ink text, blue keywords,
-// muted comments and punctuation, a softer ink for strings.
+// Neutral code colours to match the site: no hue, just ink, weight and grey.
 const theme = (name, type, c) => ({
   name,
   type,
@@ -7,27 +6,25 @@ const theme = (name, type, c) => ({
   tokenColors: [
     { scope: ['comment', 'punctuation.definition.comment'], settings: { foreground: c.muted, fontStyle: 'italic' } },
     {
-      scope: ['keyword', 'storage', 'storage.type', 'storage.modifier', 'keyword.control', 'constant.language', 'constant.numeric'],
-      settings: { foreground: c.accent },
+      scope: ['keyword', 'storage', 'storage.type', 'storage.modifier', 'keyword.control', 'constant.language'],
+      settings: { foreground: c.ink, fontStyle: 'bold' },
     },
-    { scope: ['string', 'string.quoted', 'string.template', 'markup.inline.raw'], settings: { foreground: c.ink2 } },
+    { scope: ['string', 'string.quoted', 'string.template', 'constant.numeric', 'markup.inline.raw'], settings: { foreground: c.soft } },
     { scope: ['punctuation', 'keyword.operator', 'meta.brace'], settings: { foreground: c.muted } },
     { scope: ['entity.name.function', 'support.function', 'variable', 'entity.name.type', 'support.type'], settings: { foreground: c.ink } },
   ],
 });
 
-export const paperLight = theme('klein-porcelain', 'light', {
-  bg: '#eff2f8',
-  ink: '#0b1220',
-  ink2: '#3b4a66',
-  muted: '#656d7f',
-  accent: '#0040e6',
+export const paperLight = theme('neutral-light', 'light', {
+  bg: '#f4f4f4',
+  ink: '#000000',
+  soft: '#4c4c4c',
+  muted: '#686765',
 });
 
-export const paperDark = theme('prussian-night', 'dark', {
-  bg: '#141f35',
-  ink: '#e6eef8',
-  ink2: '#a9c1e6',
-  muted: '#8b96a9',
-  accent: '#7aa6ff',
+export const paperDark = theme('neutral-dark', 'dark', {
+  bg: '#28292b',
+  ink: '#ffffff',
+  soft: '#cccccc',
+  muted: '#a5a5a6',
 });

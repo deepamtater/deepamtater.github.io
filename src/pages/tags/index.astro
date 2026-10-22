@@ -15,7 +15,7 @@ const topics = TOPICS.map((tag) => ({
   <div class="wrap">
     <header class="page-head">
       <h1>Topics</h1>
-      <p>Four things I keep coming back to.</p>
+      <p>What the essays and notes are about.</p>
     </header>
     <ul class="topics" role="list">
       {
@@ -23,7 +23,7 @@ const topics = TOPICS.map((tag) => ({
           <li>
             <a href={url(`/tags/${tag}/`)}>
               <span class="name">{tag}</span>
-              <span class="mono">
+              <span class="date">
                 {count} {count === 1 ? 'piece' : 'pieces'}
               </span>
             </a>
@@ -36,35 +36,25 @@ const topics = TOPICS.map((tag) => ({
 
 <style>
   .topics {
+    display: grid;
+    gap: 0.6rem;
     padding: 0;
     list-style: none;
-    border-top: 1px solid var(--rule);
-  }
-
-  li {
-    border-bottom: 1px solid var(--rule);
   }
 
   a {
     display: flex;
-    justify-content: space-between;
+    gap: 0.75rem;
     align-items: baseline;
-    padding-block: 1.1rem;
     text-decoration: none;
   }
 
   .name {
-    font-size: var(--step-2);
-    font-style: italic;
+    font-weight: 700;
     text-transform: capitalize;
-    transition: transform 300ms var(--ease);
   }
 
   a:hover .name {
-    transform: translateX(0.4rem);
-  }
-
-  .mono {
-    color: var(--muted);
+    text-decoration: underline;
   }
 </style>

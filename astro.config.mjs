@@ -36,38 +36,24 @@ export default defineConfig({
       defaultColor: false,
     },
   },
+  // Libre Franklin: an open Franklin Gothic, close in voice to nav.al's Benton Sans.
   fonts: [
     {
       provider: fontProviders.local(),
-      name: 'Newsreader',
-      cssVariable: '--font-serif',
-      fallbacks: ['Georgia', 'serif'],
+      name: 'Libre Franklin',
+      cssVariable: '--font-text',
+      fallbacks: ['Helvetica Neue', 'Arial', 'sans-serif'],
       options: {
         variants: [
           {
-            src: [`${fontDir}/newsreader/files/newsreader-latin-wght-normal.woff2`],
-            weight: '200 800',
-            style: 'normal',
-          },
-          {
-            src: [`${fontDir}/newsreader/files/newsreader-latin-wght-italic.woff2`],
-            weight: '200 800',
-            style: 'italic',
-          },
-        ],
-      },
-    },
-    {
-      provider: fontProviders.local(),
-      name: 'Geist Mono',
-      cssVariable: '--font-mono',
-      fallbacks: ['ui-monospace', 'monospace'],
-      options: {
-        variants: [
-          {
-            src: [`${fontDir}/geist-mono/files/geist-mono-latin-wght-normal.woff2`],
+            src: [`${fontDir}/libre-franklin/files/libre-franklin-latin-wght-normal.woff2`],
             weight: '100 900',
             style: 'normal',
+          },
+          {
+            src: [`${fontDir}/libre-franklin/files/libre-franklin-latin-wght-italic.woff2`],
+            weight: '100 900',
+            style: 'italic',
           },
         ],
       },

@@ -1,0 +1,53 @@
+---
+import { SITE } from '../site.config';
+---
+
+<button class="copy-email" type="button" data-copy={SITE.email}>
+  <span class="copy-label">Copy</span><span class="visually-hidden"> email address</span>
+</button>
+<span class="visually-hidden" role="status" data-copy-status></span>
+
+<script is:inline>
+  (() => {
+    if (window.__copyBound) return;
+    window.__copyBound = true;
+    document.addEventListener('click', async (event) => {
+      const button = event.target instanceof Element && event.target.closest('button[data-copy]');
+      if (!button) return;
+      const label = button.querySelector('.copy-label');
+      const status = button.nextElementSibling;
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy);
+        label.textContent = 'Copied';
+        if (status) status.textContent = 'Email address copied';
+      } catch {
+        label.textContent = button.dataset.copy;
+        if (status) status.textContent = `Copy failed; the address is ${button.dataset.copy}`;
+      }
+      button.dataset.state = 'done';
+      clearTimeout(button._t);
+      button._t = setTimeout(() => {
+        label.textContent = 'Copy';
+        if (status) status.textContent = '';
+        delete button.dataset.state;
+      }, 1600);
+    });
+  })();
+</script>
+
+<style>
+  .copy-email {
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: inherit;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color var(--duration-fast) var(--ease);
+  }
+
+  .copy-email:hover,
+  .copy-email[data-state='done'] {
+    color: var(--ink);
+  }
+</style>

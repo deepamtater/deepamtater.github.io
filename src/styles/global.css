@@ -1,55 +1,48 @@
-/* ─── Tokens ──────────────────────────────────────────────────────────── */
+/* ─── Tokens ──────────────────────────────────────────────────────────────
+   Neutral, after nav.al: white and #1e1f21 grounds, black/white ink, plain
+   greys. No accent colour; links and the full stop are ink. */
 :root {
   color-scheme: light;
-  /* Klein & Porcelain: porcelain ground, blue-black ink, International Klein Blue. */
-  --paper: #fafbfd;
-  --paper-2: #eff2f8;
-  --ink: #0b1220;
-  --ink-2: #3b414c;
-  --muted: #656d7f; /* 5.0:1 on paper */
-  --rule: #dfe3eb;
-  --accent: #0047ff; /* 6.1:1 on paper */
-  --rule-strong: color-mix(in oklab, var(--accent) 32%, var(--rule));
-  --accent-soft: color-mix(in oklab, var(--accent) 14%, transparent);
+  --paper: #ffffff;
+  --paper-2: #f4f4f4;
+  --ink: #000000;
+  --ink-2: #333333;
+  --muted: #686765; /* 5.7:1 on white */
+  --rule: #eeeeee;
+  --rule-strong: #cccccc;
+  --accent: var(--ink);
 
-  /* Fluid type scale (minor third on mobile → perfect fourth on desktop) */
-  --step--2: clamp(0.72rem, 0.7rem + 0.1vw, 0.78rem);
-  --step--1: clamp(0.84rem, 0.82rem + 0.12vw, 0.9rem);
-  --step-0: clamp(1.08rem, 1.03rem + 0.25vw, 1.22rem);
-  --step-1: clamp(1.3rem, 1.2rem + 0.45vw, 1.6rem);
-  --step-2: clamp(1.55rem, 1.38rem + 0.85vw, 2.1rem);
-  --step-3: clamp(1.9rem, 1.6rem + 1.5vw, 2.9rem);
-  --step-4: clamp(2.3rem, 1.85rem + 2.3vw, 3.9rem);
+  --step--1: 0.9375rem; /* 15px */
+  --step-0: 1.125rem; /* 18px */
+  --step-lede: 1.25rem; /* 20px */
+  --step-1: 1.375rem; /* 22px */
+  --step-2: 1.75rem; /* 28px */
+  --step-3: clamp(1.9rem, 1.6rem + 1.2vw, 2.4rem);
 
   --space-xs: 0.5rem;
   --space-s: 1rem;
-  --space-m: 1.5rem;
-  --space-l: clamp(2.25rem, 1.8rem + 2vw, 3.5rem);
-  --space-xl: clamp(3.5rem, 2.6rem + 4vw, 6rem);
+  --space-m: 1.75rem;
+  --space-l: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+  --space-xl: clamp(3.5rem, 2.8rem + 3vw, 5.5rem);
 
-  --measure: 65ch;
-  --wrap: 44rem;
-  --gutter: clamp(1.25rem, 0.75rem + 2.5vw, 2.5rem);
+  --measure: 66ch;
+  --wrap: 46rem;
+  --gutter: clamp(1.25rem, 0.75rem + 2.5vw, 3.75rem);
+
   --ease: cubic-bezier(0.24, 1, 0.4, 1);
-
-  /* Motion tokens after Astryx's foundations: three bands, one curve. */
-  --duration-fast: 175ms;
-  --duration-medium: 410ms;
-  --duration-slow: 975ms;
+  --duration-fast: 150ms;
+  --duration-medium: 320ms;
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  /* Prussian Night: deep Prussian ground, cool paper ink, sapphire. */
-  --paper: #091326;
-  --paper-2: #141f35;
-  --ink: #e6eef8;
-  --ink-2: #c3cbd6;
-  --muted: #8b96a9; /* 6.2:1 on paper */
-  --rule: #253046;
-  --accent: #5890ff; /* 6.0:1 on paper */
-  --rule-strong: color-mix(in oklab, var(--accent) 38%, var(--rule));
-  --accent-soft: color-mix(in oklab, var(--accent) 16%, transparent);
+  --paper: #1e1f21;
+  --paper-2: #28292b;
+  --ink: #ffffff;
+  --ink-2: #eeeeee;
+  --muted: #a5a5a6; /* nav.al nav, rgba(255,255,255,.7) on #1e1f21 */
+  --rule: #2d3139;
+  --rule-strong: #4c4c4c;
 }
 
 /* ─── Base ────────────────────────────────────────────────────────────── */
@@ -64,7 +57,7 @@
 }
 
 html {
-  scrollbar-color: color-mix(in oklab, var(--ink) 25%, var(--paper)) var(--paper);
+  scrollbar-color: var(--rule-strong) var(--paper);
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   background: var(--paper);
@@ -77,19 +70,17 @@ body {
   flex-direction: column;
   background: var(--paper);
   color: var(--ink);
-  font-family: var(--font-serif);
+  font-family: var(--font-text);
   font-size: var(--step-0);
-  font-optical-sizing: auto;
-  line-height: 1.62;
+  font-weight: 400;
+  line-height: 1.6;
   font-kerning: normal;
-  font-variant-ligatures: common-ligatures;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: var(--accent-soft);
+  background: color-mix(in oklab, var(--ink) 14%, transparent);
   color: var(--ink);
 }
 
@@ -105,9 +96,8 @@ h1,
 h2,
 h3,
 h4 {
-  font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: -0.012em;
+  font-weight: 700;
+  line-height: 1.25;
   text-wrap: balance;
 }
 
@@ -120,43 +110,39 @@ a {
   color: inherit;
   text-decoration-line: underline;
   text-decoration-thickness: 1px;
-  text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
+  text-decoration-color: var(--rule-strong);
   text-underline-offset: 0.2em;
   transition:
-    color 160ms var(--ease),
-    text-decoration-color 160ms var(--ease),
-    text-underline-offset 160ms var(--ease);
+    color var(--duration-fast) var(--ease),
+    text-decoration-color var(--duration-fast) var(--ease);
 }
 
 a:hover {
-  color: var(--accent);
   text-decoration-color: currentColor;
-  text-underline-offset: 0.28em;
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--ink);
   outline-offset: 3px;
   border-radius: 2px;
 }
 
-.mono {
-  font-family: var(--font-mono);
-  font-size: var(--step--2);
-  letter-spacing: 0.02em;
-  font-variant-numeric: tabular-nums;
+button {
+  font: inherit;
+  color: inherit;
 }
 
-.eyebrow {
-  font-family: var(--font-mono);
-  font-size: var(--step--2);
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.muted {
   color: var(--muted);
 }
 
-.visually-hidden {
+.date {
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.visually-hidden,
+.sr-only {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -169,11 +155,10 @@ a:hover {
   position: absolute;
   left: var(--gutter);
   top: -4rem;
-  z-index: 10;
+  z-index: 30;
   padding: 0.5rem 0.9rem;
   background: var(--ink);
   color: var(--paper);
-  font-family: var(--font-mono);
   font-size: var(--step--1);
   text-decoration: none;
 }
@@ -193,21 +178,26 @@ main {
   padding-block: var(--space-l) var(--space-xl);
 }
 
-/* ─── Page heading ────────────────────────────────────────────────────── */
+/* ─── Headings ────────────────────────────────────────────────────────── */
 .page-head {
   margin-block-end: var(--space-l);
 }
 
 .page-head h1 {
-  font-size: var(--step-3);
-  font-weight: 400;
-  letter-spacing: -0.02em;
+  font-size: var(--step-2);
+  letter-spacing: -0.01em;
 }
 
 .page-head p {
-  margin-block-start: 0.6rem;
-  color: var(--muted);
+  margin-block-start: 0.4rem;
   max-width: var(--measure);
+  color: var(--muted);
+}
+
+.section-title {
+  margin-block-end: 0.5rem;
+  font-size: var(--step-0);
+  font-weight: 700;
 }
 
 .section-head {
@@ -215,27 +205,24 @@ main {
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-s);
-  padding-block-end: 0.6rem;
-  border-bottom: 1px solid var(--rule);
+  margin-block-end: 0.5rem;
 }
 
 .section-head a {
-  font-family: var(--font-mono);
-  font-size: var(--step--2);
-  letter-spacing: 0.04em;
+  font-size: var(--step--1);
   color: var(--muted);
   text-decoration: none;
 }
 
 .section-head a:hover {
-  color: var(--accent);
+  color: var(--ink);
 }
 
 /* ─── Prose ───────────────────────────────────────────────────────────── */
 .prose {
   max-width: var(--measure);
   color: var(--ink-2);
-  hanging-punctuation: first last;
+  line-height: 1.7;
 }
 
 .prose > * + * {
@@ -243,34 +230,28 @@ main {
 }
 
 .prose h2 {
-  margin-block-start: 2.2em;
+  margin-block-start: 2em;
   font-size: var(--step-1);
   color: var(--ink);
 }
 
 .prose h3 {
-  margin-block-start: 1.8em;
+  margin-block-start: 1.7em;
   font-size: var(--step-0);
-  font-weight: 600;
   color: var(--ink);
 }
 
 .prose h2 + *,
 .prose h3 + * {
-  margin-block-start: 0.6em;
+  margin-block-start: 0.5em;
 }
 
 .prose a {
   color: var(--ink);
-  text-decoration-color: var(--accent);
-}
-
-.prose a:hover {
-  color: var(--accent);
 }
 
 .prose strong {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--ink);
 }
 
@@ -280,49 +261,37 @@ main {
 }
 
 .prose li + li {
-  margin-block-start: 0.4em;
+  margin-block-start: 0.35em;
 }
 
 .prose li::marker {
   color: var(--muted);
 }
 
-.prose ul > li::marker {
-  content: '–  ';
-}
-
 .prose blockquote {
-  padding-inline-start: 1.1em;
-  border-inline-start: 2px solid var(--accent);
-  font-style: italic;
+  padding-inline-start: 1em;
+  border-inline-start: 2px solid var(--rule-strong);
   color: var(--ink);
 }
 
 .prose hr {
-  border: 0;
+  height: 1px;
   margin-block: 2.5em;
-  text-align: center;
-  height: auto;
-}
-
-.prose hr::after {
-  content: '⁂';
-  color: var(--accent);
-  font-size: var(--step-1);
+  border: 0;
+  background: var(--rule);
 }
 
 .prose code {
-  font-family: var(--font-mono);
-  font-size: 0.82em;
-  padding: 0.12em 0.32em;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 0.85em;
+  padding: 0.1em 0.3em;
   border-radius: 3px;
   background: var(--paper-2);
 }
 
 .prose pre {
-  padding: 1.1rem 1.25rem;
-  border: 1px solid var(--rule);
-  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  border-radius: 6px;
   background: var(--paper-2) !important;
   overflow-x: auto;
   font-size: var(--step--1);
@@ -332,50 +301,33 @@ main {
 .prose pre code {
   padding: 0;
   background: none;
-  font-size: inherit;
+  font-size: 0.92em;
+  font-variant-ligatures: none;
 }
 
 .astro-code,
 .astro-code span {
   color: var(--shiki-light);
+  font-weight: var(--shiki-light-font-weight);
+  font-style: var(--shiki-light-font-style);
 }
 
 [data-theme='dark'] .astro-code,
 [data-theme='dark'] .astro-code span {
   color: var(--shiki-dark);
+  font-weight: var(--shiki-dark-font-weight);
+  font-style: var(--shiki-dark-font-style);
 }
 
 .prose img {
-  border-radius: 8px;
-}
-
-.prose .sample-note {
-  display: block;
-  font-family: var(--font-mono);
-  font-style: normal;
-  font-size: var(--step--2);
-  letter-spacing: 0.02em;
-  color: var(--muted);
-  padding: 0.6rem 0.8rem;
-  border: 1px dashed var(--rule);
-  border-radius: 3px;
-}
-
-/* GFM footnotes: the generated "Footnotes" heading is for screen readers only. */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+  border-radius: 6px;
 }
 
 .prose .footnotes {
   margin-block-start: 2.5em;
   padding-block-start: 1em;
   border-top: 1px solid var(--rule);
-  font-size: 0.92em;
+  font-size: var(--step--1);
   color: var(--muted);
 }
 
@@ -385,36 +337,48 @@ main {
 
 .prose sup a {
   text-decoration: none;
-  color: var(--accent);
-  font-family: var(--font-mono);
-  font-size: 0.7em;
+  color: var(--muted);
+  font-size: 0.75em;
   padding-inline: 0.1em;
 }
 
-/* Essays open with a lede: first line in small caps. */
-.prose--essay > p:first-of-type::first-line {
-  font-variant-caps: all-small-caps;
-  letter-spacing: 0.04em;
+.prose sup a:hover {
   color: var(--ink);
 }
 
-/* ─── View transitions (cross-document, no JS) ────────────────────────── */
+/* GFM's back-reference glyph is replaced with a plain word; its aria-label stays. */
+.prose .footnotes a[data-footnote-backref] {
+  font-size: 0;
+  text-decoration: none;
+}
+
+.prose .footnotes a[data-footnote-backref]::after {
+  content: 'Back';
+  margin-inline-start: 0.4em;
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+.prose .footnotes a[data-footnote-backref]:hover::after {
+  color: var(--ink);
+}
+
+/* ─── View transitions ────────────────────────────────────────────────── */
 @view-transition {
   navigation: auto;
 }
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 220ms;
+  animation-duration: 180ms;
   animation-timing-function: var(--ease);
 }
 
 ::view-transition-group(*) {
-  animation-duration: 340ms;
+  animation-duration: var(--duration-medium);
   animation-timing-function: var(--ease);
 }
 
-/* ─── Motion ──────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -426,48 +390,4 @@ main {
   @view-transition {
     navigation: none;
   }
-}
-
-.muted {
-  color: var(--muted);
-}
-
-
-/* ─── Link underline choreography ─────────────────────────────────────
-   A faint resting underline; on hover a Klein-blue line draws over it from
-   the left. Drawn with backgrounds so it can animate and wrap across lines. */
-.lede a,
-.prose a,
-.about-text a,
-.inline-link {
-  text-decoration: none;
-  background:
-    linear-gradient(var(--accent), var(--accent)) 0 100% / 0 1px no-repeat,
-    linear-gradient(var(--rule-strong), var(--rule-strong)) 0 100% / 100% 1px no-repeat;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-  padding-bottom: 0.08em;
-  transition:
-    background-size var(--duration-medium) var(--ease),
-    color var(--duration-fast) var(--ease);
-}
-
-.lede a:hover,
-.prose a:hover,
-.about-text a:hover,
-.inline-link:hover,
-.lede a:focus-visible,
-.prose a:focus-visible,
-.about-text a:focus-visible,
-.inline-link:focus-visible {
-  color: var(--ink);
-  background-size:
-    100% 1px,
-    100% 1px;
-}
-
-.prose sup a,
-.prose .footnotes a[data-footnote-backref] {
-  background: none;
-  padding: 0;
 }

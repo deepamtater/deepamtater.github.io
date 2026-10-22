@@ -41,8 +41,8 @@ const rss = new URL(url('/rss.xml'), Astro.site);
     <link rel="icon" href={url("/favicon.svg")} type="image/svg+xml" />
     <link rel="alternate" type="application/rss+xml" title={SITE.title} href={rss} />
     <link rel="sitemap" href={url("/sitemap-index.xml")} />
-    <meta name="theme-color" content="#fafbfd" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#091326" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1e1f21" media="(prefers-color-scheme: dark)" />
 
     <meta property="og:site_name" content={SITE.title} />
     <meta property="og:title" content={title ?? SITE.title} />
@@ -56,8 +56,7 @@ const rss = new URL(url('/rss.xml'), Astro.site);
     {publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
     {tags.map((tag) => <meta property="article:tag" content={tag} />)}
 
-    <Font cssVariable="--font-serif" preload={[{ style: 'normal' }]} />
-    <Font cssVariable="--font-mono" />
+    <Font cssVariable="--font-text" preload={[{ style: 'normal' }]} />
 
     <script is:inline>
       (() => {

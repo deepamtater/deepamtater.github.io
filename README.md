@@ -64,15 +64,15 @@ public/                             favicon.svg, og.png (default social preview 
 astro.config.mjs                    site URL + base path, fonts, integrations
 ```
 
-Built in: RSS (`/rss.xml`), sitemap (`/sitemap-index.xml`), canonical/Open Graph/Twitter meta, light and dark mode (follows the system, with a toggle), self-hosted fonts (Newsreader and Geist Mono via Astro's Fonts API), and cross-document view transitions.
+Built in: RSS (`/rss.xml`), sitemap (`/sitemap-index.xml`), canonical/Open Graph/Twitter meta, light and dark mode (follows the system, with a toggle), self-hosted fonts (Libre Franklin via Astro's Fonts API), and cross-document view transitions.
 
 ## Design
 
-- **Palette:** light is Klein & Porcelain (porcelain `#fafbfd`, blue-black ink `#0b1220`, International Klein Blue `#0047ff`); dark is Prussian Night (Prussian `#091326`, cool paper ink `#e6eef8`, sapphire `#5890ff`). Code blocks, the favicon, and `public/og.png` use the same palette (`src/lib/shiki-themes.mjs`).
+- **Palette:** neutral, after nav.al: white `#ffffff` / ink `#000000` / body `#333333` / muted `#686765` / rules `#eeeeee`; dark is `#1e1f21` / `#ffffff` / `#eeeeee` / `#a5a5a6` / `#2d3139`. No accent colour; links and the full stop are ink. Code blocks, favicon, and `public/og.png` follow the same palette (`src/lib/shiki-themes.mjs`).
 - **Identity:** name, email, and social links live in `src/site.config.ts`; the About text lives in `src/components/AboutContent.astro`.
-- **Type:** Newsreader for reading, Geist Mono for nav, dates, and labels.
-- **Home:** one linked line (essays, notes, topics), About and Elsewhere that open in place, then the essay and note lists.
-- **The full stop:** the blue dot after "Deepam Tater" is the only moving thing on the site. It rests after the name (or the current section), slides to whichever nav link you point at, carries across page loads, and on a post docks to the top edge as a reading-progress marker (`src/components/SignatureDot.astro`). All motion is off under `prefers-reduced-motion`.
+- **Type:** one sans, Libre Franklin (an open Franklin Gothic), in sentence case. System monospace only for code.
+- **Home:** a plain intro paragraph, one line of links (X, LinkedIn, GitHub, Email with a copy button), then the essay and note lists.
+- **The full stop:** the ink full stop after "Deepam Tater" is the only moving thing on the site. It rests after the name (or the current section), slides to whichever nav link you point at, carries across page loads, and on a post docks to the top edge as a reading-progress marker (`src/components/SignatureDot.astro`). All motion is off under `prefers-reduced-motion`.
 
 ## Deploy: GitHub Pages (primary)
 
