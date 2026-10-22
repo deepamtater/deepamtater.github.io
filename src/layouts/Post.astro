@@ -1,0 +1,188 @@
+---
+import { url } from '../lib/url';
+import { render } from 'astro:content';
+import Base from './Base.astro';
+import TagList from '../components/TagList.astro';
+import PostList from '../components/PostList.astro';
+import {
+  formatDate,
+  getPosts,
+  kindLabel,
+  postUrl,
+  readingTime,
+  relatedPosts,
+  transitionName,
+  type Post,
+} from '../lib/posts';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const isEssay = post.collection === 'essays';
+
+const siblings = await getPosts(post.collection);
+const index = siblings.findIndex((p) => p.id === post.id);
+const newer = siblings[index - 1];
+const older = siblings[index + 1];
+const adjacent = new Set([newer, older].filter(Boolean).map((p) => postUrl(p!)));
+const related = relatedPosts(
+  post,
+  (await getPosts()).filter((p) => !adjacent.has(postUrl(p))),
+);
+---
+
+<Base
+  title={post.data.title}
+  description={post.data.summary}
+  type="article"
+  publishedTime={post.data.date}
+  tags={post.data.tags}
+  progress
+>
+  <article class="wrap">
+    <header class="post-head">
+      <p class="eyebrow rise">
+        <a href={url(`/${post.collection}/`)}>{kindLabel(post)}</a>
+        <span aria-hidden="true">·</span>
+        <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+        <span aria-hidden="true">·</span>
+        <span>{readingTime(post.body)}</span>
+      </p>
+      <h1 style={`view-transition-name: ${transitionName(post)}`}>{post.data.title}</h1>
+      {isEssay && <p class="dek rise rise-2">{post.data.summary}</p>}
+    </header>
+
+    <div class:list={['prose', 'rise', 'rise-3', { 'prose--essay': isEssay }]}>
+      <Content />
+    </div>
+
+    <footer class="post-foot">
+      {post.data.tags.length > 0 && <TagList tags={post.data.tags} />}
+
+      {
+        (newer || older) && (
+          <nav class="pager" aria-label={`More ${post.collection}`}>
+            {older ? (
+              <a href={postUrl(older)} rel="prev">
+                <span class="eyebrow">← Previous</span>
+                <span class="pager-title">{older.data.title}</span>
+              </a>
+            ) : (
+              <span />
+            )}
+            {newer && (
+              <a href={postUrl(newer)} rel="next" class="next">
+                <span class="eyebrow">Next →</span>
+                <span class="pager-title">{newer.data.title}</span>
+              </a>
+            )}
+          </nav>
+        )
+      }
+
+      {
+        related.length > 0 && (
+          <section class="related" aria-labelledby="related-heading">
+            <h2 id="related-heading" class="eyebrow">
+              Related
+            </h2>
+            <PostList posts={related} showKind />
+          </section>
+        )
+      }
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .post-head {
+    max-width: var(--measure);
+    margin-block: var(--space-m) var(--space-l);
+  }
+
+  .eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+  }
+
+  .eyebrow a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  h1 {
+    margin-block-start: 0.9rem;
+    font-size: var(--step-4);
+    font-weight: 400;
+    line-height: 1.04;
+    letter-spacing: -0.028em;
+  }
+
+  .dek {
+    margin-block-start: 1.1rem;
+    font-size: var(--step-1);
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--muted);
+  }
+
+  .post-foot {
+    max-width: var(--measure);
+    margin-block-start: var(--space-xl);
+    display: grid;
+    gap: var(--space-l);
+  }
+
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-s);
+    padding-block-start: var(--space-m);
+    border-top: 1px solid var(--rule);
+  }
+
+  .pager a {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 200ms var(--ease);
+  }
+
+  .pager a:hover {
+    background: var(--paper-2);
+    color: var(--ink);
+  }
+
+  .pager a:hover .pager-title {
+    color: var(--accent);
+  }
+
+  .pager .next {
+    text-align: end;
+  }
+
+  .pager-title {
+    line-height: 1.3;
+    transition: color 160ms var(--ease);
+  }
+
+  .related h2 {
+    margin-block-end: 0.25rem;
+  }
+
+  @media (max-width: 34rem) {
+    .pager {
+      grid-template-columns: 1fr;
+    }
+
+    .pager .next {
+      text-align: start;
+    }
+  }
+</style>

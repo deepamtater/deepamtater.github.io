@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostList from '../../components/PostList.astro';
+import { getPosts } from '../../lib/posts';
+
+const posts = await getPosts('essays');
+const description = 'Long-form, evergreen pieces — rewritten until they hold up.';
+---
+
+<Base title="Essays" description={description}>
+  <div class="wrap">
+    <header class="page-head">
+      <h1>Essays</h1>
+      <p>{description}</p>
+    </header>
+    {posts.length ? <PostList posts={posts} showSummary /> : <p>The first essay is on its way.</p>}
+  </div>
+</Base>

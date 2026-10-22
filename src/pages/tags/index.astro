@@ -1,0 +1,70 @@
+---
+import { url } from '../../lib/url';
+import Base from '../../layouts/Base.astro';
+import { getPosts } from '../../lib/posts';
+import { TOPICS } from '../../site.config';
+
+const posts = await getPosts();
+const topics = TOPICS.map((tag) => ({
+  tag,
+  count: posts.filter((p) => p.data.tags.includes(tag)).length,
+}));
+---
+
+<Base title="Topics" description="Browse writing by topic.">
+  <div class="wrap">
+    <header class="page-head">
+      <h1>Topics</h1>
+      <p>Four things I keep coming back to.</p>
+    </header>
+    <ul class="topics" role="list">
+      {
+        topics.map(({ tag, count }) => (
+          <li>
+            <a href={url(`/tags/${tag}/`)}>
+              <span class="name">{tag}</span>
+              <span class="mono">
+                {count} {count === 1 ? 'piece' : 'pieces'}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Base>
+
+<style>
+  .topics {
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--rule);
+  }
+
+  li {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  a {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-block: 1.1rem;
+    text-decoration: none;
+  }
+
+  .name {
+    font-size: var(--step-2);
+    font-style: italic;
+    text-transform: capitalize;
+    transition: transform 300ms var(--ease);
+  }
+
+  a:hover .name {
+    transform: translateX(0.4rem);
+  }
+
+  .mono {
+    color: var(--muted);
+  }
+</style>
