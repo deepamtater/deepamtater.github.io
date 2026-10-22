@@ -1,4 +1,4 @@
-# Dee Tater — personal site
+# Deepam Tater — personal site
 
 Essays and notes on startups, engineering, reading, and life. A static [Astro](https://astro.build) site: Markdown in the repo, push to publish, near-zero JavaScript.
 
@@ -47,7 +47,7 @@ Notes:
 - An essay's `summary` is also shown as the italic subtitle under its title.
 - The site launches with no posts; every list shows one line ("Nothing published yet…") with an RSS link until the first post lands. Until then, `npm run dev` and `npm run build` print a harmless `collection ... is empty` warning.
 - Drafts: `draft: true` posts show in `npm run dev` and are left out of the built site, RSS, and sitemap.
-- The bio (`src/components/AboutContent.astro`, used on the home page and `/about/`) and the email in `src/components/Elsewhere.astro` are marked placeholders. Replace them.
+- The About text (home page and `/about/`) is one paragraph in `src/components/AboutContent.astro`.
 
 ## Project layout
 
@@ -68,10 +68,11 @@ Built in: RSS (`/rss.xml`), sitemap (`/sitemap-index.xml`), canonical/Open Graph
 
 ## Design
 
-- **Palette:** oat paper `#f5f0e6`, iron-gall ink `#211a15`, one persimmon `#b53d0d`; dark mode is an espresso ground `#18130f` with warm paper-white ink and a brighter persimmon `#f2845a`. Code blocks use the same palette (`src/lib/shiki-themes.mjs`).
+- **Palette:** light is Klein & Porcelain (porcelain `#fafbfd`, blue-black ink `#0b1220`, International Klein Blue `#0047ff`); dark is Prussian Night (Prussian `#091326`, cool paper ink `#e6eef8`, sapphire `#5890ff`). Code blocks, the favicon, and `public/og.png` use the same palette (`src/lib/shiki-themes.mjs`).
+- **Identity:** name, email, and social links live in `src/site.config.ts`; the About text lives in `src/components/AboutContent.astro`.
 - **Type:** Newsreader for reading, Geist Mono for nav, dates, and labels.
 - **Home:** one linked line (essays, notes, topics), About and Elsewhere that open in place, then the essay and note lists.
-- **The full stop:** the persimmon dot after "Dee Tater" is the only moving thing on the site. It rests after the name (or the current section), slides to whichever nav link you point at, carries across page loads, and on a post docks to the top edge as a reading-progress marker (`src/components/SignatureDot.astro`). All motion is off under `prefers-reduced-motion`.
+- **The full stop:** the blue dot after "Deepam Tater" is the only moving thing on the site. It rests after the name (or the current section), slides to whichever nav link you point at, carries across page loads, and on a post docks to the top edge as a reading-progress marker (`src/components/SignatureDot.astro`). All motion is off under `prefers-reduced-motion`.
 
 ## Deploy: GitHub Pages (primary)
 

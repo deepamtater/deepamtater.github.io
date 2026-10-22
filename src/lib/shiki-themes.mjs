@@ -1,4 +1,4 @@
-// Code colours drawn from the site palette: ink text, persimmon keywords,
+// Code colours drawn from the site palette: ink text, blue keywords,
 // muted comments and punctuation, a softer ink for strings.
 const theme = (name, type, c) => ({
   name,
@@ -16,18 +16,18 @@ const theme = (name, type, c) => ({
   ],
 });
 
-export const paperLight = theme('paper-light', 'light', {
-  bg: '#ece5d7',
-  ink: '#211a15',
-  ink2: '#5d4a3c',
-  muted: '#6c6156',
-  accent: '#b53d0d',
+export const paperLight = theme('klein-porcelain', 'light', {
+  bg: '#eff2f8',
+  ink: '#0b1220',
+  ink2: '#3b4a66',
+  muted: '#656d7f',
+  accent: '#0040e6',
 });
 
-export const paperDark = theme('paper-dark', 'dark', {
-  bg: '#221b16',
-  ink: '#efe6d7',
-  ink2: '#d2b9a0',
-  muted: '#a3978a',
-  accent: '#f2845a',
+export const paperDark = theme('prussian-night', 'dark', {
+  bg: '#141f35',
+  ink: '#e6eef8',
+  ink2: '#a9c1e6',
+  muted: '#8b96a9',
+  accent: '#7aa6ff',
 });

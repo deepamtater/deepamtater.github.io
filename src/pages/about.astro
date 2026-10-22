@@ -2,17 +2,31 @@
 import Base from '../layouts/Base.astro';
 import AboutContent from '../components/AboutContent.astro';
 import Elsewhere from '../components/Elsewhere.astro';
+import { SITE } from '../site.config';
 ---
 
-<Base title="About" description="Who Dee Tater is and why this site exists.">
+<Base title="About" description={`Who ${SITE.author} is and why he writes.`}>
   <div class="wrap">
     <header class="page-head">
       <h1>About</h1>
     </header>
     <div class="prose">
       <AboutContent />
-      <h2>Elsewhere</h2>
-      <Elsewhere />
     </div>
+    <section class="elsewhere" aria-labelledby="elsewhere-heading">
+      <h2 id="elsewhere-heading" class="eyebrow">Elsewhere</h2>
+      <Elsewhere />
+    </section>
   </div>
 </Base>
+
+<style>
+  .elsewhere {
+    max-width: var(--measure);
+    margin-block-start: var(--space-xl);
+  }
+
+  .elsewhere h2 {
+    margin-block-end: 0.75rem;
+  }
+</style>

@@ -26,7 +26,7 @@ const nothing = essays.length + notes.length === 0;
           <summary>About</summary>
           <div class="unfold">
             <AboutContent />
-            <p><a href={url('/about/')}>The full about page</a></p>
+            <p><a class="inline-link" href={url('/about/')}>More on the about page</a></p>
           </div>
         </details>
         <details name="more" id="elsewhere">
@@ -97,15 +97,6 @@ const nothing = essays.length + notes.length === 0;
     text-wrap: pretty;
   }
 
-  .lede a {
-    text-decoration-color: color-mix(in oklab, var(--accent) 55%, transparent);
-    text-underline-offset: 0.16em;
-  }
-
-  .lede a:hover {
-    text-decoration-color: var(--accent);
-  }
-
   /* About and Elsewhere open in place, one at a time. */
   .more {
     display: grid;
@@ -159,16 +150,24 @@ const nothing = essays.length + notes.length === 0;
     color: var(--ink);
   }
 
+  /* Height opens on the standard curve while the content fades up a beat behind. */
   details::details-content {
     block-size: 0;
+    opacity: 0;
     overflow: clip;
     transition:
-      block-size var(--duration-medium) var(--ease),
-      content-visibility var(--duration-medium) allow-discrete;
+      block-size 320ms var(--ease),
+      opacity 200ms var(--ease),
+      content-visibility 320ms allow-discrete;
   }
 
   details[open]::details-content {
     block-size: auto;
+    opacity: 1;
+    transition:
+      block-size 320ms var(--ease),
+      opacity 260ms var(--ease) 60ms,
+      content-visibility 320ms allow-discrete;
   }
 
   .unfold {

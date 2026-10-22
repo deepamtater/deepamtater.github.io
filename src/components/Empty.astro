@@ -9,7 +9,7 @@ const { what = 'Nothing' } = Astro.props;
 ---
 
 <p class="empty">
-  {what} published yet. The first pieces are on the way; <a href={url('/rss.xml')}>follow by RSS</a>.
+  {what} published yet. The first pieces are on the way; <a class="inline-link" href={url('/rss.xml')}>follow by RSS</a>.
 </p>
 
 <style>
@@ -25,6 +25,5 @@ const { what = 'Nothing' } = Astro.props;
 
   .empty a {
     color: var(--ink);
-    text-decoration-color: var(--accent);
   }
 </style>

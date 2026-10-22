@@ -1,14 +1,15 @@
 /* ─── Tokens ──────────────────────────────────────────────────────────── */
 :root {
   color-scheme: light;
-  /* Oat paper, iron-gall ink, one persimmon. */
-  --paper: #f5f0e6;
-  --paper-2: #ece5d7;
-  --ink: #211a15;
-  --ink-2: #41372f;
-  --muted: #6c6156; /* 5.3:1 on paper */
-  --rule: #e0d6c6;
-  --accent: #b53d0d; /* persimmon, 4.9:1 on paper */
+  /* Klein & Porcelain: porcelain ground, blue-black ink, International Klein Blue. */
+  --paper: #fafbfd;
+  --paper-2: #eff2f8;
+  --ink: #0b1220;
+  --ink-2: #3b414c;
+  --muted: #656d7f; /* 5.0:1 on paper */
+  --rule: #dfe3eb;
+  --accent: #0047ff; /* 6.1:1 on paper */
+  --rule-strong: color-mix(in oklab, var(--accent) 32%, var(--rule));
   --accent-soft: color-mix(in oklab, var(--accent) 14%, transparent);
 
   /* Fluid type scale (minor third on mobile → perfect fourth on desktop) */
@@ -39,14 +40,15 @@
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  /* Lamp-lit: espresso ground, warm paper-white ink. */
-  --paper: #18130f;
-  --paper-2: #221b16;
-  --ink: #efe6d7;
-  --ink-2: #d2c7b6;
-  --muted: #a3978a;
-  --rule: #33291f;
-  --accent: #f2845a;
+  /* Prussian Night: deep Prussian ground, cool paper ink, sapphire. */
+  --paper: #091326;
+  --paper-2: #141f35;
+  --ink: #e6eef8;
+  --ink-2: #c3cbd6;
+  --muted: #8b96a9; /* 6.2:1 on paper */
+  --rule: #253046;
+  --accent: #5890ff; /* 6.0:1 on paper */
+  --rule-strong: color-mix(in oklab, var(--accent) 38%, var(--rule));
   --accent-soft: color-mix(in oklab, var(--accent) 16%, transparent);
 }
 
@@ -403,7 +405,7 @@ main {
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 260ms;
+  animation-duration: 220ms;
   animation-timing-function: var(--ease);
 }
 
@@ -426,34 +428,46 @@ main {
   }
 }
 
-/* ─── Placeholders: copy Dee still has to write ──────────────────────── */
-.placeholder {
-  padding: 0.9rem 1rem;
-  border: 1px dashed var(--accent);
-  border-radius: 3px;
-  font-style: italic;
-  color: var(--muted);
-}
-
-.placeholder code {
-  font-family: var(--font-mono);
-  font-size: 0.8em;
-  font-style: normal;
-}
-
-.placeholder-inline {
-  padding-inline: 0.3rem;
-  border: 1px dashed var(--accent);
-  border-radius: 3px;
-}
-
 .muted {
   color: var(--muted);
 }
 
-.elsewhere {
-  display: grid;
-  gap: 0.35rem;
+
+/* ─── Link underline choreography ─────────────────────────────────────
+   A faint resting underline; on hover a Klein-blue line draws over it from
+   the left. Drawn with backgrounds so it can animate and wrap across lines. */
+.lede a,
+.prose a,
+.about-text a,
+.inline-link {
+  text-decoration: none;
+  background:
+    linear-gradient(var(--accent), var(--accent)) 0 100% / 0 1px no-repeat,
+    linear-gradient(var(--rule-strong), var(--rule-strong)) 0 100% / 100% 1px no-repeat;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding-bottom: 0.08em;
+  transition:
+    background-size var(--duration-medium) var(--ease),
+    color var(--duration-fast) var(--ease);
+}
+
+.lede a:hover,
+.prose a:hover,
+.about-text a:hover,
+.inline-link:hover,
+.lede a:focus-visible,
+.prose a:focus-visible,
+.about-text a:focus-visible,
+.inline-link:focus-visible {
+  color: var(--ink);
+  background-size:
+    100% 1px,
+    100% 1px;
+}
+
+.prose sup a,
+.prose .footnotes a[data-footnote-backref] {
+  background: none;
   padding: 0;
-  list-style: none;
 }

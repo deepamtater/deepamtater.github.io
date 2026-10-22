@@ -1,8 +1,179 @@
 ---
 import { url } from '../lib/url';
+import { SITE } from '../site.config';
+
+const [user, domain] = SITE.email.split('@');
 ---
 
-<ul class="elsewhere" role="list">
-  <li><a href={url('/rss.xml')}>RSS feed</a></li>
-  <li><span class="placeholder-inline">hello@example.com</span> <span class="muted">(placeholder email)</span></li>
+<ul class="ledger" role="list">
+  {
+    SITE.socials.map(({ label, handle, href }) => (
+      <li>
+        <a class="row" href={href} rel="me noopener">
+          <span class="platform">{label}</span>
+          <span class="handle">{handle}</span>
+          <svg class="out" viewBox="0 0 10 10" width="10" height="10" aria-hidden="true">
+            <path d="M2.5 7.5 7.5 2.5M3.5 2.5h4v4" fill="none" stroke="currentColor" stroke-width="1.2" />
+          </svg>
+          <span class="visually-hidden"> (external)</span>
+        </a>
+      </li>
+    ))
+  }
+  <li>
+    <div class="row email">
+      <span class="platform">Email</span>
+      <a class="handle" href={`mailto:${SITE.email}`}>{user}@<wbr />{domain}</a>
+      <button class="copy" type="button" data-copy={SITE.email}>
+        <span class="copy-label">Copy</span><span class="visually-hidden"> email address</span>
+      </button>
+      <span class="visually-hidden" role="status" data-copy-status></span>
+    </div>
+  </li>
+  <li>
+    <a class="row" href={url('/rss.xml')}>
+      <span class="platform">RSS</span>
+      <span class="handle">Subscribe to the feed</span>
+    </a>
+  </li>
 </ul>
+
+<script is:inline>
+  (() => {
+    if (window.__copyBound) return;
+    window.__copyBound = true;
+    document.addEventListener('click', async (event) => {
+      const button = event.target instanceof Element && event.target.closest('button[data-copy]');
+      if (!button) return;
+      const label = button.querySelector('.copy-label');
+      const status = button.parentElement.querySelector('[data-copy-status]');
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy);
+        label.textContent = 'Copied';
+        if (status) status.textContent = 'Email address copied';
+      } catch {
+        label.textContent = 'Selected';
+        if (status) status.textContent = 'Email address selected; copy it with your keyboard';
+        const range = document.createRange();
+        range.selectNodeContents(button.parentElement.querySelector('.handle'));
+        getSelection()?.removeAllRanges();
+        getSelection()?.addRange(range);
+      }
+      button.dataset.state = 'done';
+      clearTimeout(button._t);
+      button._t = setTimeout(() => {
+        label.textContent = 'Copy';
+        if (status) status.textContent = '';
+        delete button.dataset.state;
+      }, 1600);
+    });
+  })();
+</script>
+
+<style>
+  .ledger {
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--rule);
+  }
+
+  .row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 5.5rem minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding-block: 0.7rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  /* Each row sits on a hairline; on hover a Klein-blue line draws along it. */
+  .row::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 1px;
+    background: linear-gradient(var(--accent), var(--accent)) 0 0 / 0 100% no-repeat, var(--rule);
+    transition: background-size var(--duration-medium) var(--ease);
+  }
+
+  .row:hover::after,
+  .row:focus-within::after {
+    background-size:
+      100% 100%,
+      auto;
+  }
+
+  .platform {
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color var(--duration-fast) var(--ease);
+  }
+
+  .row:hover .platform,
+  .row:focus-within .platform {
+    color: var(--accent);
+  }
+
+  .handle {
+    min-width: 0;
+    overflow-wrap: break-word;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  a.handle:focus-visible,
+  a.row:focus-visible {
+    outline-offset: 4px;
+  }
+
+  .out {
+    align-self: center;
+    color: var(--muted);
+    transition:
+      transform var(--duration-fast) var(--ease),
+      color var(--duration-fast) var(--ease);
+  }
+
+  .row:hover .out {
+    color: var(--accent);
+    transform: translate(2px, -2px);
+  }
+
+  .copy {
+    align-self: center;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: none;
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    transition:
+      color var(--duration-fast) var(--ease),
+      border-color var(--duration-fast) var(--ease);
+  }
+
+  .copy:hover {
+    color: var(--ink);
+    border-color: var(--muted);
+  }
+
+  .copy[data-state='done'] {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  @media (max-width: 30rem) {
+    .row {
+      grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+    }
+  }
+</style>
