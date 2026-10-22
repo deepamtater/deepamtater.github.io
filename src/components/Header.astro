@@ -3,32 +3,74 @@ import { url } from '../lib/url';
 import { SITE } from '../site.config';
 
 const path = Astro.url.pathname;
+const home = url('/');
+const isHome = path === home;
 const nav = SITE.nav.map(({ href, label }) => ({ href: url(href), label }));
 const isCurrent = (href: string) => path.startsWith(href);
+const hasCurrent = nav.some(({ href }) => isCurrent(href));
 ---
 
 <header class="site-header wrap">
-  <a class="wordmark" href={url("/")} aria-label={`${SITE.name}, home`}>
-    {SITE.name}<span class="dot" aria-hidden="true">.</span>
+  <a
+    class="wordmark"
+    href={home}
+    aria-label={`${SITE.name}, home`}
+    aria-current={isHome ? 'page' : undefined}
+    data-dot-target
+    data-dot-rest={isHome || !hasCurrent ? '' : undefined}
+  >
+    <span class="label"
+      ><span class="given">Deepam</span>{' '}<span class="surname">Tater</span></span
+    ><span class="stop" aria-hidden="true">.</span>
   </a>
   <nav aria-label="Primary">
     <ul>
       {
         nav.map(({ href, label }) => (
           <li>
-            <a href={href} aria-current={isCurrent(href) ? 'page' : undefined}>
-              {label}
+            <a
+              href={href}
+              aria-current={isCurrent(href) ? 'page' : undefined}
+              data-dot-target
+              data-dot-rest={isCurrent(href) ? '' : undefined}
+            >
+              <span class="label">{label}</span>
             </a>
           </li>
         ))
       }
     </ul>
-    <button class="theme-toggle" type="button" aria-label="Toggle color theme" title="Toggle theme">
-      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-        <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.5"></circle>
-        <path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path>
-      </svg>
-    </button>
+    <div class="controls">
+      <button
+        class="search-trigger"
+        type="button"
+        aria-label="Search site"
+        aria-keyshortcuts="/ Control+K Meta+K"
+        title="Search (/)"
+        data-search-open
+        data-dot-target
+      >
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+          <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"
+          ></circle>
+          <path d="M15.5 15.5L20 20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          ></path>
+        </svg>
+        <kbd class="label mono" aria-hidden="true">/</kbd>
+      </button>
+      <button
+        class="theme-toggle"
+        type="button"
+        aria-label="Toggle color theme"
+        title="Toggle theme"
+      >
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.5"
+          ></circle>
+          <path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path>
+        </svg>
+      </button>
+    </div>
   </nav>
 </header>
 
@@ -44,10 +86,11 @@ const isCurrent = (href: string) => path.startsWith(href);
 <style>
   .site-header {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
     gap: var(--space-s);
     padding-block: clamp(1.25rem, 1rem + 1.5vw, 2.25rem) 0;
+    view-transition-name: site-header;
   }
 
   .wordmark {
@@ -64,52 +107,105 @@ const isCurrent = (href: string) => path.startsWith(href);
     color: var(--ink);
   }
 
-  .dot {
+  .given,
+  .surname {
+    display: inline-block;
+    transition:
+      transform 260ms var(--ease),
+      letter-spacing 260ms var(--ease),
+      color 180ms var(--ease);
+  }
+
+  /* Subtle, handcrafted optical breath on the surname when hovered or focused */
+  .wordmark:hover .surname,
+  .wordmark:focus-visible .surname {
+    letter-spacing: 0.008em;
+    transform: translateY(-0.5px);
+    color: color-mix(in oklab, var(--ink) 78%, var(--accent));
+  }
+
+  .stop {
     color: var(--accent);
     font-style: normal;
+  }
+
+  :global(.has-dot) .stop {
+    color: transparent;
   }
 
   nav {
     display: flex;
     align-items: center;
-    gap: clamp(0.4rem, 1.5vw, 1rem);
+    gap: clamp(0.45rem, 1.5vw, 1rem);
   }
 
   ul {
     display: flex;
-    gap: clamp(0.85rem, 2.5vw, 1.5rem);
+    gap: clamp(0.75rem, 2.2vw, 1.35rem);
     padding: 0;
     list-style: none;
   }
 
   nav a {
+    display: inline-block;
     font-family: var(--font-mono);
     font-size: var(--step--2);
     letter-spacing: 0.01em;
     text-decoration: none;
     color: var(--muted);
     padding-block: 0.25rem;
+    padding-inline-end: 0.25em;
     transition: color 140ms ease;
   }
 
-  nav a:hover {
-    color: var(--accent);
-  }
-
+  nav a:hover,
   nav a[aria-current='page'] {
     color: var(--ink);
-    text-decoration-line: underline;
-    text-decoration-color: var(--accent);
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.32em;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+
+  .search-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
+    height: 2rem;
+    padding: 0 0.45rem;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    transition:
+      color 140ms ease,
+      border-color 140ms ease,
+      background-color 140ms ease;
+  }
+
+  .search-trigger:hover,
+  .search-trigger:focus-visible {
+    color: var(--ink);
+    border-color: color-mix(in oklab, var(--ink) 26%, var(--rule));
+    background: var(--hover);
+  }
+
+  .search-trigger kbd {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1;
+    color: inherit;
   }
 
   .theme-toggle {
     display: grid;
     place-items: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    margin-inline-end: -0.5rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-inline-end: -0.4rem;
     border: 0;
     border-radius: 4px;
     background: none;
@@ -121,13 +217,13 @@ const isCurrent = (href: string) => path.startsWith(href);
   }
 
   @media (pointer: coarse) {
-    .theme-toggle {
-      min-width: 2.75rem;
-      min-height: 2.75rem;
+    .theme-toggle,
+    .search-trigger {
+      min-height: 2.5rem;
     }
 
     nav a {
-      padding-block: 0.5rem;
+      padding-block: 0.45rem;
     }
   }
 
@@ -136,10 +232,10 @@ const isCurrent = (href: string) => path.startsWith(href);
     background: var(--hover);
   }
 
-  @media (max-width: 34rem) {
+  @media (max-width: 36rem) {
     .site-header {
       flex-wrap: wrap;
-      row-gap: 0.4rem;
+      row-gap: 0.35rem;
     }
 
     nav {

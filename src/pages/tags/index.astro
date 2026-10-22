@@ -15,17 +15,14 @@ const topics = TOPICS.map((tag) => ({
   <div class="wrap">
     <header class="page-head">
       <h1>Topics</h1>
-      <p>Four subjects I keep returning to.</p>
     </header>
     <ul class="topics" role="list">
       {
         topics.map(({ tag, count }) => (
           <li>
-            <a href={url(`/tags/${tag}/`)}>
+            <a href={url(`/topics/${tag}/`)}>
               <span class="name">{tag}</span>
-              <span class="mono">
-                {count} {count === 1 ? 'piece' : 'pieces'}
-              </span>
+              <span class="mono">{count}</span>
             </a>
           </li>
         ))

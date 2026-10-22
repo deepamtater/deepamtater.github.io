@@ -11,6 +11,12 @@ const postSchema = z.object({
   draft: z.boolean().default(false),
 });
 
+const thoughtSchema = z.object({
+  date: z.coerce.date(),
+  time: z.string().default('02:00 AM'),
+  draft: z.boolean().default(false),
+});
+
 const essays = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/essays' }),
   schema: postSchema,
@@ -21,4 +27,9 @@ const notes = defineCollection({
   schema: postSchema,
 });
 
-export const collections = { essays, notes };
+const thoughts = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/thoughts' }),
+  schema: thoughtSchema,
+});
+
+export const collections = { essays, notes, thoughts };

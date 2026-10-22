@@ -1,0 +1,265 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getThoughts, render } from '../../lib/thoughts';
+
+const thoughts = await getThoughts();
+const rendered = await Promise.all(
+  thoughts.map(async (t) => ({
+    ...t,
+    Content: t.entry ? (await render(t.entry)).Content : null,
+  })),
+);
+---
+
+<Base title="2AM" description="Late-night thoughts, fragments, and observations.">
+  <div class="wrap" data-article>
+    <header class="page-head">
+      <h1>2AM</h1>
+    </header>
+
+    {
+      rendered.length > 0 ? (
+        <ol class="ledger" role="list" data-ledger>
+          {rendered.map(({ id, date, time, shortDate, monthYear, showMonth, Content, inline }) => (
+            <li id={id} class="ledger-row" tabindex="-1" data-thought>
+              <div class="ledger-margin mono">
+                {showMonth && <span class="ledger-month">{monthYear}</span>}
+                <a
+                  href={`#${id}`}
+                  class="ledger-stamp"
+                  data-permalink={id}
+                  aria-label={`Permalink to ${shortDate} at ${time}`}
+                >
+                  <time datetime={date.toISOString()} class="stamp-time">
+                    {time}
+                  </time>
+                  <span class="stamp-date">{shortDate}</span>
+                </a>
+              </div>
+              <div class="ledger-body prose">
+                <span class="ledger-tick" aria-hidden="true" />
+                {Content ? <Content /> : inline && <Fragment set:html={inline.html} />}
+              </div>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p class="empty">No entries yet.</p>
+      )
+    }
+  </div>
+</Base>
+
+<script is:inline>
+  (() => {
+    const rows = [...document.querySelectorAll('[data-thought]')];
+    if (!rows.length) return;
+
+    let activeIdx = -1;
+
+    const selectRow = (idx, scroll = true) => {
+      if (idx < 0 || idx >= rows.length) return;
+      rows.forEach((r, i) => r.classList.toggle('is-focused', i === idx));
+      activeIdx = idx;
+      const target = rows[idx];
+      target.focus({ preventScroll: true });
+      if (scroll) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    };
+
+    // Highlight hash entry on load
+    if (location.hash) {
+      const id = location.hash.slice(1);
+      const found = rows.findIndex((r) => r.id === id);
+      if (found !== -1) selectRow(found, false);
+    }
+
+    // Click-to-copy permalink #id on timestamp
+    for (const link of document.querySelectorAll('[data-permalink]')) {
+      link.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const id = link.getAttribute('data-permalink');
+        if (!id) return;
+        const idx = rows.findIndex((r) => r.id === id);
+        if (idx !== -1) selectRow(idx, false);
+        const url = new URL(location.href);
+        url.hash = id;
+        history.replaceState(null, '', url);
+        const timeEl = link.querySelector('.stamp-time');
+        const orig = timeEl?.textContent;
+        try {
+          await navigator.clipboard.writeText(url.toString());
+          if (timeEl && orig) {
+            timeEl.textContent = 'Copied #';
+            setTimeout(() => {
+              timeEl.textContent = orig;
+            }, 1200);
+          }
+        } catch {
+          // URL hash already updated
+        }
+      });
+    }
+
+    // j / k keyboard navigation across the stream
+    document.addEventListener('keydown', (event) => {
+      if (
+        event.defaultPrevented ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey ||
+        document.querySelector('[data-search-modal]:not([hidden])')
+      ) {
+        return;
+      }
+      const tag = document.activeElement?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable) {
+        return;
+      }
+      if (event.key === 'j') {
+        event.preventDefault();
+        selectRow(activeIdx < rows.length - 1 ? activeIdx + 1 : 0);
+      } else if (event.key === 'k') {
+        event.preventDefault();
+        selectRow(activeIdx > 0 ? activeIdx - 1 : rows.length - 1);
+      }
+    });
+  })();
+</script>
+
+<style>
+  .ledger {
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--rule);
+  }
+
+  .ledger-row {
+    display: grid;
+    grid-template-columns: 7.75rem 1fr;
+    align-items: start;
+    scroll-margin-top: 2.5rem;
+    outline: none;
+  }
+
+  .ledger-margin {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
+    padding: 1.15rem 1.1rem 1.15rem 0;
+    text-align: end;
+    color: var(--muted);
+    user-select: none;
+  }
+
+  .ledger-month {
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-block-end: 0.15rem;
+  }
+
+  .ledger-stamp {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.08rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 140ms ease;
+  }
+
+  .stamp-time {
+    color: var(--ink);
+    font-weight: 450;
+    transition: color 140ms ease;
+  }
+
+  .stamp-date {
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .ledger-stamp:hover .stamp-time,
+  .ledger-row.is-focused .stamp-time {
+    color: var(--accent);
+  }
+
+  .ledger-body {
+    position: relative;
+    padding: 1.1rem 0.85rem 1.15rem 1.35rem;
+    border-inline-start: 1px solid var(--rule);
+    border-bottom: 1px solid color-mix(in oklab, var(--rule) 55%, transparent);
+    border-radius: 0 3px 3px 0;
+    transition: background-color 140ms ease;
+  }
+
+  .ledger-row:last-child .ledger-body {
+    border-bottom: 0;
+  }
+
+  .ledger-row:hover .ledger-body,
+  .ledger-row:focus-within .ledger-body,
+  .ledger-row.is-focused .ledger-body {
+    background: var(--hover);
+  }
+
+  /* Tick mark on the continuous vertical hairline rule */
+  .ledger-tick {
+    position: absolute;
+    inset-inline-start: -1px;
+    top: 1.75rem;
+    width: 7px;
+    height: 1px;
+    background: var(--rule);
+    transition:
+      width 160ms var(--ease),
+      background-color 160ms var(--ease);
+  }
+
+  .ledger-row:hover .ledger-tick,
+  .ledger-row:focus-within .ledger-tick,
+  .ledger-row.is-focused .ledger-tick {
+    width: 12px;
+    background: var(--accent);
+  }
+
+  .empty {
+    padding-block: 1rem;
+    border-top: 1px solid var(--rule);
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  @media (max-width: 36rem) {
+    .ledger-row {
+      grid-template-columns: 1fr;
+    }
+
+    .ledger-margin {
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 0.9rem 0 0.2rem 1rem;
+      border-inline-start: 1px solid var(--rule);
+      text-align: start;
+    }
+
+    .ledger-stamp {
+      flex-direction: row;
+      gap: 0.5rem;
+    }
+
+    .ledger-body {
+      padding-top: 0.35rem;
+      padding-inline-start: 1rem;
+    }
+
+    .ledger-tick {
+      top: 0.85rem;
+    }
+  }
+</style>

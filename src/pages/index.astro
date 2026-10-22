@@ -3,6 +3,7 @@ import { url } from '../lib/url';
 import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
 import { getPosts } from '../lib/posts';
+import { GOALS } from '../data/now';
 
 const essays = (await getPosts('essays')).slice(0, 5);
 const notes = (await getPosts('notes')).slice(0, 6);
@@ -21,6 +22,54 @@ const notes = (await getPosts('notes')).slice(0, 6);
         Essays are slow and rewritten until they’re true. Notes are fast — things I learned this
         week, written down before I forget them. <a href={url("/about/")}>More about me</a>.
       </p>
+    </section>
+
+    <section class="block" aria-labelledby="now-heading">
+      <div class="section-head">
+        <h2 id="now-heading" class="eyebrow">Now</h2>
+        <a href={url("/now/")}>/now →</a>
+      </div>
+      <ol class="now-rail" role="list">
+        {
+          GOALS.map((goal) => {
+            const active =
+              goal.steps.find((s) => s.state === 'active') ??
+              goal.steps[goal.steps.length - 1];
+            return (
+              <li>
+                <a href={url(`/now/#${goal.id}`)} class="rail-row">
+                  <div class="rail-top">
+                    <span class="goal-title">{goal.title}</span>
+                    <span class="schematic" aria-hidden="true">
+                      {goal.steps.map((step, idx) => (
+                        <>
+                          {idx > 0 && (
+                            <span
+                              class:list={[
+                                'seg',
+                                { 'seg--done': step.state === 'done' || step.state === 'active' },
+                              ]}
+                            />
+                          )}
+                          <span class:list={['node', `node--${step.state}`]} />
+                        </>
+                      ))}
+                    </span>
+                  </div>
+                  {active && (
+                    <div class="rail-active">
+                      <span class="active-mark mono" aria-hidden="true">
+                        ◉
+                      </span>
+                      <span class="active-label">{active.label}</span>
+                    </div>
+                  )}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ol>
     </section>
 
     <section class="block" aria-labelledby="essays-heading">
@@ -94,9 +143,136 @@ const notes = (await getPosts('notes')).slice(0, 6);
     margin-block-start: var(--space-xl);
   }
 
+  /* ─── Compact Now / Goals schematic rail ──────────────────────────────── */
+  .now-rail {
+    padding: 0;
+    list-style: none;
+  }
+
+  .now-rail li + li {
+    border-top: 1px solid var(--rule);
+  }
+
+  .rail-row {
+    display: grid;
+    grid-template-columns: minmax(11rem, 15rem) 1fr;
+    column-gap: var(--space-m);
+    row-gap: 0.25rem;
+    align-items: baseline;
+    padding: 0.85rem 0.65rem;
+    margin-inline: -0.65rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition:
+      background-color 140ms ease,
+      color 140ms ease;
+  }
+
+  .rail-row:hover,
+  .rail-row:focus-visible {
+    background: var(--hover);
+  }
+
+  .rail-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .goal-title {
+    font-size: var(--step-0);
+    font-weight: 450;
+    color: var(--ink);
+    transition: color 140ms ease;
+  }
+
+  .rail-row:hover .goal-title,
+  .rail-row:focus-visible .goal-title {
+    color: var(--accent);
+  }
+
+  .schematic {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .seg {
+    width: 14px;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .seg--done {
+    background: color-mix(in oklab, var(--ink) 45%, var(--rule));
+  }
+
+  .node {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .node--done {
+    background: var(--ink);
+  }
+
+  .node--active {
+    width: 7px;
+    height: 7px;
+    background: var(--accent);
+    box-shadow:
+      0 0 0 2px var(--paper),
+      0 0 0 3px var(--accent);
+  }
+
+  .rail-row:hover .node--active {
+    box-shadow:
+      0 0 0 2px var(--hover),
+      0 0 0 3px var(--accent);
+  }
+
+  .node--next {
+    background: var(--paper);
+    border: 1px solid var(--muted);
+  }
+
+  .rail-active {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    font-size: var(--step--1);
+    color: var(--muted);
+    min-width: 0;
+  }
+
+  .active-mark {
+    color: var(--accent);
+    font-size: 0.72rem;
+    flex-shrink: 0;
+  }
+
+  .active-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .empty {
     padding-block: 1rem;
     color: var(--muted);
     font-style: italic;
+  }
+
+  @media (max-width: 38rem) {
+    .rail-row {
+      grid-template-columns: 1fr;
+    }
+
+    .active-label {
+      white-space: normal;
+    }
   }
 </style>

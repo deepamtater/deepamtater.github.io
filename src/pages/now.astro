@@ -1,0 +1,152 @@
+---
+import Base from '../layouts/Base.astro';
+import { GOALS } from '../data/now';
+---
+
+<Base title="Now" description="Current focus, active goals, and milestones.">
+  <div class="wrap" data-article>
+    <header class="page-head">
+      <h1>Now</h1>
+    </header>
+
+    <div class="spine">
+      {
+        GOALS.map((goal, idx) => (
+          <section
+            id={goal.id}
+            class="goal-group"
+            aria-labelledby={`goal-${goal.id}`}
+          >
+            <div class="goal-head">
+              <span class="goal-idx mono">{String(idx + 1).padStart(2, '0')}</span>
+              <div class="goal-title-row">
+                <h2 id={`goal-${goal.id}`}>{goal.title}</h2>
+                {goal.horizon && <span class="horizon mono">{goal.horizon}</span>}
+              </div>
+            </div>
+
+            <ol class="steps" role="list">
+              {goal.steps.map((step) => (
+                <li class:list={['step', `step--${step.state}`]}>
+                  <span class="step-marker" aria-hidden="true">
+                    {step.state === 'done' ? '●' : step.state === 'active' ? '◉' : '○'}
+                  </span>
+                  <span class="step-label">{step.label}</span>
+                  {step.state === 'active' && <span class="step-tag mono">now</span>}
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))
+      }
+    </div>
+  </div>
+</Base>
+
+<style>
+  .spine {
+    position: relative;
+    border-top: 1px solid var(--rule);
+  }
+
+  .goal-group {
+    padding-block: var(--space-l);
+    border-bottom: 1px solid var(--rule);
+    scroll-margin-top: 2rem;
+  }
+
+  .goal-head {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    align-items: baseline;
+  }
+
+  .goal-idx {
+    color: var(--muted);
+  }
+
+  .goal-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem var(--space-s);
+  }
+
+  h2 {
+    font-size: var(--step-1);
+    font-weight: 450;
+    color: var(--ink);
+  }
+
+  .horizon {
+    color: var(--muted);
+  }
+
+  .steps {
+    position: relative;
+    margin-block-start: var(--space-s);
+    margin-inline-start: 0.35rem;
+    padding-inline-start: 2.15rem;
+    border-inline-start: 1px solid var(--rule);
+    list-style: none;
+  }
+
+  .step {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-s);
+    padding: 0.48rem 0.55rem;
+    margin-inline: -0.55rem;
+    border-radius: 3px;
+    transition: background-color 140ms ease;
+  }
+
+  .step:hover {
+    background: var(--hover);
+  }
+
+  .step-marker {
+    position: absolute;
+    inset-inline-start: -2.15rem;
+    transform: translateX(-50%);
+    width: 1.1rem;
+    text-align: center;
+    background: var(--paper);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.2;
+  }
+
+  .step--done .step-marker {
+    color: var(--ink);
+  }
+
+  .step--done .step-label {
+    color: var(--muted);
+  }
+
+  .step--active .step-marker {
+    color: var(--accent);
+  }
+
+  .step--active .step-label {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .step--next .step-marker {
+    color: var(--muted);
+  }
+
+  .step--next .step-label {
+    color: var(--muted);
+  }
+
+  .step-tag {
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+</style>

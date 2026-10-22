@@ -29,7 +29,6 @@ import { SITE } from '../site.config';
         you.
       </p>
 
-      <h2>Elsewhere</h2>
       <dl class="elsewhere">
         {
           SITE.socials.map(({ label, handle, href }) => (
@@ -89,7 +88,7 @@ import { SITE } from '../site.config';
 
 <style>
   .elsewhere {
-    margin-block-start: 1rem;
+    margin-block-start: var(--space-l);
     border-top: 1px solid var(--rule);
   }
 
