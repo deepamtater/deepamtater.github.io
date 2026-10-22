@@ -1,0 +1,74 @@
+---
+import { url } from '../lib/url';
+interface Props {
+  tags: readonly string[];
+  counts?: Record<string, number>;
+  filter?: boolean;
+  current?: string;
+}
+
+const { tags, counts, filter = false, current } = Astro.props;
+---
+
+<ul class="tags" role="list">
+  {
+    tags.map((tag) => (
+      <li>
+        <a
+          href={url(`/tags/${tag}/`)}
+          data-filter={filter ? tag : undefined}
+          aria-current={current === tag ? 'page' : undefined}
+        >
+          <span aria-hidden="true">#</span>
+          {tag}
+          {counts && <span class="count">{counts[tag] ?? 0}</span>}
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.15em;
+    padding: 0.3rem 0.65rem;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: 0.02em;
+    color: var(--muted);
+    text-decoration: none;
+    transition:
+      color 160ms var(--ease),
+      border-color 160ms var(--ease),
+      background 160ms var(--ease);
+  }
+
+  a:hover {
+    color: var(--ink);
+    border-color: color-mix(in oklab, var(--ink) 30%, var(--rule));
+  }
+
+  a[aria-current='page'],
+  a[aria-pressed='true'] {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .count {
+    margin-inline-start: 0.35em;
+    opacity: 0.6;
+  }
+</style>
