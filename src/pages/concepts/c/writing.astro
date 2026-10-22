@@ -1,0 +1,17 @@
+---
+import Concept from '../../../layouts/Concept.astro';
+import FullStop from '../../../components/concepts/FullStop.astro';
+import '../../../styles/concepts/c.css';
+import { url } from '../../../lib/url';
+---
+
+<Concept concept="c" title="Writing">
+  <main class="page solo">
+    <h1 data-line><span class="t">Nothing yet</span></h1>
+    <p class="sub">
+      The first essays are being rewritten until they hold up. <a href={url('/rss.xml')} data-stop>Follow by RSS</a>,
+      or go back to <a href={url('/concepts/c/')} data-stop>Dee Tater</a>.
+    </p>
+  </main>
+  <FullStop />
+</Concept>
