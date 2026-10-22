@@ -98,10 +98,10 @@ export const GET: APIRoute = async () => {
     },
     {
       title: '2AM',
-      snippet: 'Late-night thoughts and half-formed ideas I’m still figuring out.',
+      snippet: 'Raw, untitled late-night thoughts, timestamped as they happen.',
       kind: 'Page',
       href: url('/2am/'),
-      keywords: '2am thoughts stream ledger night',
+      keywords: '2am thoughts stream ledger night untitled',
     },
     {
       title: 'About Deepam Tater',
@@ -112,25 +112,24 @@ export const GET: APIRoute = async () => {
     },
     {
       title: 'Writing',
-      snippet: 'Essays and short notes, newest first.',
+      snippet: 'Essays and short field notes, newest first.',
       kind: 'Page',
       href: url('/writing/'),
       keywords: 'writing archive essays notes all',
     },
     {
       title: 'Essays',
-      snippet: 'Longer pieces on startups, software, books, and life.',
+      snippet: 'Long, finished arguments rewritten until they hold up.',
       kind: 'Page',
       href: url('/essays/'),
       keywords: 'essays long-form writing startups software books life',
     },
     {
       title: 'Notes',
-      snippet:
-        'Short things I learned while building or reading, written down before I forget them.',
+      snippet: 'Short field notes, benchmarks, and takeaways from building and reading.',
       kind: 'Page',
       href: url('/notes/'),
-      keywords: 'notes short learnings reading building',
+      keywords: 'notes short field notes benchmarks takeaways reading building',
     },
   ];
 

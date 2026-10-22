@@ -11,7 +11,7 @@ const rendered = await Promise.all(
     Content: t.entry ? (await render(t.entry)).Content : null,
   })),
 );
-const description = 'Late-night thoughts and half-formed ideas I’m still figuring out.';
+const description = 'Raw, untitled late-night thoughts, timestamped as they happen.';
 const siteOrigin = (Astro.site ?? new URL('https://deepamtater.github.io')).origin;
 const pageCanonical = new URL(url('/2am/'), siteOrigin).href;
 

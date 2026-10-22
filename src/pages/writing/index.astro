@@ -12,7 +12,7 @@ const counts = Object.fromEntries(
   TOPICS.map((t) => [t, posts.filter((p) => p.data.tags.includes(t)).length]),
 );
 const tags = TOPICS.filter((t) => counts[t] > 0);
-const description = 'Essays and short notes, newest first.';
+const description = 'Essays and short field notes, newest first.';
 const collectionItems = posts.map((p) => ({
   name: p.data.title,
   url: postUrl(p),

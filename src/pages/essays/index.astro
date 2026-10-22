@@ -5,7 +5,7 @@ import PostList from '../../components/PostList.astro';
 import { getPosts, postUrl } from '../../lib/posts';
 
 const posts = await getPosts('essays');
-const description = 'Longer pieces on startups, software, books, and life.';
+const description = 'Long, finished arguments rewritten until they hold up.';
 const collectionItems = posts.map((p) => ({
   name: p.data.title,
   url: postUrl(p),

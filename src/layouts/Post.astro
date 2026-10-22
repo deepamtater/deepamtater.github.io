@@ -58,7 +58,9 @@ const blogPostingNode = {
   mainEntityOfPage: { '@id': `${canonicalUrl}#webpage` },
   speakable: {
     '@type': 'SpeakableSpecification',
-    cssSelector: ['article h1', '.post-summary', '.prose p:first-of-type'],
+    cssSelector: isEssay
+      ? ['article h1', '.post-summary', '.prose p:first-of-type']
+      : ['article h1', '.prose p:first-of-type'],
   },
 };
 ---
@@ -72,7 +74,7 @@ const blogPostingNode = {
   progress
   extraSchemaNodes={[blogPostingNode]}
 >
-  <article class="wrap">
+  <article class:list={['wrap', { 'post--note': !isEssay }]}>
     <header class="post-head">
       <h1>{post.data.title}</h1>
       {isEssay && <p class="dek post-summary">{post.data.summary}</p>}
@@ -80,8 +82,14 @@ const blogPostingNode = {
         <a href={url(`/${post.collection}/`)}>{kindLabel(post)}</a>
         <span aria-hidden="true">·</span>
         <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
-        <span aria-hidden="true">·</span>
-        <span>{readingTime(post.body)}</span>
+        {
+          isEssay && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>{readingTime(post.body)}</span>
+            </>
+          )
+        }
       </p>
     </header>
 
@@ -135,11 +143,21 @@ const blogPostingNode = {
     border-bottom: 1px solid var(--rule);
   }
 
+  .post--note .post-head {
+    margin-block-end: var(--space-m);
+    padding-block-end: var(--space-s);
+  }
+
   h1 {
     font-size: var(--step-4);
     font-weight: 400;
     line-height: 1.08;
     letter-spacing: -0.025em;
+  }
+
+  .post--note h1 {
+    font-size: var(--step-3);
+    line-height: 1.12;
   }
 
   .dek {
@@ -158,6 +176,10 @@ const blogPostingNode = {
     font-size: var(--step--1);
     font-variant-numeric: tabular-nums;
     color: var(--muted);
+  }
+
+  .post--note .post-meta {
+    margin-block-start: 0.65rem;
   }
 
   .post-meta a {

@@ -1,10 +1,22 @@
 # Deepam Tater · Personal Website
 
-Static [Astro](https://astro.build) site deployed at [deepamtater.github.io](https://deepamtater.github.io). Everything is plain Markdown and TypeScript files in this repo; pushing to `main` builds and deploys automatically via GitHub Actions.
+Static [Astro](https://astro.build) site deployed at [deepamtater.github.io](https://deepamtater.github.io). Everything is plain Markdown and TypeScript in this repo; pushing to `main` builds and deploys automatically via GitHub Actions.
 
 ---
 
-## 1. Quick Start
+## 1. Essays vs. Notes vs. 2AM — Which One to Write?
+
+| Format | Purpose | Typical Length | Page & Layout Structure | Where It Lives |
+| :--- | :--- | :--- | :--- | :--- |
+| **Essays** (`/essays/`) | **Long, finished arguments** — ideas rewritten over days or weeks until the thesis holds up on its own. | 800–3,000 words | Full article page with title, italic summary dek, date, reading time (`4 min read`), and topic tags. | `src/content/essays/<slug>.md` |
+| **Notes** (`/notes/`) | **Short field notes & concrete takeaways** — a specific paper, benchmark, book insight, or engineering lesson written down while building or reading. | 150–600 words | Crisp field-note page: starts directly with the prose right under the title + date (no summary dek above the body, no reading-time badge). | `src/content/notes/<slug>.md` |
+| **2AM** (`/2am/`) | **Raw, untitled late-night thoughts** — half-formed ideas, honest admissions, and observations that do not need a title or an article page. | 1–5 sentences | Continuous nocturnal margin-ledger stream, timestamped to the minute (`02:14 AM · Oct 19, 2026`) with `#id` permalinks and `j`/`k` navigation. | `src/data/thoughts.ts` (or `src/content/thoughts/<slug>.md`) |
+
+> **Automatic discovery:** Every Essay, Note, and 2AM thought you add is automatically indexed at build time into `/search-index.json` (instant `/` site search), `/rss.xml` (full-text RSS), `/sitemap-index.xml`, `/llms.txt`, `/llms-full.txt`, and JSON-LD `@graph` structured data. Zero manual steps required.
+
+---
+
+## 2. Quick Start
 
 Requires Node 22.23.4+ (Node 24 recommended; see `.nvmrc`).
 
@@ -17,7 +29,7 @@ npm run build    # Build production static files into dist/
 
 ---
 
-## 2. How to Add an Essay (`src/content/essays/<slug>.md`)
+## 3. How to Add an Essay (`src/content/essays/<slug>.md`)
 
 Create a `.md` (or `.mdx`) file in `src/content/essays/`. The filename becomes the URL:
 `src/content/essays/taste-cannot-be-prompted.md` -> `/essays/taste-cannot-be-prompted/`
@@ -35,12 +47,12 @@ Write your essay in Markdown here.
 ```
 
 - **Allowed `tags`**: `startups`, `engineering`, `reading`, `life` (defined in `src/site.config.ts`).
-- **`summary`**: Shown as the italic subtitle under the essay title, on `/essays/`, in search, and in RSS.
-- **`draft: true`**: Visible in `npm run dev`, hidden from production builds until set to `false`.
+- **`summary`**: Displayed as the italic subtitle under the essay title on the essay page, on `/essays/`, in search, and in RSS/JSON-LD.
+- **`draft: true`**: Visible locally in `npm run dev`, hidden from production builds until set to `false`.
 
 ---
 
-## 3. How to Add a Note (`src/content/notes/<slug>.md`)
+## 4. How to Add a Note (`src/content/notes/<slug>.md`)
 
 Create a `.md` file in `src/content/notes/`. The filename becomes the URL:
 `src/content/notes/more-memory-worse-agents.md` -> `/notes/more-memory-worse-agents/`
@@ -54,17 +66,37 @@ tags: [engineering]
 draft: false
 ---
 
-Write your note here.
+Start directly with the observation, benchmark, or takeaway.
 ```
+
+- **`summary`**: Used for `/notes/` list previews, search snippets, and SEO/RSS metadata (not repeated above the note body on the note page itself so the note reads immediately).
 
 ---
 
-## 4. How to Add a 2AM Thought (`/2am/`)
+## 5. How to Add Images to Essays and Notes (`public/images/`)
 
-You can add a 2AM thought in two ways:
+1. **Drop your image file into `public/images/`**:
+   For example: `public/images/context-tax-chart.png` (PNG, JPG, WebP, or SVG).
+2. **Embed a standard image in Markdown**:
+   ```markdown
+   ![Quadratic token accumulation across 30 turns](/images/context-tax-chart.png)
+   ```
+3. **Embed an image with a visible italic caption below it**:
+   Use `<figure>` and `<figcaption>` directly in your Markdown file:
+   ```html
+   <figure>
+     <img src="/images/context-tax-chart.png" alt="Quadratic token accumulation across 30 turns" loading="lazy" />
+     <figcaption>Cumulative tokens billed across a 30-turn coding session when past turns are re-read on every prompt.</figcaption>
+   </figure>
+   ```
+   Both plain Markdown images and `<figure>` blocks automatically get responsive sizing (`max-width: 100%`), a subtle `1px` border (`var(--rule)`), `2rem` vertical spacing, and muted italic caption typography in light and dark mode.
+
+---
+
+## 6. How to Add a 2AM Thought (`/2am/`)
 
 ### Option A: Quick inline entry in `src/data/thoughts.ts` (fastest)
-Prepend a new object to `THOUGHTS` in `src/data/thoughts.ts`:
+Prepend a new object to `THOUGHTS` at the top of `src/data/thoughts.ts`:
 
 ```ts
 export const THOUGHTS: InlineThought[] = [
@@ -72,14 +104,14 @@ export const THOUGHTS: InlineThought[] = [
     id: '2026-10-23-0210',
     date: '2026-10-23T02:10:00',
     time: '02:10 AM',
-    html: '<p>Your late-night thought here.</p>',
+    html: '<p>Your raw late-night thought here.</p>',
   },
   // ...existing thoughts
 ];
 ```
 
 ### Option B: Markdown file in `src/content/thoughts/<slug>.md`
-For multi-paragraph thoughts or code blocks, create `src/content/thoughts/2026-10-23-idea.md`:
+For multi-paragraph riffs or code blocks, create `src/content/thoughts/2026-10-23-idea.md`:
 
 ```markdown
 ---
@@ -93,9 +125,9 @@ Your Markdown thought here.
 
 ---
 
-## 5. How to Update `Now` & `Previously` (`src/data/now.ts`)
+## 7. How to Update `Now` & `Previously` (`src/data/now.ts`)
 
-All data for the `/now/` page (and the `/topics/reading/` bookshelf) lives in **`src/data/now.ts`**:
+All data for `/now/` (and the `/topics/reading/` bookshelf) lives in **`src/data/now.ts`**:
 
 - **Update current books (`CURRENTLY_READING`)**:
   ```ts
@@ -107,7 +139,7 @@ All data for the `/now/` page (and the `/topics/reading/` bookshelf) lives in **
 - **Move a finished book to `PREVIOUSLY_READ`**:
   Cut the book from `CURRENTLY_READING` and add it to the top of `PREVIOUSLY_READ`.
 - **Move a finished LLM study week into `PREVIOUSLY.studied`**:
-  1. Update the active week in `src/pages/now.astro` (and the homepage `Now` aside in `src/pages/index.astro`) from `(Week 1)` to `(Week 2)`.
+  1. Update `(Week 1)` to `(Week 2)` in `src/pages/now.astro` and `src/pages/index.astro`.
   2. Add the completed week to `PREVIOUSLY.studied` in `src/data/now.ts`:
      ```ts
      export const PREVIOUSLY: PreviouslyArchive = {
@@ -120,13 +152,13 @@ All data for the `/now/` page (and the `/topics/reading/` bookshelf) lives in **
        read: PREVIOUSLY_READ,
      };
      ```
-  The `Studied` row appears automatically at the top of `PREVIOUSLY` on `/now/` and is indexed in site search.
+  The `Studied` row renders automatically at the top of `PREVIOUSLY` on `/now/`.
 - **Edit `Not doing`**: Update the `NOT_DOING` string in `src/data/now.ts`.
 
 ---
 
-## 6. How to Edit `About` & Site Links
+## 8. How to Edit `About` & Site Links
 
-- **Bio prose & inline contact links**: Edit `src/pages/about.astro`.
+- **Bio prose, attention-span line, & inline contact links**: Edit `src/pages/about.astro`.
 - **Site name, email, navigation tabs, social links, and allowed topics**: Edit `src/site.config.ts`.
 - **Footer links**: Edit `src/components/Footer.astro`.
