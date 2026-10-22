@@ -45,7 +45,7 @@ const related = relatedPosts(
     <header class="post-head">
       <h1>{post.data.title}</h1>
       {isEssay && <p class="dek">{post.data.summary}</p>}
-      <p class="post-meta mono">
+      <p class="post-meta">
         <a href={url(`/${post.collection}/`)}>{kindLabel(post)}</a>
         <span aria-hidden="true">·</span>
         <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
@@ -66,7 +66,7 @@ const related = relatedPosts(
           <nav class="pager" aria-label={`More ${post.collection}`}>
             {older ? (
               <a href={postUrl(older)} rel="prev">
-                <span class="pager-label mono">Previous</span>
+                <span class="pager-label">Previous</span>
                 <span class="pager-title">{older.data.title}</span>
               </a>
             ) : (
@@ -74,7 +74,7 @@ const related = relatedPosts(
             )}
             {newer && (
               <a href={postUrl(newer)} rel="next" class="next">
-                <span class="pager-label mono">Next</span>
+                <span class="pager-label">Next</span>
                 <span class="pager-title">{newer.data.title}</span>
               </a>
             )}
@@ -124,6 +124,8 @@ const related = relatedPosts(
     display: flex;
     flex-wrap: wrap;
     gap: 0.55em;
+    font-size: var(--step--1);
+    font-variant-numeric: tabular-nums;
     color: var(--muted);
   }
 
@@ -167,6 +169,8 @@ const related = relatedPosts(
   }
 
   .pager-label {
+    font-size: var(--step--1);
+    font-style: italic;
     color: var(--muted);
   }
 

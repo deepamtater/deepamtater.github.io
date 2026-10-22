@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getPosts, kindLabel, postUrl } from '../lib/posts';
 import { getThoughts } from '../lib/thoughts';
-import { CURRENTLY_READING, NOW_SECTIONS, PREVIOUSLY_READ } from '../data/now';
+import { CURRENTLY_READING, NOW_SECTIONS, PREVIOUSLY } from '../data/now';
 import { SITE, TOPICS } from '../site.config';
 import { url } from '../lib/url';
 
@@ -45,7 +45,23 @@ export const GET: APIRoute = async () => {
       snippet: sec.text,
       kind: 'Now' as const,
       href: url(`/now/#${sec.id}`),
-      keywords: `now ${sec.title} ${sec.note ?? ''} ${sec.text}`,
+      keywords: `now ${sec.label} ${sec.title} ${sec.note ?? ''} ${sec.text}`,
+    })),
+
+    ...PREVIOUSLY.studied.map((item) => ({
+      title: 'Previously studied',
+      snippet: item,
+      kind: 'Now' as const,
+      href: url('/now/#previously-heading'),
+      keywords: `previously studied llms ${item}`,
+    })),
+
+    ...PREVIOUSLY.built.map((item) => ({
+      title: 'Previously built',
+      snippet: item,
+      kind: 'Now' as const,
+      href: url('/now/#previously-heading'),
+      keywords: `previously built ${item}`,
     })),
 
     ...CURRENTLY_READING.map((book) => ({
@@ -56,11 +72,11 @@ export const GET: APIRoute = async () => {
       keywords: `reading book currently ${book.title} ${book.author}`,
     })),
 
-    ...PREVIOUSLY_READ.map((book) => ({
+    ...PREVIOUSLY.read.map((book) => ({
       title: book.title,
       snippet: book.author,
       kind: 'Reading' as const,
-      href: url('/now/#reading'),
+      href: url('/now/#previously-heading'),
       keywords: `reading book bookshelf previously read ${book.title} ${book.author}`,
     })),
 
@@ -74,10 +90,10 @@ export const GET: APIRoute = async () => {
 
     {
       title: 'Now',
-      snippet: 'What I’m working on, studying, and reading right now in Jaipur.',
+      snippet: 'What I’m working on, studying, and reading right now!',
       kind: 'Page',
       href: url('/now/'),
-      keywords: 'now puvio everything about llms from a to z week 1 reading books jaipur',
+      keywords: 'now puvio everything about llms from a to z week 1 reading books',
     },
     {
       title: '2AM',

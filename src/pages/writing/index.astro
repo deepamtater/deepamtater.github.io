@@ -20,7 +20,7 @@ const description = 'Essays and short notes, newest first.';
     <header class="page-head">
       <div class="head-row">
         <h1>Writing</h1>
-        <nav class="kind-nav mono" aria-label="Writing format">
+        <nav class="kind-nav" aria-label="Writing format">
           <a href={url("/writing/")} aria-current="page">All</a>
           <span aria-hidden="true">·</span>
           <a href={url("/essays/")}>Essays</a>
@@ -35,7 +35,7 @@ const description = 'Essays and short notes, newest first.';
       tags.length > 0 && (
         <div class="filter" role="group" aria-label="Topics">
           <TagList tags={tags} counts={counts} filter />
-          <p class="status mono" aria-live="polite"></p>
+          <p class="status" aria-live="polite"></p>
         </div>
       )
     }
@@ -43,9 +43,7 @@ const description = 'Essays and short notes, newest first.';
     {
       years.map(([year, items]) => (
         <section class="year" data-year aria-labelledby={`y-${year}`}>
-          <h2 id={`y-${year}`} class="mono">
-            {year}
-          </h2>
+          <h2 id={`y-${year}`}>{year}</h2>
           <PostList posts={items} showKind shortDate />
         </section>
       ))
@@ -116,6 +114,7 @@ const description = 'Essays and short notes, newest first.';
     display: inline-flex;
     align-items: baseline;
     gap: 0.45rem;
+    font-size: var(--step--1);
     color: var(--muted);
   }
 
@@ -144,6 +143,7 @@ const description = 'Essays and short notes, newest first.';
   }
 
   .status {
+    font-size: var(--step--1);
     color: var(--muted);
   }
 
@@ -170,7 +170,10 @@ const description = 'Essays and short notes, newest first.';
 
   .year h2 {
     padding-block-start: 0.9rem;
-    font-weight: 500;
+    font-size: var(--step-0);
+    font-weight: 400;
+    font-style: italic;
+    font-variant-numeric: tabular-nums;
     color: var(--muted);
   }
 

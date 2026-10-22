@@ -12,6 +12,19 @@ export interface NowSection {
   href?: string;
 }
 
+export interface PreviouslyArchive {
+  /**
+   * Completed LLM roadmap weeks or study milestones.
+   * Example when moving to Week 2:
+   * studied: ['Week 1 · Neural networks and backpropagation by hand from blank files.'],
+   */
+  studied: string[];
+  /** Completed product or engineering milestones. */
+  built: string[];
+  /** Finished books. */
+  read: Book[];
+}
+
 export const CURRENTLY_READING: Book[] = [
   { title: 'Zero to One', author: 'Peter Thiel' },
   { title: 'LLM Engineer’s Handbook', author: 'Paul Iusztin & Maxime Labonne' },
@@ -24,6 +37,12 @@ export const PREVIOUSLY_READ: Book[] = [
   { title: 'How to Win Friends and Influence People', author: 'Dale Carnegie' },
   { title: 'Think and Grow Rich', author: 'Napoleon Hill' },
 ];
+
+export const PREVIOUSLY: PreviouslyArchive = {
+  studied: [],
+  built: [],
+  read: PREVIOUSLY_READ,
+};
 
 export const NOW_SECTIONS: NowSection[] = [
   {
