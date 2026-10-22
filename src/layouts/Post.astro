@@ -52,9 +52,14 @@ const blogPostingNode = {
   articleSection: kindLabel(post),
   inLanguage: SITE.locale,
   url: canonicalUrl,
+  isPartOf: { '@id': `${siteOrigin}/#website` },
   author: { '@id': `${siteOrigin}/#person` },
   publisher: { '@id': `${siteOrigin}/#person` },
   mainEntityOfPage: { '@id': `${canonicalUrl}#webpage` },
+  speakable: {
+    '@type': 'SpeakableSpecification',
+    cssSelector: ['article h1', '.post-summary', '.prose p:first-of-type'],
+  },
 };
 ---
 
@@ -70,7 +75,7 @@ const blogPostingNode = {
   <article class="wrap">
     <header class="post-head">
       <h1>{post.data.title}</h1>
-      {isEssay && <p class="dek">{post.data.summary}</p>}
+      {isEssay && <p class="dek post-summary">{post.data.summary}</p>}
       <p class="post-meta">
         <a href={url(`/${post.collection}/`)}>{kindLabel(post)}</a>
         <span aria-hidden="true">·</span>

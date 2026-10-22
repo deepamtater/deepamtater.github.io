@@ -76,4 +76,5 @@ export async function getThoughts(): Promise<RenderedThought[]> {
   });
 }
 
+export const getPublishedThoughts = getThoughts;
 export { render };

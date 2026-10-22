@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { formatDate, getPosts, postUrl } from '../lib/posts';
-import { getThoughts } from '../lib/thoughts';
+import { getPublishedThoughts } from '../lib/thoughts';
 import { CURRENTLY_READING, NOT_DOING, PREVIOUSLY } from '../data/now';
 import { SITE } from '../site.config';
 import { url } from '../lib/url';
@@ -12,7 +12,7 @@ export const GET: APIRoute = async (context) => {
   const [essays, notes, thoughts] = await Promise.all([
     getPosts('essays'),
     getPosts('notes'),
-    getThoughts(),
+    getPublishedThoughts(),
   ]);
 
   const lines: string[] = [
@@ -28,6 +28,7 @@ export const GET: APIRoute = async (context) => {
     `- Now: ${fullUrl('/now/')}`,
     `- Writing: ${fullUrl('/writing/')}`,
     `- 2AM: ${fullUrl('/2am/')}`,
+    `- Full Corpus: ${fullUrl('/llms-full.txt')}`,
     `- RSS: ${fullUrl('/rss.xml')}`,
     ...SITE.socials.map((s) => `- ${s.label}: ${s.href}`),
     `- Email: mailto:${SITE.email}`,
