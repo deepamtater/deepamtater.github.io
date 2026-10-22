@@ -1,14 +1,14 @@
 import type { APIRoute } from 'astro';
 import { getPosts, kindLabel, postUrl } from '../lib/posts';
 import { getThoughts } from '../lib/thoughts';
-import { GOALS } from '../data/now';
+import { CURRENTLY_READING, GOALS, PREVIOUSLY_READ } from '../data/now';
 import { SITE, TOPICS } from '../site.config';
 import { url } from '../lib/url';
 
 export interface SearchItem {
   title: string;
   snippet: string;
-  kind: 'Essay' | 'Note' | '2AM' | 'Now' | 'Topic' | 'Page';
+  kind: 'Essay' | 'Note' | '2AM' | 'Now' | 'Reading' | 'Topic' | 'Page';
   href: string;
   keywords?: string;
 }
@@ -40,16 +40,29 @@ export const GET: APIRoute = async () => {
       keywords: `${t.monthYear} 2am thought ${t.plainText}`,
     })),
 
-    ...GOALS.map((goal) => {
-      const active = goal.steps.find((s) => s.state === 'active') ?? goal.steps[0];
-      return {
-        title: goal.title,
-        snippet: active ? `Active: ${active.label}` : '',
-        kind: 'Now' as const,
-        href: url(`/now/#${goal.id}`),
-        keywords: `now goal progress ${goal.horizon ?? ''} ${goal.steps.map((s) => s.label).join(' ')}`,
-      };
-    }),
+    ...GOALS.map((goal) => ({
+      title: goal.title,
+      snippet: goal.summary,
+      kind: 'Now' as const,
+      href: url(`/now/#${goal.id}`),
+      keywords: `now goal progress ${goal.horizon ?? ''} ${goal.summary} ${goal.steps.map((s) => s.label).join(' ')}`,
+    })),
+
+    ...CURRENTLY_READING.map((book) => ({
+      title: book.title,
+      snippet: `${book.author} · Currently reading`,
+      kind: 'Reading' as const,
+      href: url('/now/#reading'),
+      keywords: `reading book currently ${book.title} ${book.author}`,
+    })),
+
+    ...PREVIOUSLY_READ.map((book) => ({
+      title: book.title,
+      snippet: book.author,
+      kind: 'Reading' as const,
+      href: url('/now/#reading'),
+      keywords: `reading book bookshelf previously read ${book.title} ${book.author}`,
+    })),
 
     ...TOPICS.map((topic) => ({
       title: `#${topic}`,
@@ -61,10 +74,10 @@ export const GET: APIRoute = async () => {
 
     {
       title: 'Now',
-      snippet: 'Active goals, milestones, and current focus',
+      snippet: 'Puvio, Everything about LLMs, from A to Z (Week 1), and reading',
       kind: 'Page',
       href: url('/now/'),
-      keywords: 'now goals progress timeline current',
+      keywords: 'now puvio everything about llms from a to z week 1 reading books',
     },
     {
       title: '2AM',
@@ -75,10 +88,10 @@ export const GET: APIRoute = async () => {
     },
     {
       title: 'About Deepam Tater',
-      snippet: `Software, essays, notes · ${SITE.socials.map((s) => s.handle).join(' · ')} · ${SITE.email}`,
+      snippet: `Founder and engineer in Jaipur · Puvio · ${SITE.email}`,
       kind: 'Page',
       href: url('/about/'),
-      keywords: `about bio contact email x twitter linkedin github ${SITE.email}`,
+      keywords: `about deepam tater jaipur bikaner puvio puvio.app x twitter linkedin github ${SITE.socials.map((s) => s.handle).join(' ')} ${SITE.email}`,
     },
     {
       title: 'Writing',

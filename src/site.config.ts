@@ -1,13 +1,13 @@
 export const SITE = {
   name: 'Deepam Tater',
   title: 'Deepam Tater',
-  description:
-    'Essays and notes on startups, engineering, reading, and life — written to think more clearly.',
+  description: 'Essays and notes on startups, engineering, reading, and life.',
   author: 'Deepam Tater',
   locale: 'en',
   ogImage: '/og.png',
   email: 'connectwithdeepam@gmail.com',
   socials: [
+    { label: 'Puvio', handle: 'puvio.app', href: 'https://puvio.app' },
     { label: 'X', handle: '@justdeepam', href: 'https://x.com/justdeepam' },
     {
       label: 'LinkedIn',

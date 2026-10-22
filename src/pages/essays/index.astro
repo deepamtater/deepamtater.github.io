@@ -4,7 +4,7 @@ import PostList from '../../components/PostList.astro';
 import { getPosts } from '../../lib/posts';
 
 const posts = await getPosts('essays');
-const description = 'Long-form, evergreen pieces — rewritten until they hold up.';
+const description = 'Long-form essays, rewritten until they hold up.';
 ---
 
 <Base title="Essays" description={description}>

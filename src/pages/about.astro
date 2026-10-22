@@ -4,28 +4,28 @@ import Base from '../layouts/Base.astro';
 import { SITE } from '../site.config';
 ---
 
-<Base title="About" description="Who Deepam Tater is and why this site exists.">
+<Base title="About" description="About Deepam Tater.">
   <div class="wrap">
     <header class="page-head">
       <h1>About</h1>
     </header>
     <div class="prose">
       <p>
-        I’m Deepam Tater. I build software and use this site as a quiet place to think in public —
-        working through ideas on startups, systems, and the books I’m reading.
+        I’m Deepam Tater, a 22-year-old founder and engineer based in Jaipur (I grew up in Bikaner).
+        I’m building <a href="https://puvio.app" rel="noopener" target="_blank">Puvio</a> and
+        studying how language models work from the ground up.
       </p>
       <p>
-        There are two kinds of writing here. <a href={url("/essays/")}>Essays</a> are slow: I
-        rewrite them until the argument holds up cleanly on its own. <a href={url("/notes/")}
-          >Notes</a
-        > are shorter: a technical detail from the week, a passage worth keeping, or an observation
-        written down before it fades.
+        Writing is how I check whether I actually understand something.{' '}
+        <a href={url("/essays/")}>Essays</a> are slow pieces rewritten until the argument holds up
+        on its own. <a href={url("/notes/")}>Notes</a> are shorter observations on{' '}
+        <a href={url("/topics/startups/")}>startups</a>,{' '}
+        <a href={url("/topics/engineering/")}>software</a>,{' '}
+        <a href={url("/topics/reading/")}>books</a>, and <a href={url("/topics/life/")}>life</a>,
+        alongside late-night fragments on <a href={url("/2am/")}>2AM</a>.
       </p>
       <p>
-        Most pieces touch on <a href={url("/topics/startups/")}>startups</a>,{' '}
-        <a href={url("/topics/engineering/")}>engineering</a>,{' '}
-        <a href={url("/topics/reading/")}>reading</a>, or <a href={url("/topics/life/")}>life</a>. If
-        something here is useful — or if you think I’ve got something wrong — I’d love to hear from
+        If something here is useful, or if you think I have something wrong, I’d like to hear from
         you.
       </p>
 
