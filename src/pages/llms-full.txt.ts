@@ -27,8 +27,6 @@ export const GET: APIRoute = async (context) => {
     '',
     'This site is where I keep my notes in public. Essays are longer pieces on startups, software, books, and life. Notes are shorter takeaways from the week, and 2AM holds late-night thoughts I’m still working through.',
     '',
-    'I’m not on Instagram, Snapchat, or TikTok, and I don’t watch Reels or Shorts. I like having a working attention span.',
-    '',
     `Contact: ${SITE.email} | X: https://x.com/justdeepam | LinkedIn: https://www.linkedin.com/in/deepamtater/ | GitHub: https://github.com/dimension-drifter`,
     '',
     '---',

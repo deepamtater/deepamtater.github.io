@@ -108,7 +108,7 @@ export const GET: APIRoute = async () => {
       snippet: `Founder and fourth-year computer science undergraduate in Jaipur · Puvio · ${SITE.email}`,
       kind: 'Page',
       href: url('/about/'),
-      keywords: `about deepam tater jaipur bikaner btech computer science undergraduate puvio puvio.app x twitter linkedin github instagram insta snapchat tiktok reels shorts brainrot attention span ${SITE.socials.map((s) => s.handle).join(' ')} ${SITE.email}`,
+      keywords: `about deepam tater jaipur bikaner btech computer science undergraduate puvio puvio.app x twitter linkedin github ${SITE.socials.map((s) => s.handle).join(' ')} ${SITE.email}`,
     },
     {
       title: 'Writing',
