@@ -9,12 +9,14 @@ const rendered = await Promise.all(
     Content: t.entry ? (await render(t.entry)).Content : null,
   })),
 );
+const description = 'Late-night thoughts and half-formed ideas I’m still figuring out.';
 ---
 
-<Base title="2AM" description="Late-night thoughts, fragments, and observations.">
+<Base title="2AM" description={description}>
   <div class="wrap" data-article>
     <header class="page-head">
       <h1>2AM</h1>
+      <p>{description}</p>
     </header>
 
     {

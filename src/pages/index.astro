@@ -17,8 +17,10 @@ const posts = (await getPosts()).slice(0, 10);
         <a href={url("/topics/life/")}><em>life</em></a>.
       </h1>
       <p>
-        Essays are slow and rewritten until they’re true. Notes are fast, things I learned this
-        week written down before I forget them. <a href={url("/about/")}>More about me</a>.
+        Writing is how I check if I actually understand something. Longer pieces go in{' '}
+        <a href={url("/essays/")}>essays</a>, quick learnings go in{' '}
+        <a href={url("/notes/")}>notes</a>, and late-night thoughts go in{' '}
+        <a href={url("/2am/")}>2AM</a>. <a href={url("/about/")}>More about me</a>.
       </p>
     </section>
 
@@ -95,7 +97,7 @@ const posts = (await getPosts()).slice(0, 10);
 
   .intro p {
     margin-block-start: var(--space-m);
-    max-width: 52ch;
+    max-width: 54ch;
     color: var(--muted);
   }
 

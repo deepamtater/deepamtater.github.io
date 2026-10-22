@@ -62,13 +62,12 @@
       const isWordmark = el === wordmark;
       const isWordmarkActive = isWordmark && hovered === wordmark;
       const baseSize = Math.max(4.5, fs * (isWordmark ? 0.21 : 0.24));
-      const size = isWordmarkActive ? baseSize * 1.12 : baseSize;
+      const size = isWordmarkActive ? baseSize * 1.08 : baseSize;
       const baseline = rect.bottom - descentOf(style) * fs;
-      const nudgeX = isWordmarkActive ? 2.2 : 0;
-      const nudgeY = isWordmarkActive ? -0.6 : 0;
+      const nudgeX = isWordmarkActive ? 1.2 : 0;
       return {
         x: rect.right + fs * 0.08 + nudgeX + scrollX,
-        y: baseline - size + nudgeY + scrollY,
+        y: baseline - size + scrollY,
         size,
       };
     };

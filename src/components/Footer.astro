@@ -3,13 +3,14 @@ import { url } from '../lib/url';
 import { SITE } from '../site.config';
 
 const year = new Date().getFullYear();
+const footerSocials = SITE.socials.filter(({ label }) => label !== 'Puvio');
 ---
 
 <footer class="site-footer wrap">
   <p>© {year} {SITE.author}</p>
   <ul>
     {
-      SITE.socials.map(({ label, href }) => (
+      footerSocials.map(({ label, href }) => (
         <li>
           <a href={href} rel="me noopener" target="_blank">
             {label}
@@ -17,8 +18,6 @@ const year = new Date().getFullYear();
         </li>
       ))
     }
-    <li><a href={`mailto:${SITE.email}`}>Email</a></li>
-    <li><a href={url("/topics/")}>Topics</a></li>
     <li><a href={url("/rss.xml")}>RSS</a></li>
   </ul>
 </footer>

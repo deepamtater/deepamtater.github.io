@@ -5,8 +5,13 @@ import { SITE } from '../site.config';
 const path = Astro.url.pathname;
 const home = url('/');
 const isHome = path === home;
+const writingHref = url('/writing/');
+const essaysHref = url('/essays/');
+const notesHref = url('/notes/');
 const nav = SITE.nav.map(({ href, label }) => ({ href: url(href), label }));
-const isCurrent = (href: string) => path.startsWith(href);
+const isCurrent = (href: string) =>
+  path.startsWith(href) ||
+  (href === writingHref && (path.startsWith(essaysHref) || path.startsWith(notesHref)));
 const hasCurrent = nav.some(({ href }) => isCurrent(href));
 ---
 
@@ -19,9 +24,7 @@ const hasCurrent = nav.some(({ href }) => isCurrent(href));
     data-dot-target
     data-dot-rest={isHome || !hasCurrent ? '' : undefined}
   >
-    <span class="label"
-      ><span class="given">Deepam</span>{' '}<span class="surname">Tater</span></span
-    ><span class="stop" aria-hidden="true">.</span>
+    <span class="label">{SITE.name}</span><span class="stop" aria-hidden="true">.</span>
   </a>
   <nav aria-label="Primary">
     <ul>
@@ -103,25 +106,23 @@ const hasCurrent = nav.some(({ href }) => isCurrent(href));
     color: var(--ink);
   }
 
-  .wordmark:hover {
+  .wordmark .label {
+    display: inline-block;
+    transition:
+      color 180ms var(--ease),
+      transform 220ms var(--ease);
+  }
+
+  .wordmark:hover,
+  .wordmark:focus-visible {
     color: var(--ink);
   }
 
-  .given,
-  .surname {
-    display: inline-block;
-    transition:
-      transform 260ms var(--ease),
-      letter-spacing 260ms var(--ease),
-      color 180ms var(--ease);
-  }
-
-  /* Subtle, handcrafted optical breath on the surname when hovered or focused */
-  .wordmark:hover .surname,
-  .wordmark:focus-visible .surname {
-    letter-spacing: 0.008em;
+  /* Unified response across the entire name on hover or focus */
+  .wordmark:hover .label,
+  .wordmark:focus-visible .label {
+    color: var(--accent);
     transform: translateY(-0.5px);
-    color: color-mix(in oklab, var(--ink) 78%, var(--accent));
   }
 
   .stop {
@@ -141,7 +142,7 @@ const hasCurrent = nav.some(({ href }) => isCurrent(href));
 
   ul {
     display: flex;
-    gap: clamp(0.75rem, 2.2vw, 1.35rem);
+    gap: clamp(0.85rem, 2.4vw, 1.45rem);
     padding: 0;
     list-style: none;
   }

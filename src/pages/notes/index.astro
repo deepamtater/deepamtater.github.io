@@ -1,16 +1,28 @@
 ---
+import { url } from '../../lib/url';
 import Base from '../../layouts/Base.astro';
 import PostList from '../../components/PostList.astro';
 import { getPosts } from '../../lib/posts';
 
 const posts = await getPosts('notes');
-const description = 'Short learnings and book notes, written down before they fade.';
+const description =
+  'Short things I learned while building or reading, written down before I forget them.';
 ---
 
 <Base title="Notes" description={description}>
   <div class="wrap">
     <header class="page-head">
-      <h1>Notes</h1>
+      <div class="head-row">
+        <h1>Notes</h1>
+        <nav class="kind-nav mono" aria-label="Writing format">
+          <a href={url("/writing/")}>All</a>
+          <span aria-hidden="true">·</span>
+          <a href={url("/essays/")}>Essays</a>
+          <span aria-hidden="true">·</span>
+          <a href={url("/notes/")} aria-current="page">Notes</a>
+        </nav>
+      </div>
+      <p>{description}</p>
     </header>
     {
       posts.length ? (
@@ -23,6 +35,37 @@ const description = 'Short learnings and book notes, written down before they fa
 </Base>
 
 <style>
+  .head-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-s);
+  }
+
+  .kind-nav {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    color: var(--muted);
+  }
+
+  .kind-nav a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .kind-nav a:hover {
+    color: var(--accent);
+  }
+
+  .kind-nav a[aria-current='page'] {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 0.24em;
+  }
+
   .empty {
     padding-block: 1rem;
     border-top: 1px solid var(--rule);
