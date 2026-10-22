@@ -1,0 +1,88 @@
+---
+import { url } from '../lib/url';
+import Base from '../layouts/Base.astro';
+import PostList from '../components/PostList.astro';
+import { getPosts } from '../lib/posts';
+
+const essays = (await getPosts('essays')).slice(0, 5);
+const notes = (await getPosts('notes')).slice(0, 6);
+---
+
+<Base>
+  <div class="wrap">
+    <section class="intro" aria-label="Introduction">
+      <h1 class="rise">
+        I’m Dee. I write to understand <em>startups</em>, <em>engineering</em>,
+        the <em>books</em> I read, and the occasional thing about <em>life</em>.
+      </h1>
+      <p class="rise rise-2">
+        Essays are slow and rewritten until they’re true. Notes are fast — things I learned this
+        week, written down before I forget them. <a href={url("/about/")}>More about me</a>.
+      </p>
+    </section>
+
+    <section class="block rise rise-3" aria-labelledby="essays-heading">
+      <div class="section-head">
+        <h2 id="essays-heading" class="eyebrow">Essays</h2>
+        <a href={url("/essays/")}>All essays →</a>
+      </div>
+      {
+        essays.length ? (
+          <PostList posts={essays} showSummary />
+        ) : (
+          <p class="empty">The first essay is still being rewritten.</p>
+        )
+      }
+    </section>
+
+    <section class="block rise rise-3" aria-labelledby="notes-heading">
+      <div class="section-head">
+        <h2 id="notes-heading" class="eyebrow">Notes</h2>
+        <a href={url("/notes/")}>All notes →</a>
+      </div>
+      {
+        notes.length ? (
+          <PostList posts={notes} />
+        ) : (
+          <p class="empty">No notes yet.</p>
+        )
+      }
+    </section>
+  </div>
+</Base>
+
+<style>
+  .intro {
+    max-width: 36rem;
+    margin-block: var(--space-l) var(--space-xl);
+  }
+
+  h1 {
+    font-size: var(--step-2);
+    font-weight: 380;
+    line-height: 1.28;
+    letter-spacing: -0.018em;
+    text-wrap: pretty;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .intro p {
+    margin-block-start: var(--space-m);
+    max-width: 52ch;
+    color: var(--muted);
+  }
+
+  .block + .block {
+    margin-block-start: var(--space-xl);
+  }
+
+  .empty {
+    padding-block: 1rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+</style>

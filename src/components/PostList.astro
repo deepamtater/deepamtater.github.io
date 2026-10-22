@@ -1,0 +1,134 @@
+---
+import {
+  formatDate,
+  formatShortDate,
+  kindLabel,
+  postUrl,
+  transitionName,
+  type Post,
+} from '../lib/posts';
+
+interface Props {
+  posts: Post[];
+  showKind?: boolean;
+  showSummary?: boolean;
+  shortDate?: boolean;
+}
+
+const { posts, showKind = false, showSummary = false, shortDate = false } = Astro.props;
+---
+
+<ol class="post-list" role="list">
+  {
+    posts.map((post) => (
+      <li data-tags={post.data.tags.join(' ')}>
+        <a href={postUrl(post)}>
+          <span class="title" style={`view-transition-name: ${transitionName(post)}`}>
+            {post.data.title}
+            {post.data.draft && <span class="draft mono">draft</span>}
+          </span>
+          {showSummary && <span class="summary">{post.data.summary}</span>}
+          <span class="meta mono">
+            {showKind && <span class="kind">{kindLabel(post)}</span>}
+            <time datetime={post.data.date.toISOString()}>
+              {shortDate ? formatShortDate(post.data.date) : formatDate(post.data.date)}
+            </time>
+          </span>
+        </a>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .post-list {
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    border-top: 1px solid var(--rule);
+  }
+
+  /* First *visible* row, so the tag filter never leaves a dangling divider. */
+  li:nth-child(1 of :not([hidden])) {
+    border-top: 0;
+  }
+
+  a {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'title meta'
+      'summary summary';
+    column-gap: var(--space-m);
+    align-items: baseline;
+    padding-block: 0.95rem;
+    text-decoration: none;
+  }
+
+  .title {
+    grid-area: title;
+    width: fit-content;
+    font-size: var(--step-0);
+    font-weight: 450;
+    line-height: 1.3;
+    color: var(--ink);
+    text-wrap: balance;
+    background: linear-gradient(var(--accent), var(--accent)) 0 100% / 0 1px no-repeat;
+    transition:
+      background-size 360ms var(--ease),
+      color 160ms var(--ease);
+  }
+
+  a:hover .title,
+  a:focus-visible .title {
+    color: var(--accent);
+    background-size: 100% 1px;
+  }
+
+  .summary {
+    grid-area: summary;
+    margin-block-start: 0.3rem;
+    max-width: 58ch;
+    font-size: var(--step--1);
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .meta {
+    grid-area: meta;
+    display: flex;
+    gap: 0.75rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .kind {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .draft {
+    margin-inline-start: 0.5rem;
+    padding: 0.05rem 0.35rem;
+    border: 1px solid var(--accent);
+    border-radius: 3px;
+    color: var(--accent);
+    vertical-align: middle;
+  }
+
+  @media (max-width: 34rem) {
+    a {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        'title'
+        'summary'
+        'meta';
+    }
+
+    .meta {
+      margin-block-start: 0.35rem;
+    }
+  }
+</style>
