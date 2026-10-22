@@ -74,10 +74,10 @@ export const GET: APIRoute = async () => {
 
     {
       title: 'Now',
-      snippet: 'Puvio, LLMs from scratch (Week 1), and reading list',
+      snippet: 'Puvio, Everything about LLMs, from A to Z (Week 1), and reading',
       kind: 'Page',
       href: url('/now/'),
-      keywords: 'now puvio llms from scratch reading books',
+      keywords: 'now puvio everything about llms from a to z week 1 reading books',
     },
     {
       title: '2AM',

@@ -31,32 +31,38 @@ const notes = (await getPosts('notes')).slice(0, 6);
       </div>
       <ol class="now-rail" role="list">
         {
-          GOALS.map((goal) => (
+          GOALS.map((goal, idx) => (
             <li>
               <a href={url(`/now/#${goal.id}`)} class="rail-row">
-                <div class="rail-top">
-                  <span class="goal-title">{goal.title}</span>
-                  <span class="schematic" aria-hidden="true">
-                    {goal.steps.map((step, idx) => (
-                      <>
-                        {idx > 0 && (
-                          <span
-                            class:list={[
-                              'seg',
-                              { 'seg--done': step.state === 'done' || step.state === 'active' },
-                            ]}
-                          />
-                        )}
-                        <span class:list={['node', `node--${step.state}`]} />
-                      </>
-                    ))}
-                  </span>
-                </div>
-                <div class="rail-active">
-                  <span class="active-mark mono" aria-hidden="true">
-                    ◉
-                  </span>
-                  <span class="active-label">{goal.summary}</span>
+                <span class="rail-idx mono">{String(idx + 1).padStart(2, '0')}</span>
+                <div class="rail-body">
+                  <div class="rail-top">
+                    <span class="goal-title">{goal.title}</span>
+                    <span class="rail-meta">
+                      {goal.horizon && <span class="rail-horizon mono">{goal.horizon}</span>}
+                      <span class="schematic" aria-hidden="true">
+                        {goal.steps.map((step, sIdx) => (
+                          <>
+                            {sIdx > 0 && (
+                              <span
+                                class:list={[
+                                  'seg',
+                                  { 'seg--done': step.state === 'done' || step.state === 'active' },
+                                ]}
+                              />
+                            )}
+                            <span class:list={['node', `node--${step.state}`]} />
+                          </>
+                        ))}
+                      </span>
+                    </span>
+                  </div>
+                  <div class="rail-active">
+                    <span class="active-mark mono" aria-hidden="true">
+                      ◉
+                    </span>
+                    <span class="active-label">{goal.summary}</span>
+                  </div>
                 </div>
               </a>
             </li>
@@ -148,11 +154,9 @@ const notes = (await getPosts('notes')).slice(0, 6);
 
   .rail-row {
     display: grid;
-    grid-template-columns: minmax(11rem, 14rem) 1fr;
-    column-gap: var(--space-m);
-    row-gap: 0.25rem;
+    grid-template-columns: 2rem 1fr;
     align-items: baseline;
-    padding: 0.85rem 0.65rem;
+    padding: 0.95rem 0.65rem;
     margin-inline: -0.65rem;
     border-radius: 4px;
     text-decoration: none;
@@ -166,11 +170,27 @@ const notes = (await getPosts('notes')).slice(0, 6);
     background: var(--hover);
   }
 
+  .rail-idx {
+    color: var(--muted);
+    transition: color 140ms ease;
+  }
+
+  .rail-row:hover .rail-idx,
+  .rail-row:focus-visible .rail-idx {
+    color: var(--accent);
+  }
+
+  .rail-body {
+    display: grid;
+    gap: 0.32rem;
+    min-width: 0;
+  }
+
   .rail-top {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
-    gap: 0.75rem;
+    gap: var(--space-s);
   }
 
   .goal-title {
@@ -183,6 +203,17 @@ const notes = (await getPosts('notes')).slice(0, 6);
   .rail-row:hover .goal-title,
   .rail-row:focus-visible .goal-title {
     color: var(--accent);
+  }
+
+  .rail-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-shrink: 0;
+  }
+
+  .rail-horizon {
+    color: var(--muted);
   }
 
   .schematic {
@@ -248,9 +279,7 @@ const notes = (await getPosts('notes')).slice(0, 6);
   }
 
   .active-label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 1.48;
   }
 
   .empty {
@@ -259,13 +288,14 @@ const notes = (await getPosts('notes')).slice(0, 6);
     font-style: italic;
   }
 
-  @media (max-width: 38rem) {
+  @media (max-width: 36rem) {
     .rail-row {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1.75rem 1fr;
     }
 
-    .active-label {
-      white-space: normal;
+    .rail-top {
+      flex-wrap: wrap;
+      gap: 0.25rem 0.75rem;
     }
   }
 </style>

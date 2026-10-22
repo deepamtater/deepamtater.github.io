@@ -13,17 +13,20 @@ const focusGoals = GOALS.filter((g) => g.id !== 'reading');
 
     <div class="spine">
       {
-        focusGoals.map((goal) => (
+        focusGoals.map((goal, idx) => (
           <section id={goal.id} class="goal-group" aria-labelledby={`goal-${goal.id}`}>
-            <div class="goal-title-row">
-              <h2 id={`goal-${goal.id}`}>{goal.title}</h2>
-              {goal.href ? (
-                <a href={goal.href} rel="noopener" target="_blank" class="horizon mono">
-                  {goal.horizon}
-                </a>
-              ) : (
-                goal.horizon && <span class="horizon mono">{goal.horizon}</span>
-              )}
+            <div class="goal-head">
+              <span class="goal-idx mono">{String(idx + 1).padStart(2, '0')}</span>
+              <div class="goal-title-row">
+                <h2 id={`goal-${goal.id}`}>{goal.title}</h2>
+                {goal.href ? (
+                  <a href={goal.href} rel="noopener" target="_blank" class="horizon mono">
+                    {goal.horizon} ↗
+                  </a>
+                ) : (
+                  goal.horizon && <span class="horizon mono">{goal.horizon}</span>
+                )}
+              </div>
             </div>
 
             <ol class="steps" role="list">
@@ -33,7 +36,6 @@ const focusGoals = GOALS.filter((g) => g.id !== 'reading');
                     {step.state === 'done' ? '●' : step.state === 'active' ? '◉' : '○'}
                   </span>
                   <span class="step-label">{step.label}</span>
-                  {step.state === 'active' && <span class="step-tag mono">now</span>}
                 </li>
               ))}
             </ol>
@@ -42,36 +44,49 @@ const focusGoals = GOALS.filter((g) => g.id !== 'reading');
       }
 
       <section id="reading" class="goal-group" aria-labelledby="goal-reading">
-        <div class="goal-title-row">
-          <h2 id="goal-reading">Reading</h2>
+        <div class="goal-head">
+          <span class="goal-idx mono">03</span>
+          <div class="goal-title-row">
+            <h2 id="goal-reading">Reading</h2>
+            <span class="horizon mono">{CURRENTLY_READING.length} open</span>
+          </div>
         </div>
 
-        <ol class="steps" role="list">
+        <ol class="open-desk" role="list">
           {
             CURRENTLY_READING.map((book) => (
-              <li class="step step--active">
-                <span class="step-marker" aria-hidden="true">
-                  ◉
+              <li class="open-book">
+                <span class="open-status mono">
+                  <span class="open-dot" aria-hidden="true">
+                    ◉
+                  </span>
+                  open
                 </span>
-                <span class="book-title">{book.title}</span>
-                <span class="book-author">{book.author}</span>
+                <span class="open-title">{book.title}</span>
+                <span class="open-author mono">{book.author}</span>
               </li>
             ))
           }
         </ol>
 
         <div class="previous-block">
-          <h3 class="eyebrow">Previously read</h3>
-          <ul class="book-list" role="list">
+          <div class="previous-head">
+            <h3 class="eyebrow">Read</h3>
+            <span class="mono previous-count">{PREVIOUSLY_READ.length}</span>
+          </div>
+          <ol class="book-spine" role="list">
             {
-              PREVIOUSLY_READ.map((book) => (
+              PREVIOUSLY_READ.map((book, idx) => (
                 <li class="book-row">
+                  <span class="book-tick" aria-hidden="true" />
+                  <span class="book-idx mono">{String(idx + 1).padStart(2, '0')}</span>
                   <span class="book-title">{book.title}</span>
+                  <span class="book-rule" aria-hidden="true" />
                   <span class="book-author">{book.author}</span>
                 </li>
               ))
             }
-          </ul>
+          </ol>
         </div>
       </section>
     </div>
@@ -87,6 +102,16 @@ const focusGoals = GOALS.filter((g) => g.id !== 'reading');
     padding-block: var(--space-l);
     border-bottom: 1px solid var(--rule);
     scroll-margin-top: 2rem;
+  }
+
+  .goal-head {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    align-items: baseline;
+  }
+
+  .goal-idx {
+    color: var(--muted);
   }
 
   .goal-title-row {
@@ -117,7 +142,7 @@ const focusGoals = GOALS.filter((g) => g.id !== 'reading');
     position: relative;
     margin-block-start: var(--space-s);
     margin-inline-start: 0.35rem;
-    padding-inline-start: 1.75rem;
+    padding-inline-start: 1.9rem;
     border-inline-start: 1px solid var(--rule);
     list-style: none;
   }
@@ -140,7 +165,7 @@ const focusGoals = GOALS.filter((g) => g.id !== 'reading');
 
   .step-marker {
     position: absolute;
-    inset-inline-start: -1.75rem;
+    inset-inline-start: -1.9rem;
     transform: translateX(-50%);
     width: 1.1rem;
     text-align: center;
@@ -175,65 +200,187 @@ const focusGoals = GOALS.filter((g) => g.id !== 'reading');
     color: var(--muted);
   }
 
-  .step-tag {
-    color: var(--accent);
-    flex-shrink: 0;
+  /* ─── Open books on the desk (2-up ruled schematic) ───────────────────── */
+  .open-desk {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-block-start: var(--space-m);
+    margin-inline-start: 2.25rem;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    list-style: none;
   }
 
+  .open-book {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1.05rem 1rem 1.1rem 0;
+    transition: background-color 140ms ease;
+  }
+
+  .open-book + .open-book {
+    padding-inline: 1.25rem 0;
+    border-inline-start: 1px solid var(--rule);
+  }
+
+  .open-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--accent);
+  }
+
+  .open-dot {
+    font-size: 0.7rem;
+  }
+
+  .open-title {
+    font-size: var(--step-1);
+    font-style: italic;
+    font-weight: 430;
+    line-height: 1.22;
+    color: var(--ink);
+    transition: color 140ms ease;
+  }
+
+  .open-book:hover .open-title {
+    color: var(--accent);
+  }
+
+  .open-author {
+    color: var(--muted);
+    margin-block-start: auto;
+    padding-block-start: 0.15rem;
+  }
+
+  /* ─── Previously read numbered spine ──────────────────────────────────── */
   .previous-block {
     margin-block-start: var(--space-l);
+    margin-inline-start: 2.25rem;
   }
 
-  .previous-block h3 {
-    padding-block-end: 0.55rem;
+  .previous-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-block-end: 0.5rem;
     border-bottom: 1px solid var(--rule);
   }
 
-  .book-list {
+  .previous-count {
+    color: var(--muted);
+  }
+
+  .book-spine {
+    position: relative;
     padding: 0;
+    margin: 0;
+    border-inline-start: 1px solid var(--rule);
     list-style: none;
   }
 
   .book-row {
+    position: relative;
     display: flex;
     align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-m);
-    padding: 0.55rem 0.5rem;
-    margin-inline: -0.5rem;
-    border-bottom: 1px solid color-mix(in oklab, var(--rule) 65%, transparent);
-    border-radius: 3px;
+    gap: 0.75rem;
+    padding: 0.65rem 0.6rem 0.65rem 1.1rem;
+    border-radius: 0 3px 3px 0;
     transition: background-color 140ms ease;
-  }
-
-  .book-row:last-child {
-    border-bottom: 0;
   }
 
   .book-row:hover {
     background: var(--hover);
   }
 
+  .book-tick {
+    position: absolute;
+    inset-inline-start: -1px;
+    top: 1.15rem;
+    width: 6px;
+    height: 1px;
+    background: var(--rule);
+    transition:
+      width 150ms var(--ease),
+      background-color 150ms var(--ease);
+  }
+
+  .book-row:hover .book-tick {
+    width: 10px;
+    background: var(--accent);
+  }
+
+  .book-idx {
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: color 140ms ease;
+  }
+
+  .book-row:hover .book-idx {
+    color: var(--accent);
+  }
+
   .book-title {
     font-style: italic;
     color: var(--ink);
+    transition: color 140ms ease;
+  }
+
+  .book-row:hover .book-title {
+    color: var(--accent);
+  }
+
+  .book-rule {
+    flex: 1;
+    min-width: 1.5rem;
+    height: 1px;
+    background: color-mix(in oklab, var(--rule) 70%, transparent);
+    align-self: center;
   }
 
   .book-author {
-    font-size: var(--step--1);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
     color: var(--muted);
     text-align: end;
     flex-shrink: 0;
+    transition: color 140ms ease;
   }
 
-  @media (max-width: 36rem) {
-    .step,
+  .book-row:hover .book-author {
+    color: var(--ink);
+  }
+
+  @media (max-width: 38rem) {
+    .open-desk {
+      grid-template-columns: 1fr;
+      margin-inline-start: 0;
+    }
+
+    .open-book + .open-book {
+      padding-inline: 0;
+      border-inline-start: 0;
+      border-top: 1px solid var(--rule);
+    }
+
+    .previous-block {
+      margin-inline-start: 0;
+    }
+
     .book-row {
-      flex-direction: column;
-      gap: 0.15rem;
+      flex-wrap: wrap;
+      row-gap: 0.15rem;
+    }
+
+    .book-rule {
+      display: none;
     }
 
     .book-author {
+      width: 100%;
+      padding-inline-start: 1.95rem;
       text-align: start;
     }
   }
