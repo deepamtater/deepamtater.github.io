@@ -4,6 +4,7 @@ import Base from '../../layouts/Base.astro';
 import PostList from '../../components/PostList.astro';
 import TagList from '../../components/TagList.astro';
 import { getPosts } from '../../lib/posts';
+import { CURRENTLY_READING, PREVIOUSLY_READ } from '../../data/now';
 import { TOPICS } from '../../site.config';
 
 export const getStaticPaths = (async () => {
@@ -15,6 +16,7 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 const { tag, posts } = Astro.props;
+const isReading = tag === 'reading';
 ---
 
 <Base title={`#${tag}`} description={`Essays and notes about ${tag}.`}>
@@ -30,6 +32,40 @@ const { tag, posts } = Astro.props;
         <PostList posts={posts} showKind showSummary />
       ) : (
         <p class="empty">No pieces filed under #{tag} yet.</p>
+      )
+    }
+
+    {
+      isReading && (
+        <div class="bookshelf">
+          <section class="shelf-group" aria-labelledby="reading-now-heading">
+            <h2 id="reading-now-heading" class="eyebrow">
+              Reading
+            </h2>
+            <ul class="book-list" role="list">
+              {CURRENTLY_READING.map((book) => (
+                <li class="book-row">
+                  <span class="book-title">{book.title}</span>
+                  <span class="book-author">{book.author}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section class="shelf-group" aria-labelledby="previously-read-heading">
+            <h2 id="previously-read-heading" class="eyebrow">
+              Previously read
+            </h2>
+            <ul class="book-list" role="list">
+              {PREVIOUSLY_READ.map((book) => (
+                <li class="book-row">
+                  <span class="book-title">{book.title}</span>
+                  <span class="book-author">{book.author}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
       )
     }
   </div>
@@ -49,5 +85,64 @@ const { tag, posts } = Astro.props;
     border-top: 1px solid var(--rule);
     color: var(--muted);
     font-style: italic;
+  }
+
+  .bookshelf {
+    margin-block-start: var(--space-xl);
+    display: grid;
+    gap: var(--space-l);
+  }
+
+  .shelf-group h2 {
+    padding-block-end: 0.55rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .book-list {
+    padding: 0;
+    list-style: none;
+  }
+
+  .book-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-m);
+    padding: 0.55rem 0.5rem;
+    margin-inline: -0.5rem;
+    border-bottom: 1px solid color-mix(in oklab, var(--rule) 65%, transparent);
+    border-radius: 3px;
+    transition: background-color 140ms ease;
+  }
+
+  .book-row:last-child {
+    border-bottom: 0;
+  }
+
+  .book-row:hover {
+    background: var(--hover);
+  }
+
+  .book-title {
+    font-style: italic;
+    color: var(--ink);
+  }
+
+  .book-author {
+    font-size: var(--step--1);
+    color: var(--muted);
+    text-align: end;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 36rem) {
+    .book-row {
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .book-author {
+      text-align: start;
+    }
   }
 </style>

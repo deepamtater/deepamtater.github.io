@@ -1,9 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
-import { GOALS } from '../data/now';
+import { CURRENTLY_READING, GOALS, PREVIOUSLY_READ } from '../data/now';
+
+const focusGoals = GOALS.filter((g) => g.id !== 'reading');
 ---
 
-<Base title="Now" description="Current focus, active goals, and milestones.">
+<Base title="Now" description="Current focus and reading.">
   <div class="wrap" data-article>
     <header class="page-head">
       <h1>Now</h1>
@@ -11,18 +13,17 @@ import { GOALS } from '../data/now';
 
     <div class="spine">
       {
-        GOALS.map((goal, idx) => (
-          <section
-            id={goal.id}
-            class="goal-group"
-            aria-labelledby={`goal-${goal.id}`}
-          >
-            <div class="goal-head">
-              <span class="goal-idx mono">{String(idx + 1).padStart(2, '0')}</span>
-              <div class="goal-title-row">
-                <h2 id={`goal-${goal.id}`}>{goal.title}</h2>
-                {goal.horizon && <span class="horizon mono">{goal.horizon}</span>}
-              </div>
+        focusGoals.map((goal) => (
+          <section id={goal.id} class="goal-group" aria-labelledby={`goal-${goal.id}`}>
+            <div class="goal-title-row">
+              <h2 id={`goal-${goal.id}`}>{goal.title}</h2>
+              {goal.href ? (
+                <a href={goal.href} rel="noopener" target="_blank" class="horizon mono">
+                  {goal.horizon}
+                </a>
+              ) : (
+                goal.horizon && <span class="horizon mono">{goal.horizon}</span>
+              )}
             </div>
 
             <ol class="steps" role="list">
@@ -39,13 +40,46 @@ import { GOALS } from '../data/now';
           </section>
         ))
       }
+
+      <section id="reading" class="goal-group" aria-labelledby="goal-reading">
+        <div class="goal-title-row">
+          <h2 id="goal-reading">Reading</h2>
+        </div>
+
+        <ol class="steps" role="list">
+          {
+            CURRENTLY_READING.map((book) => (
+              <li class="step step--active">
+                <span class="step-marker" aria-hidden="true">
+                  ◉
+                </span>
+                <span class="book-title">{book.title}</span>
+                <span class="book-author">{book.author}</span>
+              </li>
+            ))
+          }
+        </ol>
+
+        <div class="previous-block">
+          <h3 class="eyebrow">Previously read</h3>
+          <ul class="book-list" role="list">
+            {
+              PREVIOUSLY_READ.map((book) => (
+                <li class="book-row">
+                  <span class="book-title">{book.title}</span>
+                  <span class="book-author">{book.author}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </section>
     </div>
   </div>
 </Base>
 
 <style>
   .spine {
-    position: relative;
     border-top: 1px solid var(--rule);
   }
 
@@ -53,16 +87,6 @@ import { GOALS } from '../data/now';
     padding-block: var(--space-l);
     border-bottom: 1px solid var(--rule);
     scroll-margin-top: 2rem;
-  }
-
-  .goal-head {
-    display: grid;
-    grid-template-columns: 2.5rem 1fr;
-    align-items: baseline;
-  }
-
-  .goal-idx {
-    color: var(--muted);
   }
 
   .goal-title-row {
@@ -81,13 +105,19 @@ import { GOALS } from '../data/now';
 
   .horizon {
     color: var(--muted);
+    text-decoration: none;
+  }
+
+  a.horizon:hover {
+    color: var(--accent);
+    text-decoration: underline;
   }
 
   .steps {
     position: relative;
     margin-block-start: var(--space-s);
     margin-inline-start: 0.35rem;
-    padding-inline-start: 2.15rem;
+    padding-inline-start: 1.75rem;
     border-inline-start: 1px solid var(--rule);
     list-style: none;
   }
@@ -98,7 +128,7 @@ import { GOALS } from '../data/now';
     align-items: baseline;
     justify-content: space-between;
     gap: var(--space-s);
-    padding: 0.48rem 0.55rem;
+    padding: 0.45rem 0.55rem;
     margin-inline: -0.55rem;
     border-radius: 3px;
     transition: background-color 140ms ease;
@@ -110,7 +140,7 @@ import { GOALS } from '../data/now';
 
   .step-marker {
     position: absolute;
-    inset-inline-start: -2.15rem;
+    inset-inline-start: -1.75rem;
     transform: translateX(-50%);
     width: 1.1rem;
     text-align: center;
@@ -134,7 +164,7 @@ import { GOALS } from '../data/now';
 
   .step--active .step-label {
     color: var(--ink);
-    font-weight: 500;
+    font-weight: 450;
   }
 
   .step--next .step-marker {
@@ -148,5 +178,63 @@ import { GOALS } from '../data/now';
   .step-tag {
     color: var(--accent);
     flex-shrink: 0;
+  }
+
+  .previous-block {
+    margin-block-start: var(--space-l);
+  }
+
+  .previous-block h3 {
+    padding-block-end: 0.55rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .book-list {
+    padding: 0;
+    list-style: none;
+  }
+
+  .book-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-m);
+    padding: 0.55rem 0.5rem;
+    margin-inline: -0.5rem;
+    border-bottom: 1px solid color-mix(in oklab, var(--rule) 65%, transparent);
+    border-radius: 3px;
+    transition: background-color 140ms ease;
+  }
+
+  .book-row:last-child {
+    border-bottom: 0;
+  }
+
+  .book-row:hover {
+    background: var(--hover);
+  }
+
+  .book-title {
+    font-style: italic;
+    color: var(--ink);
+  }
+
+  .book-author {
+    font-size: var(--step--1);
+    color: var(--muted);
+    text-align: end;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 36rem) {
+    .step,
+    .book-row {
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .book-author {
+      text-align: start;
+    }
   }
 </style>

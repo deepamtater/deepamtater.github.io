@@ -19,8 +19,8 @@ const notes = (await getPosts('notes')).slice(0, 6);
         <a href={url("/topics/life/")}><em>life</em></a>.
       </h1>
       <p>
-        Essays are slow and rewritten until they’re true. Notes are fast — things I learned this
-        week, written down before I forget them. <a href={url("/about/")}>More about me</a>.
+        Essays are slow and rewritten until they’re true. Notes are fast, things I learned this
+        week written down before I forget them. <a href={url("/about/")}>More about me</a>.
       </p>
     </section>
 
@@ -31,43 +31,36 @@ const notes = (await getPosts('notes')).slice(0, 6);
       </div>
       <ol class="now-rail" role="list">
         {
-          GOALS.map((goal) => {
-            const active =
-              goal.steps.find((s) => s.state === 'active') ??
-              goal.steps[goal.steps.length - 1];
-            return (
-              <li>
-                <a href={url(`/now/#${goal.id}`)} class="rail-row">
-                  <div class="rail-top">
-                    <span class="goal-title">{goal.title}</span>
-                    <span class="schematic" aria-hidden="true">
-                      {goal.steps.map((step, idx) => (
-                        <>
-                          {idx > 0 && (
-                            <span
-                              class:list={[
-                                'seg',
-                                { 'seg--done': step.state === 'done' || step.state === 'active' },
-                              ]}
-                            />
-                          )}
-                          <span class:list={['node', `node--${step.state}`]} />
-                        </>
-                      ))}
-                    </span>
-                  </div>
-                  {active && (
-                    <div class="rail-active">
-                      <span class="active-mark mono" aria-hidden="true">
-                        ◉
-                      </span>
-                      <span class="active-label">{active.label}</span>
-                    </div>
-                  )}
-                </a>
-              </li>
-            );
-          })
+          GOALS.map((goal) => (
+            <li>
+              <a href={url(`/now/#${goal.id}`)} class="rail-row">
+                <div class="rail-top">
+                  <span class="goal-title">{goal.title}</span>
+                  <span class="schematic" aria-hidden="true">
+                    {goal.steps.map((step, idx) => (
+                      <>
+                        {idx > 0 && (
+                          <span
+                            class:list={[
+                              'seg',
+                              { 'seg--done': step.state === 'done' || step.state === 'active' },
+                            ]}
+                          />
+                        )}
+                        <span class:list={['node', `node--${step.state}`]} />
+                      </>
+                    ))}
+                  </span>
+                </div>
+                <div class="rail-active">
+                  <span class="active-mark mono" aria-hidden="true">
+                    ◉
+                  </span>
+                  <span class="active-label">{goal.summary}</span>
+                </div>
+              </a>
+            </li>
+          ))
         }
       </ol>
     </section>
@@ -143,7 +136,7 @@ const notes = (await getPosts('notes')).slice(0, 6);
     margin-block-start: var(--space-xl);
   }
 
-  /* ─── Compact Now / Goals schematic rail ──────────────────────────────── */
+  /* ─── Compact Now schematic rail ──────────────────────────────────────── */
   .now-rail {
     padding: 0;
     list-style: none;
@@ -155,7 +148,7 @@ const notes = (await getPosts('notes')).slice(0, 6);
 
   .rail-row {
     display: grid;
-    grid-template-columns: minmax(11rem, 15rem) 1fr;
+    grid-template-columns: minmax(11rem, 14rem) 1fr;
     column-gap: var(--space-m);
     row-gap: 0.25rem;
     align-items: baseline;
