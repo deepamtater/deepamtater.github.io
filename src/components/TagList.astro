@@ -7,7 +7,7 @@ interface Props {
   current?: string;
 }
 
-const { tags, counts, filter = false, current } = Astro.props;
+const { tags, filter = false, current } = Astro.props;
 ---
 
 <ul class="tags" role="list">
@@ -20,7 +20,6 @@ const { tags, counts, filter = false, current } = Astro.props;
           aria-current={current === tag ? 'page' : undefined}
         >
           <span aria-hidden="true">#</span>{tag}
-          {counts && <span class="count">({counts[tag] ?? 0})</span>}
         </a>
       </li>
     ))
@@ -64,10 +63,5 @@ const { tags, counts, filter = false, current } = Astro.props;
     background: var(--hover);
     text-decoration: underline;
     text-underline-offset: 0.24em;
-  }
-
-  .count {
-    margin-inline-start: 0.25em;
-    color: var(--muted);
   }
 </style>

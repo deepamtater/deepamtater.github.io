@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getPosts, kindLabel, postUrl } from '../lib/posts';
 import { getThoughts } from '../lib/thoughts';
-import { CURRENTLY_READING, GOALS, PREVIOUSLY_READ } from '../data/now';
+import { CURRENTLY_READING, NOW_SECTIONS, PREVIOUSLY_READ } from '../data/now';
 import { SITE, TOPICS } from '../site.config';
 import { url } from '../lib/url';
 
@@ -40,12 +40,12 @@ export const GET: APIRoute = async () => {
       keywords: `${t.monthYear} 2am thought ${t.plainText}`,
     })),
 
-    ...GOALS.map((goal) => ({
-      title: goal.title,
-      snippet: goal.summary,
+    ...NOW_SECTIONS.map((sec) => ({
+      title: sec.note ? `${sec.title} (${sec.note})` : sec.title,
+      snippet: sec.text,
       kind: 'Now' as const,
-      href: url(`/now/#${goal.id}`),
-      keywords: `now goal progress ${goal.horizon ?? ''} ${goal.summary} ${goal.steps.map((s) => s.label).join(' ')}`,
+      href: url(`/now/#${sec.id}`),
+      keywords: `now ${sec.title} ${sec.note ?? ''} ${sec.text}`,
     })),
 
     ...CURRENTLY_READING.map((book) => ({
@@ -88,10 +88,10 @@ export const GET: APIRoute = async () => {
     },
     {
       title: 'About Deepam Tater',
-      snippet: `Founder and engineer in Jaipur · Puvio · ${SITE.email}`,
+      snippet: `Founder and fourth-year computer science undergraduate in Jaipur · Puvio · ${SITE.email}`,
       kind: 'Page',
       href: url('/about/'),
-      keywords: `about deepam tater jaipur bikaner puvio puvio.app x twitter linkedin github ${SITE.socials.map((s) => s.handle).join(' ')} ${SITE.email}`,
+      keywords: `about deepam tater jaipur bikaner btech computer science undergraduate puvio puvio.app x twitter linkedin github ${SITE.socials.map((s) => s.handle).join(' ')} ${SITE.email}`,
     },
     {
       title: 'Writing',

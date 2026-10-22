@@ -25,6 +25,7 @@ export const SITE = {
     { href: '/essays/', label: 'Essays' },
     { href: '/notes/', label: 'Notes' },
     { href: '/2am/', label: '2AM' },
+    { href: '/now/', label: 'Now' },
     { href: '/about/', label: 'About' },
   ],
 } as const;

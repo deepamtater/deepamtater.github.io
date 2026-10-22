@@ -37,48 +37,33 @@ const isReading = tag === 'reading';
 
     {
       isReading && (
-        <div class="bookshelf">
+        <div class="bookshelf prose">
           <section class="shelf-group" aria-labelledby="reading-now-heading">
-            <div class="shelf-head">
-              <h2 id="reading-now-heading" class="eyebrow">
-                Reading
-              </h2>
-              <span class="mono shelf-count">{CURRENTLY_READING.length} open</span>
-            </div>
-            <ol class="open-desk" role="list">
+            <h2 id="reading-now-heading" class="eyebrow subhead">
+              Currently reading
+            </h2>
+            <ul class="books" role="list">
               {CURRENTLY_READING.map((book) => (
-                <li class="open-book">
-                  <span class="open-status mono">
-                    <span class="open-dot" aria-hidden="true">
-                      ◉
-                    </span>
-                    open
-                  </span>
-                  <span class="open-title">{book.title}</span>
-                  <span class="open-author mono">{book.author}</span>
-                </li>
-              ))}
-            </ol>
-          </section>
-
-          <section class="shelf-group" aria-labelledby="previously-read-heading">
-            <div class="shelf-head">
-              <h2 id="previously-read-heading" class="eyebrow">
-                Read
-              </h2>
-              <span class="mono shelf-count">{PREVIOUSLY_READ.length}</span>
-            </div>
-            <ol class="book-spine" role="list">
-              {PREVIOUSLY_READ.map((book, idx) => (
-                <li class="book-row">
-                  <span class="book-tick" aria-hidden="true" />
-                  <span class="book-idx mono">{String(idx + 1).padStart(2, '0')}</span>
-                  <span class="book-title">{book.title}</span>
-                  <span class="book-rule" aria-hidden="true" />
+                <li>
+                  <span class="book-title">{book.title}</span>{' '}
                   <span class="book-author">{book.author}</span>
                 </li>
               ))}
-            </ol>
+            </ul>
+          </section>
+
+          <section class="shelf-group" aria-labelledby="previously-read-heading">
+            <h2 id="previously-read-heading" class="eyebrow subhead">
+              Read
+            </h2>
+            <ul class="books" role="list">
+              {PREVIOUSLY_READ.map((book) => (
+                <li>
+                  <span class="book-title">{book.title}</span>{' '}
+                  <span class="book-author">{book.author}</span>
+                </li>
+              ))}
+            </ul>
           </section>
         </div>
       )
@@ -105,176 +90,42 @@ const isReading = tag === 'reading';
   .bookshelf {
     margin-block-start: var(--space-xl);
     display: grid;
-    gap: var(--space-xl);
+    gap: var(--space-l);
   }
 
-  .shelf-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
+  .subhead {
+    margin-block-start: 0;
     padding-block-end: 0.55rem;
     border-bottom: 1px solid var(--rule);
   }
 
-  .shelf-count {
-    color: var(--muted);
-  }
-
-  .open-desk {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  .books {
     padding: 0;
-    margin: 0;
-    border-bottom: 1px solid var(--rule);
+    margin-block-start: 0.35rem;
     list-style: none;
   }
 
-  .open-book {
+  .books li {
     display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    padding: 1.05rem 1rem 1.1rem 0;
-  }
-
-  .open-book + .open-book {
-    padding-inline: 1.25rem 0;
-    border-inline-start: 1px solid var(--rule);
-  }
-
-  .open-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    color: var(--accent);
-  }
-
-  .open-dot {
-    font-size: 0.7rem;
-  }
-
-  .open-title {
-    font-size: var(--step-1);
-    font-style: italic;
-    font-weight: 430;
-    line-height: 1.22;
-    color: var(--ink);
-    transition: color 140ms ease;
-  }
-
-  .open-book:hover .open-title {
-    color: var(--accent);
-  }
-
-  .open-author {
-    color: var(--muted);
-    margin-block-start: auto;
-    padding-block-start: 0.15rem;
-  }
-
-  .book-spine {
-    position: relative;
-    padding: 0;
-    margin: 0;
-    border-inline-start: 1px solid var(--rule);
-    list-style: none;
-  }
-
-  .book-row {
-    position: relative;
-    display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
-    gap: 0.75rem;
-    padding: 0.65rem 0.6rem 0.65rem 1.1rem;
-    border-radius: 0 3px 3px 0;
-    transition: background-color 140ms ease;
+    justify-content: space-between;
+    gap: 0.25rem var(--space-m);
+    padding-block: 0.45rem;
   }
 
-  .book-row:hover {
-    background: var(--hover);
-  }
-
-  .book-tick {
-    position: absolute;
-    inset-inline-start: -1px;
-    top: 1.15rem;
-    width: 6px;
-    height: 1px;
-    background: var(--rule);
-    transition:
-      width 150ms var(--ease),
-      background-color 150ms var(--ease);
-  }
-
-  .book-row:hover .book-tick {
-    width: 10px;
-    background: var(--accent);
-  }
-
-  .book-idx {
-    color: var(--muted);
-    flex-shrink: 0;
-    transition: color 140ms ease;
-  }
-
-  .book-row:hover .book-idx {
-    color: var(--accent);
+  .books li + li {
+    margin-block-start: 0;
+    border-top: 1px solid color-mix(in oklab, var(--rule) 55%, transparent);
   }
 
   .book-title {
     font-style: italic;
     color: var(--ink);
-    transition: color 140ms ease;
-  }
-
-  .book-row:hover .book-title {
-    color: var(--accent);
-  }
-
-  .book-rule {
-    flex: 1;
-    min-width: 1.5rem;
-    height: 1px;
-    background: color-mix(in oklab, var(--rule) 70%, transparent);
-    align-self: center;
   }
 
   .book-author {
-    font-family: var(--font-mono);
-    font-size: var(--step--2);
+    font-size: var(--step--1);
     color: var(--muted);
-    text-align: end;
-    flex-shrink: 0;
-    transition: color 140ms ease;
-  }
-
-  .book-row:hover .book-author {
-    color: var(--ink);
-  }
-
-  @media (max-width: 38rem) {
-    .open-desk {
-      grid-template-columns: 1fr;
-    }
-
-    .open-book + .open-book {
-      padding-inline: 0;
-      border-inline-start: 0;
-      border-top: 1px solid var(--rule);
-    }
-
-    .book-row {
-      flex-wrap: wrap;
-      row-gap: 0.15rem;
-    }
-
-    .book-rule {
-      display: none;
-    }
-
-    .book-author {
-      width: 100%;
-      padding-inline-start: 1.95rem;
-      text-align: start;
-    }
   }
 </style>
