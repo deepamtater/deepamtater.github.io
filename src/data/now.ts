@@ -10,6 +10,7 @@ export interface NowSection {
   note?: string;
   text: string;
   href?: string;
+  keywords?: string;
 }
 
 export interface PreviouslyArchive {
@@ -19,7 +20,7 @@ export interface PreviouslyArchive {
    * studied: ['Week 1 · Neural networks and backpropagation by hand from blank files.'],
    */
   studied: string[];
-  /** Completed product or engineering milestones. */
+  /** Completed product or engineering milestones (no resume/award fluff). */
   built: string[];
   /** Finished books. */
   read: Book[];
@@ -38,9 +39,14 @@ export const PREVIOUSLY_READ: Book[] = [
   { title: 'Think and Grow Rich', author: 'Napoleon Hill' },
 ];
 
+export const NOT_DOING =
+  'Instagram, Snapchat, Reels, Shorts, or TikTok. Keeping my attention span intact and my brain out of 15-second dopamine loops.';
+
 export const PREVIOUSLY: PreviouslyArchive = {
   studied: [],
-  built: [],
+  built: [
+    'Puvio V1. Ran a 240-user beta, talked to 90 users, threw out the original draft engine, and rebuilt V2 around a single work record.',
+  ],
   read: PREVIOUSLY_READ,
 };
 
@@ -64,5 +70,12 @@ export const NOW_SECTIONS: NowSection[] = [
     label: 'Reading',
     title: 'Reading',
     text: CURRENTLY_READING.map((b) => `${b.title} (${b.author})`).join(' and '),
+  },
+  {
+    id: 'not-doing',
+    label: 'Not doing',
+    title: 'Not doing',
+    text: NOT_DOING,
+    keywords: 'instagram insta snapchat tiktok reels shorts brainrot dopamine attention span',
   },
 ];

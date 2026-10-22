@@ -45,7 +45,7 @@ export const GET: APIRoute = async () => {
       snippet: sec.text,
       kind: 'Now' as const,
       href: url(`/now/#${sec.id}`),
-      keywords: `now ${sec.label} ${sec.title} ${sec.note ?? ''} ${sec.text}`,
+      keywords: `now ${sec.label} ${sec.title} ${sec.note ?? ''} ${sec.text} ${sec.keywords ?? ''}`,
     })),
 
     ...PREVIOUSLY.studied.map((item) => ({
@@ -61,7 +61,7 @@ export const GET: APIRoute = async () => {
       snippet: item,
       kind: 'Now' as const,
       href: url('/now/#previously-heading'),
-      keywords: `previously built ${item}`,
+      keywords: `previously built puvio v1 beta ${item}`,
     })),
 
     ...CURRENTLY_READING.map((book) => ({
@@ -93,7 +93,8 @@ export const GET: APIRoute = async () => {
       snippet: 'What I’m working on, studying, and reading right now!',
       kind: 'Page',
       href: url('/now/'),
-      keywords: 'now puvio everything about llms from a to z week 1 reading books',
+      keywords:
+        'now puvio everything about llms from a to z week 1 reading books not doing instagram insta snapchat tiktok reels shorts brainrot',
     },
     {
       title: '2AM',
@@ -107,7 +108,7 @@ export const GET: APIRoute = async () => {
       snippet: `Founder and fourth-year computer science undergraduate in Jaipur · Puvio · ${SITE.email}`,
       kind: 'Page',
       href: url('/about/'),
-      keywords: `about deepam tater jaipur bikaner btech computer science undergraduate puvio puvio.app x twitter linkedin github ${SITE.socials.map((s) => s.handle).join(' ')} ${SITE.email}`,
+      keywords: `about deepam tater jaipur bikaner btech computer science undergraduate puvio puvio.app x twitter linkedin github instagram insta snapchat tiktok reels shorts brainrot attention span ${SITE.socials.map((s) => s.handle).join(' ')} ${SITE.email}`,
     },
     {
       title: 'Writing',

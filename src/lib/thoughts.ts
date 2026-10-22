@@ -16,6 +16,7 @@ export interface RenderedThought {
 const shortFmt = new Intl.DateTimeFormat('en-US', {
   month: 'short',
   day: 'numeric',
+  year: 'numeric',
   timeZone: 'UTC',
 });
 
@@ -30,6 +31,13 @@ const stripHtml = (s: string) =>
     .replace(/<[^>]+>/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+
+const parseInlineDate = (raw: string): Date => {
+  if (raw.includes('T')) {
+    return new Date(raw.endsWith('Z') ? raw : `${raw}Z`);
+  }
+  return new Date(`${raw}T00:00:00Z`);
+};
 
 export async function getThoughts(): Promise<RenderedThought[]> {
   const mdEntries = await getCollection('thoughts', ({ data }) =>
@@ -47,7 +55,7 @@ export async function getThoughts(): Promise<RenderedThought[]> {
       entry,
     })),
     ...THOUGHTS.map((inline) => {
-      const d = new Date(`${inline.date}T00:00:00Z`);
+      const d = parseInlineDate(inline.date);
       return {
         id: inline.id,
         date: d,
