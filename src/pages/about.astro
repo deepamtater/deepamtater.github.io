@@ -25,44 +25,21 @@ import { SITE } from '../site.config';
         <a href={url("/2am/")}>2AM</a> holds late-night thoughts I’m still working through.
       </p>
       <p>
-        If something here is useful, or if you think I have something wrong, I’d like to hear from
-        you.
+        If something here is useful, or if you think I have something wrong, write to me at{' '}
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>{' '}
+        <span class="copy-wrap"
+          >(<button
+            type="button"
+            class="copy-inline"
+            data-copy-email={SITE.email}
+            aria-label="Copy email address">copy</button
+          >)</span
+        >, or find me on <a href="https://x.com/justdeepam" rel="me noopener" target="_blank">X</a>,{' '}
+        <a href="https://www.linkedin.com/in/deepamtater/" rel="me noopener" target="_blank"
+          >LinkedIn</a
+        >, and{' '}
+        <a href="https://github.com/dimension-drifter" rel="me noopener" target="_blank">GitHub</a>.
       </p>
-
-      <dl class="elsewhere">
-        {
-          SITE.socials.map(({ label, handle, href }) => (
-            <div class="row">
-              <dt>{label}</dt>
-              <dd>
-                <a href={href} rel="me noopener" target="_blank" class="mono">
-                  {handle}
-                </a>
-              </dd>
-            </div>
-          ))
-        }
-        <div class="row">
-          <dt>Email</dt>
-          <dd class="email-cell">
-            <a href={`mailto:${SITE.email}`} class="mono">{SITE.email}</a>
-            <button
-              type="button"
-              class="copy-btn mono"
-              data-copy-email={SITE.email}
-              aria-label="Copy email address"
-            >
-              Copy
-            </button>
-          </dd>
-        </div>
-        <div class="row">
-          <dt>Feed</dt>
-          <dd>
-            <a href={url("/rss.xml")} class="mono">RSS</a>
-          </dd>
-        </div>
-      </dl>
     </div>
   </div>
 </Base>
@@ -75,7 +52,7 @@ import { SITE } from '../site.config';
       try {
         await navigator.clipboard.writeText(email);
         const original = btn.textContent;
-        btn.textContent = 'Copied';
+        btn.textContent = 'copied';
         setTimeout(() => {
           btn.textContent = original;
         }, 1600);
@@ -87,48 +64,18 @@ import { SITE } from '../site.config';
 </script>
 
 <style>
-  .elsewhere {
-    margin-block-start: var(--space-l);
-    border-top: 1px solid var(--rule);
-  }
-
-  .row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-s);
-    padding: 0.7rem 0.5rem;
-    margin-inline: -0.5rem;
-    border-bottom: 1px solid var(--rule);
-    border-radius: 3px;
-    transition: background-color 140ms ease;
-  }
-
-  .row:hover {
-    background: var(--hover);
-  }
-
-  dt {
+  .copy-wrap {
     color: var(--muted);
     font-size: var(--step--1);
+    white-space: nowrap;
   }
 
-  dd {
-    margin: 0;
-  }
-
-  .email-cell {
-    display: inline-flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-  }
-
-  .copy-btn {
+  .copy-inline {
     border: 0;
-    padding: 0.1rem 0.4rem;
-    border-radius: 3px;
+    padding: 0;
     background: none;
+    font: inherit;
+    font-style: italic;
     color: var(--muted);
     cursor: pointer;
     text-decoration: underline;
@@ -136,18 +83,11 @@ import { SITE } from '../site.config';
     text-underline-offset: 0.2em;
     transition:
       color 140ms ease,
-      background-color 140ms ease;
+      text-decoration-color 140ms ease;
   }
 
-  .copy-btn:hover {
+  .copy-inline:hover {
     color: var(--accent);
-    background: var(--paper);
-  }
-
-  @media (max-width: 34rem) {
-    .row {
-      flex-direction: column;
-      gap: 0.2rem;
-    }
+    text-decoration-color: currentColor;
   }
 </style>

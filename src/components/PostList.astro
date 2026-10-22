@@ -24,10 +24,10 @@ const { posts, showKind = false, showSummary = false, shortDate = false } = Astr
         <a href={postUrl(post)}>
           <span class="title">
             {post.data.title}
-            {post.data.draft && <span class="draft mono">draft</span>}
+            {post.data.draft && <span class="draft">draft</span>}
           </span>
           {showSummary && <span class="summary">{post.data.summary}</span>}
-          <span class="meta mono">
+          <span class="meta">
             {showKind && <span class="kind">{kindLabel(post)}</span>}
             <time datetime={post.data.date.toISOString()}>
               {shortDate ? formatShortDate(post.data.date) : formatDate(post.data.date)}
@@ -105,11 +105,14 @@ const { posts, showKind = false, showSummary = false, shortDate = false } = Astr
     grid-area: meta;
     display: flex;
     gap: 0.65rem;
+    font-size: var(--step--1);
+    font-variant-numeric: tabular-nums;
     color: var(--muted);
     white-space: nowrap;
   }
 
   .kind {
+    font-style: italic;
     color: var(--muted);
   }
 
@@ -118,6 +121,7 @@ const { posts, showKind = false, showSummary = false, shortDate = false } = Astr
     padding: 0.05rem 0.35rem;
     border: 1px solid var(--rule);
     border-radius: 3px;
+    font-size: var(--step--2);
     color: var(--muted);
     vertical-align: middle;
   }

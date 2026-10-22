@@ -24,7 +24,7 @@ const description = 'Late-night thoughts and half-formed ideas I’m still figur
         <ol class="ledger" role="list" data-ledger>
           {rendered.map(({ id, date, time, shortDate, monthYear, showMonth, Content, inline }) => (
             <li id={id} class="ledger-row" tabindex="-1" data-thought>
-              <div class="ledger-margin mono">
+              <div class="ledger-margin">
                 {showMonth && <span class="ledger-month">{monthYear}</span>}
                 <a
                   href={`#${id}`}
@@ -152,12 +152,14 @@ const description = 'Late-night thoughts and half-formed ideas I’m still figur
     gap: 0.2rem;
     padding: 1.15rem 1.1rem 1.15rem 0;
     text-align: end;
+    font-size: var(--step--1);
+    font-variant-numeric: tabular-nums;
     color: var(--muted);
     user-select: none;
   }
 
   .ledger-month {
-    font-size: 0.68rem;
+    font-size: var(--step--2);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--ink);
@@ -176,12 +178,12 @@ const description = 'Late-night thoughts and half-formed ideas I’m still figur
 
   .stamp-time {
     color: var(--ink);
-    font-weight: 450;
+    font-style: italic;
     transition: color 140ms ease;
   }
 
   .stamp-date {
-    font-size: 0.7rem;
+    font-size: var(--step--2);
     color: var(--muted);
   }
 
