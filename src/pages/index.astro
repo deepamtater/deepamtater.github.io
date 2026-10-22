@@ -3,10 +3,8 @@ import { url } from '../lib/url';
 import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
 import { getPosts } from '../lib/posts';
-import { GOALS } from '../data/now';
 
-const essays = (await getPosts('essays')).slice(0, 5);
-const notes = (await getPosts('notes')).slice(0, 6);
+const posts = (await getPosts()).slice(0, 10);
 ---
 
 <Base>
@@ -24,80 +22,43 @@ const notes = (await getPosts('notes')).slice(0, 6);
       </p>
     </section>
 
-    <section class="block" aria-labelledby="now-heading">
-      <div class="section-head">
-        <h2 id="now-heading" class="eyebrow">Now</h2>
-        <a href={url("/now/")}>/now →</a>
-      </div>
-      <ol class="now-rail" role="list">
+    <div class="home-columns">
+      <section class="writing-col" aria-labelledby="writing-heading">
+        <div class="section-head">
+          <h2 id="writing-heading" class="eyebrow">
+            <a href={url("/writing/")}>Writing</a>
+          </h2>
+        </div>
         {
-          GOALS.map((goal, idx) => (
-            <li>
-              <a href={url(`/now/#${goal.id}`)} class="rail-row">
-                <span class="rail-idx mono">{String(idx + 1).padStart(2, '0')}</span>
-                <div class="rail-body">
-                  <div class="rail-top">
-                    <span class="goal-title">{goal.title}</span>
-                    <span class="rail-meta">
-                      {goal.horizon && <span class="rail-horizon mono">{goal.horizon}</span>}
-                      <span class="schematic" aria-hidden="true">
-                        {goal.steps.map((step, sIdx) => (
-                          <>
-                            {sIdx > 0 && (
-                              <span
-                                class:list={[
-                                  'seg',
-                                  { 'seg--done': step.state === 'done' || step.state === 'active' },
-                                ]}
-                              />
-                            )}
-                            <span class:list={['node', `node--${step.state}`]} />
-                          </>
-                        ))}
-                      </span>
-                    </span>
-                  </div>
-                  <div class="rail-active">
-                    <span class="active-mark mono" aria-hidden="true">
-                      ◉
-                    </span>
-                    <span class="active-label">{goal.summary}</span>
-                  </div>
-                </div>
-              </a>
-            </li>
-          ))
+          posts.length ? (
+            <PostList posts={posts} showKind shortDate />
+          ) : (
+            <p class="empty">First essays and notes coming soon.</p>
+          )
         }
-      </ol>
-    </section>
+      </section>
 
-    <section class="block" aria-labelledby="essays-heading">
-      <div class="section-head">
-        <h2 id="essays-heading" class="eyebrow">Essays</h2>
-        <a href={url("/essays/")}>All essays →</a>
-      </div>
-      {
-        essays.length ? (
-          <PostList posts={essays} showSummary />
-        ) : (
-          <p class="empty">No essays published yet.</p>
-        )
-      }
-    </section>
-
-    <section class="block" aria-labelledby="notes-heading">
-      <div class="section-head">
-        <h2 id="notes-heading" class="eyebrow">Notes</h2>
-        <a href={url("/notes/")}>All notes →</a>
-      </div>
-      {
-        notes.length ? (
-          <PostList posts={notes} />
-        ) : (
-          <p class="empty">No notes published yet.</p>
-        )
-      }
-    </section>
+      <aside class="now-aside" aria-labelledby="now-heading">
+        <div class="section-head">
+          <h2 id="now-heading" class="eyebrow">
+            <a href={url("/now/")}>Now</a>
+          </h2>
+        </div>
+        <ul class="now-lines" role="list">
+          <li>
+            Building <a href="https://puvio.app" rel="noopener" target="_blank">Puvio</a>.
+          </li>
+          <li>
+            Studying <a href={url("/now/#llms")}>LLMs from A to Z</a>{' '}
+            <em class="week">(Week 1)</em>.
+          </li>
+          <li>
+            Reading <a href={url("/now/#reading")}><em>Zero to One</em></a> and{' '}
+            <a href={url("/now/#reading")}><em>LLM Engineer’s Handbook</em></a>.
+          </li>
+        </ul>
+      </aside>
+    </div>
   </div>
 </Base>
 
@@ -138,148 +99,22 @@ const notes = (await getPosts('notes')).slice(0, 6);
     color: var(--muted);
   }
 
-  .block + .block {
-    margin-block-start: var(--space-xl);
-  }
-
-  /* ─── Compact Now schematic rail ──────────────────────────────────────── */
-  .now-rail {
-    padding: 0;
-    list-style: none;
-  }
-
-  .now-rail li + li {
-    border-top: 1px solid var(--rule);
-  }
-
-  .rail-row {
+  .home-columns {
     display: grid;
-    grid-template-columns: 2rem 1fr;
-    align-items: baseline;
-    padding: 0.95rem 0.65rem;
-    margin-inline: -0.65rem;
-    border-radius: 4px;
+    grid-template-columns: minmax(0, 1fr) 15rem;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .section-head h2 a {
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
     text-decoration: none;
-    transition:
-      background-color 140ms ease,
-      color 140ms ease;
   }
 
-  .rail-row:hover,
-  .rail-row:focus-visible {
-    background: var(--hover);
-  }
-
-  .rail-idx {
-    color: var(--muted);
-    transition: color 140ms ease;
-  }
-
-  .rail-row:hover .rail-idx,
-  .rail-row:focus-visible .rail-idx {
+  .section-head h2 a:hover {
     color: var(--accent);
-  }
-
-  .rail-body {
-    display: grid;
-    gap: 0.32rem;
-    min-width: 0;
-  }
-
-  .rail-top {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-s);
-  }
-
-  .goal-title {
-    font-size: var(--step-0);
-    font-weight: 450;
-    color: var(--ink);
-    transition: color 140ms ease;
-  }
-
-  .rail-row:hover .goal-title,
-  .rail-row:focus-visible .goal-title {
-    color: var(--accent);
-  }
-
-  .rail-meta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.65rem;
-    flex-shrink: 0;
-  }
-
-  .rail-horizon {
-    color: var(--muted);
-  }
-
-  .schematic {
-    display: inline-flex;
-    align-items: center;
-    flex-shrink: 0;
-  }
-
-  .seg {
-    width: 14px;
-    height: 1px;
-    background: var(--rule);
-  }
-
-  .seg--done {
-    background: color-mix(in oklab, var(--ink) 45%, var(--rule));
-  }
-
-  .node {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  .node--done {
-    background: var(--ink);
-  }
-
-  .node--active {
-    width: 7px;
-    height: 7px;
-    background: var(--accent);
-    box-shadow:
-      0 0 0 2px var(--paper),
-      0 0 0 3px var(--accent);
-  }
-
-  .rail-row:hover .node--active {
-    box-shadow:
-      0 0 0 2px var(--hover),
-      0 0 0 3px var(--accent);
-  }
-
-  .node--next {
-    background: var(--paper);
-    border: 1px solid var(--muted);
-  }
-
-  .rail-active {
-    display: flex;
-    align-items: baseline;
-    gap: 0.45rem;
-    font-size: var(--step--1);
-    color: var(--muted);
-    min-width: 0;
-  }
-
-  .active-mark {
-    color: var(--accent);
-    font-size: 0.72rem;
-    flex-shrink: 0;
-  }
-
-  .active-label {
-    line-height: 1.48;
   }
 
   .empty {
@@ -288,14 +123,36 @@ const notes = (await getPosts('notes')).slice(0, 6);
     font-style: italic;
   }
 
-  @media (max-width: 36rem) {
-    .rail-row {
-      grid-template-columns: 1.75rem 1fr;
-    }
+  .now-lines {
+    padding: 0;
+    margin-block-start: 0.9rem;
+    list-style: none;
+    display: grid;
+    gap: 0.65rem;
+    font-size: var(--step--1);
+    line-height: 1.55;
+    color: var(--ink);
+  }
 
-    .rail-top {
-      flex-wrap: wrap;
-      gap: 0.25rem 0.75rem;
+  .now-lines a {
+    color: var(--ink);
+    text-decoration-color: color-mix(in oklab, var(--ink) 32%, transparent);
+  }
+
+  .now-lines a:hover {
+    color: var(--accent);
+    text-decoration-color: currentColor;
+  }
+
+  .week {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  @media (max-width: 42rem) {
+    .home-columns {
+      grid-template-columns: 1fr;
+      gap: var(--space-l);
     }
   }
 </style>

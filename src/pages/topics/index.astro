@@ -1,14 +1,7 @@
 ---
 import { url } from '../../lib/url';
 import Base from '../../layouts/Base.astro';
-import { getPosts } from '../../lib/posts';
 import { TOPICS } from '../../site.config';
-
-const posts = await getPosts();
-const topics = TOPICS.map((tag) => ({
-  tag,
-  count: posts.filter((p) => p.data.tags.includes(tag)).length,
-}));
 ---
 
 <Base title="Topics" description="Browse writing by topic.">
@@ -18,11 +11,10 @@ const topics = TOPICS.map((tag) => ({
     </header>
     <ul class="topics" role="list">
       {
-        topics.map(({ tag, count }) => (
+        TOPICS.map((tag) => (
           <li>
             <a href={url(`/topics/${tag}/`)}>
               <span class="name">{tag}</span>
-              <span class="mono">{count}</span>
             </a>
           </li>
         ))
@@ -43,9 +35,7 @@ const topics = TOPICS.map((tag) => ({
   }
 
   a {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
+    display: block;
     padding: 1rem 0.65rem;
     margin-inline: -0.65rem;
     border-radius: 4px;
@@ -69,9 +59,5 @@ const topics = TOPICS.map((tag) => ({
 
   a:hover .name {
     color: var(--accent);
-  }
-
-  .mono {
-    color: var(--muted);
   }
 </style>
