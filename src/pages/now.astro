@@ -105,6 +105,15 @@ const description = 'What I’m working on, studying, and reading right now!';
         }
       </dl>
     </section>
+
+    <p class="now-colophon">
+      <em>Note:</em> This page tracks active obsessions and closed loops, not credentials.
+      Hackathons, internships, college rank, and YC Startup School live on{' '}
+      <a href="https://www.linkedin.com/in/deepamtater/" rel="me noopener" target="_blank"
+        >LinkedIn</a
+      >{' '}
+      so this page never turns into a resume.
+    </p>
   </div>
 </Base>
 
@@ -203,6 +212,23 @@ const description = 'What I’m working on, studying, and reading right now!';
   .book-author {
     font-size: var(--step--1);
     color: var(--muted);
+  }
+
+  .now-colophon {
+    margin-block-start: var(--space-xl);
+    max-width: var(--measure);
+    font-size: var(--step--1);
+    color: var(--muted);
+  }
+
+  .now-colophon a {
+    color: var(--accent);
+    text-decoration-color: color-mix(in oklab, var(--accent) 45%, transparent);
+  }
+
+  .now-colophon a:hover {
+    color: var(--accent);
+    text-decoration-color: currentColor;
   }
 
   @media (max-width: 36rem) {
