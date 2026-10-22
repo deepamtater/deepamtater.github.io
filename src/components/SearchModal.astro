@@ -1,0 +1,400 @@
+---
+import { url } from '../lib/url';
+
+const indexUrl = url('/search-index.json');
+---
+
+<div
+  class="search-overlay"
+  data-search-modal
+   data-index-url={indexUrl}
+  hidden
+  role="dialog"
+  aria-modal="true"
+  aria-label="Search site"
+>
+  <div class="search-backdrop" data-search-close></div>
+  <div class="search-column wrap">
+    <div class="search-panel">
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" class="search-icon">
+          <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"
+          ></circle>
+          <path d="M15.5 15.5L20 20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          ></path>
+        </svg>
+        <input
+          type="search"
+          class="search-input"
+          data-search-input
+          placeholder="Search…"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          aria-label="Search query"
+          aria-autocomplete="list"
+          aria-controls="search-results-list"
+        />
+        <button type="button" class="search-esc mono" data-search-close aria-label="Close search">
+          Esc
+        </button>
+      </div>
+      <ol id="search-results-list" class="search-results" role="listbox" data-search-results></ol>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const modal = document.querySelector('[data-search-modal]');
+    const input = document.querySelector('[data-search-input]');
+    const list = document.querySelector('[data-search-results]');
+    const openBtns = document.querySelectorAll('[data-search-open]');
+    const closeBtns = document.querySelectorAll('[data-search-close]');
+    if (!modal || !input || !list) return;
+
+    const indexUrl = modal.getAttribute('data-index-url') || '/search-index.json';
+    let cache = null;
+    let loading = null;
+    let selectedIdx = 0;
+    let currentMatches = [];
+    let lastFocused = null;
+
+    const loadIndex = () => {
+      if (cache) return Promise.resolve(cache);
+      if (!loading) {
+        loading = fetch(indexUrl)
+          .then((r) => r.json())
+          .then((data) => {
+            cache = Array.isArray(data) ? data : [];
+            return cache;
+          })
+          .catch(() => {
+            cache = [];
+            return cache;
+          });
+      }
+      return loading;
+    };
+
+    const escapeHtml = (s) =>
+      String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+
+    const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    const highlight = (text, tokens) => {
+      const safe = escapeHtml(text || '');
+      if (!tokens.length) return safe;
+      const pattern = new RegExp(`(${tokens.map(escapeRegex).join('|')})`, 'gi');
+      return safe.replace(pattern, '<mark>$1</mark>');
+    };
+
+    const scoreItem = (item, tokens, rawQuery) => {
+      if (!tokens.length) return 1;
+      const title = (item.title || '').toLowerCase();
+      const snippet = (item.snippet || '').toLowerCase();
+      const kind = (item.kind || '').toLowerCase();
+      const kw = (item.keywords || '').toLowerCase();
+      const hay = `${title} ${snippet} ${kind} ${kw}`;
+
+      let score = 0;
+      for (const tok of tokens) {
+        if (!hay.includes(tok)) return 0;
+        if (title === tok) score += 40;
+        else if (title.startsWith(tok)) score += 24;
+        else if (title.includes(tok)) score += 16;
+        if (kind.includes(tok)) score += 10;
+        if (snippet.includes(tok)) score += 8;
+        if (kw.includes(tok)) score += 4;
+      }
+      if (rawQuery.length > 1 && title.includes(rawQuery)) score += 15;
+      return score;
+    };
+
+    const updateSelection = (idx) => {
+      const rows = [...list.querySelectorAll('.search-row')];
+      if (!rows.length) return;
+      selectedIdx = ((idx % rows.length) + rows.length) % rows.length;
+      rows.forEach((row, i) => {
+        const active = i === selectedIdx;
+        row.setAttribute('aria-selected', String(active));
+        if (active) row.scrollIntoView({ block: 'nearest' });
+      });
+    };
+
+    const renderResults = (query = '') => {
+      const items = cache || [];
+      const raw = query.trim().toLowerCase();
+      const tokens = raw.split(/\s+/).filter(Boolean);
+
+      if (!tokens.length) {
+        currentMatches = items.slice(0, 8);
+      } else {
+        currentMatches = items
+          .map((item) => ({ item, score: scoreItem(item, tokens, raw) }))
+          .filter((entry) => entry.score > 0)
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 10)
+          .map((entry) => entry.item);
+      }
+
+      selectedIdx = 0;
+      if (!currentMatches.length) {
+        list.innerHTML = `<li class="search-empty">No matches for “${escapeHtml(query.trim())}”.</li>`;
+        return;
+      }
+
+      list.innerHTML = currentMatches
+        .map(
+          (item, idx) => `
+          <li role="option" class="search-row" aria-selected="${idx === 0 ? 'true' : 'false'}" data-idx="${idx}">
+            <a href="${escapeHtml(item.href)}" class="search-link">
+              <div class="search-main">
+                <span class="search-title">${highlight(item.title, tokens)}</span>
+                ${item.snippet ? `<span class="search-snippet">${highlight(item.snippet, tokens)}</span>` : ''}
+              </div>
+              <span class="search-kind mono">${escapeHtml(item.kind)}</span>
+            </a>
+          </li>
+        `,
+        )
+        .join('');
+
+      list.querySelectorAll('.search-row').forEach((row) => {
+        row.addEventListener('pointerenter', () => {
+          const i = Number(row.getAttribute('data-idx') || 0);
+          if (i !== selectedIdx) updateSelection(i);
+        });
+      });
+    };
+
+    const openSearch = async () => {
+      if (!modal.hidden) return;
+      lastFocused = document.activeElement;
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      input.value = '';
+      await loadIndex();
+      renderResults('');
+      input.focus();
+    };
+
+    const closeSearch = () => {
+      if (modal.hidden) return;
+      modal.hidden = true;
+      document.body.style.overflow = '';
+      if (lastFocused && typeof lastFocused.focus === 'function') {
+        lastFocused.focus();
+      }
+    };
+
+    openBtns.forEach((btn) => {
+      btn.addEventListener('pointerenter', loadIndex, { once: true });
+      btn.addEventListener('focus', loadIndex, { once: true });
+      btn.addEventListener('click', openSearch);
+    });
+
+    closeBtns.forEach((btn) => btn.addEventListener('click', closeSearch));
+
+    input.addEventListener('input', () => {
+      renderResults(input.value);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      const isCmdK = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k';
+      if (isCmdK) {
+        event.preventDefault();
+        modal.hidden ? openSearch() : closeSearch();
+        return;
+      }
+
+      if (!modal.hidden) {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          closeSearch();
+        } else if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          updateSelection(selectedIdx + 1);
+        } else if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          updateSelection(selectedIdx - 1);
+        } else if (event.key === 'Enter' && currentMatches[selectedIdx]) {
+          event.preventDefault();
+          const targetHref = currentMatches[selectedIdx].href;
+          closeSearch();
+          location.href = targetHref;
+        }
+        return;
+      }
+
+      if (event.key === '/' && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        const tag = document.activeElement?.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable) {
+          return;
+        }
+        event.preventDefault();
+        openSearch();
+      }
+    });
+  })();
+</script>
+
+<style is:global>
+  .search-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+  }
+
+  .search-overlay[hidden] {
+    display: none;
+  }
+
+  .search-backdrop {
+    position: fixed;
+    inset: 0;
+    background: color-mix(in oklab, var(--paper) 78%, transparent);
+  }
+
+  .search-column {
+    position: relative;
+    z-index: 1;
+    margin-block-start: clamp(3.8rem, 3rem + 2.5vw, 5.2rem);
+  }
+
+  .search-panel {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.75rem 0.9rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .search-icon {
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .search-input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    padding: 0;
+    background: none;
+    color: var(--ink);
+    font-family: var(--font-serif);
+    font-size: var(--step-0);
+    line-height: 1.4;
+    outline: none;
+  }
+
+  .search-input::placeholder {
+    color: var(--muted);
+  }
+
+  .search-input::-webkit-search-cancel-button {
+    display: none;
+  }
+
+  .search-esc {
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0.15rem 0.45rem;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    transition:
+      color 140ms ease,
+      background-color 140ms ease;
+  }
+
+  .search-esc:hover {
+    color: var(--ink);
+    background: var(--hover);
+  }
+
+  .search-results {
+    max-height: min(65dvh, 26rem);
+    overflow-y: auto;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .search-row + .search-row {
+    border-top: 1px solid var(--rule);
+  }
+
+  .search-link {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-m);
+    padding: 0.72rem 0.9rem;
+    text-decoration: none;
+    transition: background-color 120ms ease;
+  }
+
+  .search-row[aria-selected='true'] .search-link,
+  .search-link:hover {
+    background: var(--hover);
+  }
+
+  .search-main {
+    display: grid;
+    gap: 0.18rem;
+    min-width: 0;
+  }
+
+  .search-title {
+    font-size: var(--step-0);
+    font-weight: 450;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .search-row[aria-selected='true'] .search-title {
+    color: var(--accent);
+  }
+
+  .search-snippet {
+    font-size: var(--step--1);
+    color: var(--muted);
+    line-height: 1.45;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .search-kind {
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .search-results mark {
+    background: none;
+    color: var(--accent);
+    text-decoration-line: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  .search-empty {
+    padding: 1.1rem 0.9rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+</style>

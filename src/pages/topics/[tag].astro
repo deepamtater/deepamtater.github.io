@@ -21,10 +21,6 @@ const { tag, posts } = Astro.props;
   <div class="wrap">
     <header class="page-head">
       <h1>#{tag}</h1>
-      <p>
-        {posts.length}
-        {posts.length === 1 ? 'piece' : 'pieces'} about {tag}.
-      </p>
     </header>
     <div class="others">
       <TagList tags={TOPICS} current={tag} />

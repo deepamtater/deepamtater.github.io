@@ -1,0 +1,222 @@
+---
+// The travelling full stop after "Deepam Tater". It rests after the wordmark
+// (or the active nav section), glides with distance-scaled duration to any
+// hovered/focused header item or search trigger, carries across page loads via
+// View Transitions, and docks to a 1px top reading-progress rail when scrolling.
+---
+
+<span class="signature-dot" aria-hidden="true"></span>
+<span class="dot-track" aria-hidden="true"></span>
+
+<script is:inline>
+  (() => {
+    const dot = document.querySelector('.signature-dot');
+    const track = document.querySelector('.dot-track');
+    const header = document.querySelector('.site-header');
+    if (!dot || ! track || !header) return;
+
+    const targets = [...header.querySelectorAll('[data-dot-target]')];
+    const wordmark = header.querySelector('.wordmark');
+    const rest = header.querySelector('[data-dot-rest]') || targets[0];
+    const article = document.querySelector('[data-article]');
+    const BASE = 8;
+    const descents = new Map();
+    let hovered = null;
+    let docked = false;
+
+    const descentOf = (style) => {
+      const font = `${style.fontWeight} 100px ${style.fontFamily}`;
+      if (!descents.has(font)) {
+        const ctx = document.createElement('canvas').getContext('2d');
+        if (ctx) {
+          ctx.font = font;
+          descents.set(font, ctx.measureText('x').fontBoundingBoxDescent / 100 || 0.24);
+        } else {
+          descents.set(font, 0.24);
+        }
+      }
+      return descents.get(font);
+    };
+
+    // Anchor just after the last glyph of the target label, sitting on the baseline.
+    const anchor = (el) => {
+      if (!el) return null;
+      const label = el.querySelector('.label') || el;
+      const walker = document.createTreeWalker(label, NodeFilter.SHOW_TEXT);
+      let text = null;
+      let node;
+      while ((node = walker.nextNode())) {
+        if (node.textContent && node.textContent.trim().length > 0) {
+          text = node;
+        }
+      }
+      if (!text || !text.textContent) return null;
+      const idx = text.textContent.trimEnd().length - 1;
+      if (idx < 0) return null;
+      const range = document.createRange();
+      range.setStart(text, idx);
+      range.setEnd(text, idx + 1);
+      const rect = range.getBoundingClientRect();
+      const style = getComputedStyle(label);
+      const fs = parseFloat(style.fontSize) || 16;
+      const isWordmark = el === wordmark;
+      const isWordmarkActive = isWordmark && hovered === wordmark;
+      const baseSize = Math.max(4.5, fs * (isWordmark ? 0.21 : 0.24));
+      const size = isWordmarkActive ? baseSize * 1.12 : baseSize;
+      const baseline = rect.bottom - descentOf(style) * fs;
+      const nudgeX = isWordmarkActive ? 2.2 : 0;
+      const nudgeY = isWordmarkActive ? -0.6 : 0;
+      return {
+        x: rect.right + fs * 0.08 + nudgeX + scrollX,
+        y: baseline - size + nudgeY + scrollY,
+        size,
+      };
+    };
+
+    let last = null;
+    const draw = (pos) => {
+      if (!pos) return;
+      const { x, y, size } = pos;
+      if (last && !docked) {
+        const d = Math.hypot(x - last.x, y - last.y);
+        dot.style.transitionDuration = `${Math.round(Math.min(440, Math.max(170, 145 + d * 0.85)))}ms`;
+      }
+      last = { x, y };
+      dot.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${size / BASE})`;
+    };
+
+    const snap = (fn) => {
+      dot.classList.add('snap');
+      fn();
+      dot.getBoundingClientRect();
+      requestAnimationFrame(() => dot.classList.remove('snap'));
+    };
+
+    const progress = () => {
+      const wrapRect = header.getBoundingClientRect();
+      let p = 0;
+      if (article) {
+        const r = article.getBoundingClientRect();
+        const travel = Math.max(1, r.height - innerHeight * 0.55);
+        p = Math.min(1, Math.max(0, -r.top / travel));
+      } else {
+        const maxScroll = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+        p = Math.min(1, Math.max(0, scrollY / maxScroll));
+      }
+      track.style.transform = `translateX(${wrapRect.left}px) scaleX(${wrapRect.width / 100})`;
+      return { x: wrapRect.left + p * wrapRect.width - 2.5, y: 3, size: 5 };
+    };
+
+    const canScrollDock = () => {
+      const scrollable = document.documentElement.scrollHeight - innerHeight > 140;
+      return (!!article || scrollable) && header.getBoundingClientRect().bottom < 0;
+    };
+
+    const update = () => {
+      const shouldDock = canScrollDock();
+      if (shouldDock !== docked) {
+        docked = shouldDock;
+        snap(() => {
+          dot.classList.toggle('docked', docked);
+          track.classList.toggle('on', docked);
+          draw(docked ? progress() : anchor(hovered || rest));
+        });
+        return;
+      }
+      if (docked) draw(progress());
+    };
+
+    const settle = () => {
+      if (docked) return draw(progress());
+      const pos = anchor(hovered || rest);
+      if (pos) draw(pos);
+    };
+
+    snap(settle);
+    document.documentElement.classList.add('has-dot');
+    document.fonts?.ready.then(() => snap(settle));
+    addEventListener('resize', () => snap(settle));
+
+    for (const el of targets) {
+      const on = () => {
+        hovered = el;
+        // Let any surname optical transition settle or measure live
+        requestAnimationFrame(settle);
+      };
+      const off = () => {
+        hovered = null;
+        requestAnimationFrame(settle);
+      };
+      el.addEventListener('pointerenter', on);
+      el.addEventListener('pointerleave', off);
+      el.addEventListener('focus', on);
+      el.addEventListener('blur', off);
+    }
+
+    let queued = false;
+    addEventListener(
+      'scroll',
+      () => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(() => {
+          queued = false;
+          update();
+        });
+      },
+      { passive: true },
+    );
+    update();
+  })();
+</script>
+
+<style is:global>
+  .signature-dot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 25;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    transform-origin: 0 0;
+    transform: translate3d(-100px, -100px, 0);
+    transition: transform 320ms var(--ease);
+    view-transition-name: signature-dot;
+    pointer-events: none;
+  }
+
+  /* 1px top reading-progress rail across the column width when scrolling. */
+  .dot-track {
+    position: fixed;
+    top: 5px;
+    left: 0;
+    z-index: 24;
+    width: 100px;
+    height: 1px;
+    background: var(--rule);
+    transform-origin: 0 0;
+    opacity: 0;
+    transition: opacity 260ms var(--ease);
+    pointer-events: none;
+  }
+
+  .dot-track.on {
+    opacity: 1;
+  }
+
+  .signature-dot.snap,
+  .signature-dot.docked {
+    transition: none;
+  }
+
+  .signature-dot.docked {
+    position: fixed;
+  }
+
+  ::view-transition-group(signature-dot) {
+    animation-duration: 340ms;
+    animation-timing-function: var(--ease);
+  }
+</style>

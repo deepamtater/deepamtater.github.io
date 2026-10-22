@@ -30,6 +30,7 @@
   --measure: 65ch;
   --wrap: 44rem;
   --gutter: clamp(1.25rem, 0.75rem + 2.5vw, 2.5rem);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :root[data-theme='dark'] {
@@ -355,33 +356,31 @@ main {
   padding-inline: 0.1em;
 }
 
-/* ─── Reading progress (scroll-driven, no JS) ─────────────────────────── */
-.progress {
-  position: fixed;
-  inset: 0 0 auto;
-  height: 2px;
-  z-index: 20;
-  background: var(--accent);
-  transform-origin: 0 50%;
-  transform: scaleX(0);
-  pointer-events: none;
+/* ─── View transitions (cross-document, no JS) ────────────────────────── */
+@view-transition {
+  navigation: auto;
 }
 
-@supports (animation-timeline: scroll()) {
-  .progress {
-    animation: progress linear both;
-    animation-timeline: scroll(root);
-  }
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+  animation-timing-function: var(--ease);
 }
 
-@keyframes progress {
-  to {
-    transform: scaleX(1);
-  }
+::view-transition-group(*) {
+  animation-duration: 320ms;
+  animation-timing-function: var(--ease);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .progress {
-    display: none;
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  @view-transition {
+    navigation: none;
   }
 }

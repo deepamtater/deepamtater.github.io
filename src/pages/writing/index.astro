@@ -17,18 +17,11 @@ const tags = TOPICS.filter((t) => counts[t] > 0);
   <div class="wrap">
     <header class="page-head">
       <h1>Writing</h1>
-      <p>
-        {
-          posts.length > 0
-            ? `Every essay and note, newest first. ${posts.length} ${posts.length === 1 ? 'piece' : 'pieces'} so far.`
-            : 'Every essay and note, newest first.'
-        }
-      </p>
     </header>
 
     {
       tags.length > 0 && (
-        <div class="filter" role="group" aria-label="Filter by topic">
+        <div class="filter" role="group" aria-label="Topics">
           <TagList tags={tags} counts={counts} filter />
           <p class="status mono" aria-live="polite"></p>
         </div>
@@ -68,11 +61,11 @@ const tags = TOPICS.filter((t) => counts[t] > 0);
         year.hidden = visible === 0;
         shown += visible;
       }
-      status.textContent = tag ? `${shown} tagged #${tag} · ` : '';
+      status.textContent = tag ? `${shown} in #${tag} · ` : '';
       if (tag)
         status.append(
           Object.assign(document.createElement('button'), {
-            textContent: 'Clear',
+            textContent: 'All',
             type: 'button',
             onclick: () => go(null),
           }),
