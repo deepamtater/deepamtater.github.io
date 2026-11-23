@@ -43,7 +43,7 @@ export const NOT_DOING =
   'Instagram, Snapchat, Reels, Shorts, or TikTok. Keeping my attention span intact and my brain out of 15-second dopamine loops.';
 
 export const PREVIOUSLY: PreviouslyArchive = {
-  studied: [],
+  studied: ['Weeks 1 and 2. Neural networks and backpropagation, from blank files.'],
   built: [
     'Puvio V1. Ran a 240-user beta, talked to 90 users, threw out the original draft engine, and rebuilt V2 around a single work record.',
   ],
@@ -62,8 +62,8 @@ export const NOW_SECTIONS: NowSection[] = [
     id: 'llms',
     label: 'Studying',
     title: 'Everything about LLMs, from A to Z',
-    note: 'Week 1',
-    text: 'Coding neural networks and backpropagation by hand from blank files, without AI autocomplete.',
+    note: 'Week 3',
+    text: 'Stanford CS224N, starting from the derivatives.',
   },
   {
     id: 'reading',

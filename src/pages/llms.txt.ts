@@ -35,7 +35,7 @@ export const GET: APIRoute = async (context) => {
     '',
     '## Currently (/now/)',
     '- Building: Puvio (https://puvio.app), a single place to keep a record of your work and use it to land roles or move up.',
-    '- Studying: Everything about LLMs, from A to Z (Week 1). Coding neural networks and backpropagation by hand from blank files, without AI autocomplete.',
+    '- Studying: Everything about LLMs, from A to Z (Week 3). Stanford CS224N, starting from the derivatives.',
     `- Reading: ${CURRENTLY_READING.map((b) => `${b.title} (${b.author})`).join(' and ')}.`,
     `- Not doing: ${NOT_DOING}`,
     '',

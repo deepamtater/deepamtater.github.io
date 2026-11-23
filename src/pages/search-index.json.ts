@@ -94,7 +94,7 @@ export const GET: APIRoute = async () => {
       kind: 'Page',
       href: url('/now/'),
       keywords:
-        'now puvio everything about llms from a to z week 1 reading books not doing instagram insta snapchat tiktok reels shorts brainrot',
+        'now puvio everything about llms from a to z week 3 reading books not doing instagram insta snapchat tiktok reels shorts brainrot',
     },
     {
       title: '2AM',
